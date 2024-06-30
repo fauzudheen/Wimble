@@ -1,0 +1,45 @@
+# Ignore Python cache files
+*/__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment
+venv/
+user_env/
+
+# Ignore Django migrations
+# */migrations/*
+# !*/migrations/__init__.py
+
+# Ignore local environment settings
+.env
+*.env
+
+# Ignore Git files
+.git
+.gitignore
+
+# Ignore Docker files
+Dockerfile
+docker-compose.yml
+
+# Ignore media and static files
+media/
+static/
+
+# Ignore IDE/editor config files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore test coverage results
+.coverage
+coverage/
+htmlcov/
+
+# Ignore build files
+build/
+dist/
+*.egg-info/

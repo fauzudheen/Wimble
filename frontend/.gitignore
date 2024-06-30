@@ -1,0 +1,23 @@
+# Vite cache and output directory
+node_modules/
+dist/
+build/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Dependency directories
+/.pnp
+.pnp.js
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+
+# Miscellaneous
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

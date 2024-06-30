@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  api_gateway:
+    container_name: api_gateway
+    build: ./backend/api_gateway
+    ports:
+      - "8000:8000"
+    depends_on:
+      - user_service
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend/api_gateway:/app
+    networks:
+      - app_network
+
+  user_service:
+    container_name: user_service
+    build: ./backend/user_service
+    ports:
+      - "8001:8001"
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - user_db
+      - user_redis
+    volumes:
+      - ./backend/user_service:/app
+    networks:
+      - app_network
+
+  user_db:
+    container_name: user_db
+    image: postgres
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: fauzu
+      POSTGRES_PASSWORD: password
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+  
+  user_redis:
+    container_name: redis
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  user_db_data:
