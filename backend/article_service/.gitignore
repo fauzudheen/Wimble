@@ -1,4 +1,4 @@
-venv*
+article_env/
 .env
 *.log
 *.pot

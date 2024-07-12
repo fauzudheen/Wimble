@@ -14,27 +14,25 @@ const AdminProtectedRoutes = () => {
     const updateToken = async() => {
         console.log("updateToken works")
         console.log("Refresh Token:", refreshToken)
-        try{
+        try {
             const response = await axios.post(`${GatewayUrl}api/token/refresh/`, {refresh: refreshToken});
             if (response.status === 200) {
                 dispatch(setAdminLogin(response.data));
-                } else {
-                dispatch(setAdminLogout());
-                console.error('Token refresh failed and user got logged out', response.data);
-                navigate('/admin/dashboard');
-                }
+            } else {
+                throw new Error('Token refresh failed');
+            }
         } catch (error) {
             console.error('Failed to refresh token:', error);
+            dispatch(setAdminLogout());
             navigate('/admin/login');
         }
-
     }
 
     useEffect(() => {
         if (isAuthenticated) {
             updateToken();
         } else {
-            navigate('admin/login')
+            navigate('/admin/login')
         }
     }, [isAuthenticated])
 

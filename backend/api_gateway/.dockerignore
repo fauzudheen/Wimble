@@ -1,10 +1,8 @@
-# Ignore Python cache files
 */__pycache__
 *.pyc
 *.pyo
 *.pyd
 
-# Ignore virtual environment
 venv/
 gateway_env/
 
@@ -13,30 +11,20 @@ gateway_env/
 # !*/migrations/__init__.py
 
 
-# Ignore Git files
 .git
 .gitignore
 
-# Ignore Docker files
 Dockerfile
-docker-compose.yml
 
-# Ignore media and static files
 media/
 static/
 
-# Ignore IDE/editor config files
 .vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
 
-# Ignore test coverage results
 .coverage
 coverage/
 htmlcov/
 
-# Ignore build files
-build/
-dist/
-*.egg-info/

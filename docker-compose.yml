@@ -8,12 +8,12 @@ services:
       - "8000:8000"
     depends_on:
       - user_service
+      - article_service
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./backend/api_gateway:/app
-    networks:
-      - app_network
+
 
   user_service:
     container_name: user_service
@@ -25,32 +25,93 @@ services:
     depends_on:
       - user_db
       - user_redis
+      - kafka
     volumes:
       - ./backend/user_service:/app
-    networks:
-      - app_network
+
+  article_service:
+    container_name: article_service
+    build: ./backend/article_service
+    ports:
+      - "8002:8002"
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - article_db
+      - article_redis
+      - kafka
+    volumes:
+      - ./backend/article_service:/app
 
   user_db:
     container_name: user_db
     image: postgres
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: user_db
       POSTGRES_USER: fauzu
       POSTGRES_PASSWORD: password
     volumes:
       - user_db_data:/var/lib/postgresql/data
-    networks:
-      - app_network
+
+
+  article_db:
+    container_name: article_db
+    image: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: article_db
+      POSTGRES_USER: fauzu
+      POSTGRES_PASSWORD: password
+    volumes:
+      - article_db_data:/var/lib/postgresql/data
+
   
   user_redis:
-    container_name: redis
+    container_name: user_redis
     image: "redis:alpine"
     ports:
       - "6379:6379"
+    volumes:
+      - user_redis_data:/data
 
-networks:
-  app_network:
-    driver: bridge
+  article_redis:
+    container_name: article_redis
+    image: "redis:alpine"
+    ports:
+      - "6380:6379"
+    volumes:
+      - article_redis_data:/data
+
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: kafka
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper 
+
 
 volumes:
   user_db_data:
+  article_db_data:
+  user_redis_data:
+  article_redis_data:
+  kafka_data:
+  zookeeper_data:

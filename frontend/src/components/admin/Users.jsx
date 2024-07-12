@@ -28,6 +28,36 @@ const Users = () => {
     setCurrentPage(page);
   }
 
+  const handleDelete = async(id) => {
+    try {
+      const axiosInstance = createAxiosInstance(token);
+      const response = await axiosInstance.delete(`${GatewayUrl}api/users/${id}/`)
+      console.log(response.data)
+      setUsers(users => users.filter(user => user.id != id));
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  }
+
+  const handleBlockToggle = async(id) => {
+    try {
+      const axiosInstance = createAxiosInstance(token);
+      const user = users.find((user) => user.id === id);
+      const dataToSend = {
+      is_active: !user.is_active,
+      };
+      const response = await axiosInstance.patch(`${GatewayUrl}api/users/${id}/`, dataToSend)
+      console.log(response.data)
+      setUsers((users) => 
+        users.map((user) =>
+          user.id === id ? { ...user, is_active: dataToSend.is_active } : user
+        )
+      )
+    } catch (error) {
+      console.error('Error blocking/unblocking user:', error);
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 dark:bg-gray-800">
       <div className="py-8">
@@ -53,6 +83,9 @@ const Users = () => {
             <thead>
               <tr className="bg-gray-100 dark:bg-gray-800">
                 <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  Sl No
+                </th>
+                <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                   User
                 </th>
                 <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
@@ -76,8 +109,11 @@ const Users = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {users.map((user, index) => (
                 <tr key={user.id}>
+                <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
+                  <p className="text-gray-900 dark:text-white whitespace-no-wrap">{(currentPage-1)*10 + (index + 1)}</p>
+                </td>
                   <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 w-10 h-10">
@@ -115,9 +151,13 @@ const Users = () => {
                       <span className="relative">{user.is_active ? "Active" : "Blocked"}</span>
                     </span>
                   </td>
-                  <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
-                    <button className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 mr-2">Edit</button>
-                    <button className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Delete</button>
+                  <td className="px-8 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
+                    <button 
+                      onClick={() => handleBlockToggle(user.id)}
+                      className={`text-${user.is_active ? 'indigo' : 'teal'}-600 dark:text-${user.is_active ? 'indigo' : 'teal'}-400 hover:text-${user.is_active ? 'indigo' : 'teal'}-900 dark:hover:text-${user.is_active ? 'indigo' : 'teal'}-300 mr-2`}>
+                      {user.is_active ? 'Block' : 'Unblock'}
+                    </button>
+                    <button onClick={() => handleDelete(user.id)} className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Delete</button>
                   </td>
                 </tr>
               ))}
@@ -134,6 +174,10 @@ const Users = () => {
           <p className="text-gray-900 dark:text-white font-semibold">{user.first_name} {user.last_name}</p>
           <p className="text-gray-600 dark:text-gray-400 text-sm">{user.email}</p>
         </div>
+      </div>
+      <div className="mb-2">
+        <span className="text-gray-600 dark:text-gray-400 text-sm">Id:</span>
+        <span className="ml-2 text-gray-900 dark:text-white">{user.id}</span>
       </div>
       <div className="mb-2">
         <span className="text-gray-600 dark:text-gray-400 text-sm">Username:</span>
@@ -162,8 +206,12 @@ const Users = () => {
         </span>
       </div>
       <div className="flex justify-end">
-        <button className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 mr-2">Edit</button>
-        <button className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Delete</button>
+        <button 
+          onClick={() => handleBlockToggle(user.id)}
+          className={`text-${user.is_active ? 'indigo' : 'teal'}-600 dark:text-${user.is_active ? 'indigo' : 'teal'}-400 hover:text-${user.is_active ? 'indigo' : 'teal'}-900 dark:hover:text-${user.is_active ? 'indigo' : 'teal'}-300 mr-2`}>
+          {user.is_active ? 'Block' : 'Unblock'}
+        </button>
+        <button onClick={() => handleDelete(user.id)} className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Delete</button>
       </div>
     </div>
   ))}

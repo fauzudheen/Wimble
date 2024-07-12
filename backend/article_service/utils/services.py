@@ -1,0 +1,1 @@
+USER_SERVICE_URL = "http://host.docker.internal:8001"

@@ -19,14 +19,13 @@ const UserProtectedRoutes = () => {
             if (response.status === 200) {
                 dispatch(setUserLogin(response.data));
                 } else {
-                dispatch(setUserLogout());
-                console.error('Token refresh failed and user got logged out', response.data);
-                navigate('/home');
+                    throw new Error('Token refresh failed');
                 }
-        } catch (error) {
-            console.error('Failed to refresh token:', error);
-            navigate('/login');
-        }
+            } catch (error) {
+                console.error('Failed to refresh token:', error);
+                dispatch(setUserLogout());
+                navigate('/login');
+            }
 
     }
 
@@ -41,7 +40,7 @@ const UserProtectedRoutes = () => {
     useEffect(() => {
         let interval;
       if (isAuthenticated) {
-        interval = setInterval(updateToken, 4 * 60 * 1000); 
+        interval = setInterval(updateToken, 28 * 60 * 1000); 
       }
       return () => clearInterval(interval);
     }, [isAuthenticated, refreshToken, dispatch, navigate ])

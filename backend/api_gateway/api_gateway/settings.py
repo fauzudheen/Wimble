@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'user',
     'admin_app',
     'auth_app',
+    'article',
 ]
 
 MIDDLEWARE = [

@@ -10,10 +10,6 @@ from .utils import generate_otp, send_otp
 from django.core.cache import cache
 
 
-class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
 class SignupView(APIView):
     permission_classes = [AllowAny]
 

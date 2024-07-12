@@ -1,16 +1,22 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from users.models import User
-from .serializers import UserSerializer, AdminLoginSerializer
+from .serializers import AdminLoginSerializer
+from users.serializers import UserSerializer 
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics  
- 
-class UserViewSet(generics.ListAPIView):
+from .permissions import IsOwnerOrAdmin
+
+class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser] 
+ 
+class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer  
+    permission_classes = [IsOwnerOrAdmin]
 
 class AdminLoginView(APIView):
     def post(self, request):

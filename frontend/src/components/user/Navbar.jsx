@@ -4,6 +4,7 @@ import logoImg from '../../assets/Logos/Square Logo.jpeg';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import UserProfileDropdown from './UserProfileDropdown';
+import Colors from './Colors';
 
 const Navbar = () => {
 
@@ -12,7 +13,9 @@ const Navbar = () => {
     return (
         <header className="flex justify-between items-center p-4 bg-white dark:bg-gray-900 shadow-md">
           <div className="flex items-center w-1/2"> 
+          <Link to='/home'>
             <img src={logoImg} alt="Wimble Logo" className="h-9 rounded-md" />
+            </Link>
             <input
               type="text"
               placeholder="Search..."
@@ -23,10 +26,10 @@ const Navbar = () => {
             { isAuthenticated ? (
               <>
               <Link to='/pricing'>
-                  <a className="text-teal-500 dark:text-teal-300">Pricing</a>
+                  <a className={Colors.tealBlueGradientText}>Pricing</a>
               </Link>
                 <Link to='/create-article'>
-              <button className="bg-gradient-to-r from-teal-400 to-blue-500 dark:bg-gradient-to-r dark:from-teal-400 dark:to-blue-500 text-white px-4 py-2 rounded-md">
+              <button  className={`${Colors.tealBlueGradientButton} text-white px-4 py-2 rounded-md`}>
                 Create Article
               </button>
               </Link>
@@ -37,7 +40,7 @@ const Navbar = () => {
                   <a className="text-teal-500 dark:text-teal-300">Login</a>
               </Link>
               <Link to='/signup'>
-              <button className="bg-gradient-to-r from-teal-400 to-blue-500 dark:bg-gradient-to-r dark:from-teal-400 dark:to-blue-500 text-white px-4 py-2 rounded-md">
+              <button className={`${Colors.tealBlueGradientButton} text-white px-4 py-2 rounded-md`}>
                 Signup
               </button>
               </Link>
