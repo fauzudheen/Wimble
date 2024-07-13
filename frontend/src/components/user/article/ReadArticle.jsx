@@ -8,6 +8,7 @@ import { HandThumbUpIcon, ChatBubbleLeftIcon, ShareIcon, BookmarkIcon } from '@h
 import { HandThumbUpIcon as ThumbUpIconSolid } from '@heroicons/react/24/solid';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { useSelector } from 'react-redux';
+import CommentSection from './CommentSection';
 
 const ReadArticle = () => {
   const { id: articleId } = useParams();
@@ -18,50 +19,50 @@ const ReadArticle = () => {
 
   const checkIfLiked = async () => {
     try {
-        const axiosInstance = createAxiosInstance(token);
-        const response = await axiosInstance.get(`${GatewayUrl}api/article-like/`, {
-            params: {
-                article_id: articleId
-            }
-        });
-        console.log(response.data)
-        if (response.data.liked === true) {
-            setIsLiked(true);
-        } else {
-            setIsLiked(false);
+      const axiosInstance = createAxiosInstance(token);
+      const response = await axiosInstance.get(`${GatewayUrl}api/article-like/`, {
+        params: {
+          article_id: articleId
         }
+      });
+      console.log(response.data)
+      if (response.data.liked === true) {
+        setIsLiked(true);
+      } else {
+        setIsLiked(false);
+      }
     } catch (error) {
-        console.error('Error checking if liked:', error);
+      console.error('Error checking if liked:', error);
     }
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     checkIfLiked();
-}, []);
+  }, []);
 
-  const handleLike = async() => {
+  const handleLike = async () => {
     if (isLiked) {
-        try {
-            const axiosInstance = createAxiosInstance(token);
-            const response = await axiosInstance.delete(`${GatewayUrl}api/article-like/?article_id=${articleId}`);
-            console.log(response.data);
-            setIsLiked(false);
-            setArticle((prevArticle) => ({ ...prevArticle, likesCount: prevArticle.likesCount - 1 }));
-        } catch (error) {
-            console.error('Error unliking article:', error);
-        }
+      try {
+        const axiosInstance = createAxiosInstance(token);
+        const response = await axiosInstance.delete(`${GatewayUrl}api/article-like/?article_id=${articleId}`);
+        console.log(response.data);
+        setIsLiked(false);
+        setArticle((prevArticle) => ({ ...prevArticle, likesCount: prevArticle.likesCount - 1 }));
+      } catch (error) {
+        console.error('Error unliking article:', error);
+      }
     } else {
-        try {
-            const axiosInstance = createAxiosInstance(token);
-            const response = await axiosInstance.post(`${GatewayUrl}api/article-like/`, { 
-                article_id: articleId,
-             });
-            console.log(response.data);
-            setIsLiked(true);
-            setArticle((prevArticle) => ({ ...prevArticle, likesCount: prevArticle.likesCount + 1 }));
-        } catch (error) {
-            console.error('Error liking article:', error);
-        }
+      try {
+        const axiosInstance = createAxiosInstance(token);
+        const response = await axiosInstance.post(`${GatewayUrl}api/article-like/`, { 
+          article_id: articleId,
+        });
+        console.log(response.data);
+        setIsLiked(true);
+        setArticle((prevArticle) => ({ ...prevArticle, likesCount: prevArticle.likesCount + 1 }));
+      } catch (error) {
+        console.error('Error liking article:', error);
+      }
     }
   }
 
@@ -143,14 +144,13 @@ useEffect(() => {
               </button>
             </div>
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-end">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
             </p>
-            <button className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
-              View all comments
-            </button>
           </div>
+
+          <CommentSection articleId={articleId} token={token} />
         </footer>
       </article>
     </div>

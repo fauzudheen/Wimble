@@ -38,7 +38,11 @@ class LikeSerializer(serializers.ModelSerializer):
         return Like.objects.create(user=user, article=article)
 
 class CommentSerializer(serializers.ModelSerializer):
+    user_data = serializers.SerializerMethodField()
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = ['id', 'text', 'created_at', 'user_data']
         read_only_fields = ['id', 'user', 'created_at']
+
+    def get_user_data(self, obj):
+        return UserSerializer(obj.user).data 

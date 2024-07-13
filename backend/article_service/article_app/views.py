@@ -57,15 +57,27 @@ class LikeView(generics.GenericAPIView):
 
 
 class CommentListCreateView(generics.ListCreateAPIView):
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
+    def get_queryset(self):
+        article_id = self.kwargs['pk']
+        return Comment.objects.filter(article_id=article_id)
+    
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user) 
+        article_id = self.kwargs.get('pk')
+        serializer.save(user_id=self.request.user.id, article_id=article_id)
 
 class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrAdmin] 
+
+class ArticleCommentListView(generics.ListAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        article_id = self.kwargs['pk']
+        return Comment.objects.filter(article_id=article_id)
     

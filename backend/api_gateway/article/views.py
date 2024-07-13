@@ -57,16 +57,16 @@ class LikeView(APIView):
 
  
 class CommentView(APIView):
-    def get(self, request, pk=None):
+    def get(self, request, pk=None, article_id=None):
         if pk:
             service_url = f"{ARTICLE_SERVICE_URL}/article-comments/{pk}/"
         else:
-            service_url = f"{ARTICLE_SERVICE_URL}/article-comments/"
+            service_url = f"{ARTICLE_SERVICE_URL}/articles/{article_id}/comments/"
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
-    
-    def post(self, request):
-        service_url = f"{ARTICLE_SERVICE_URL}/article-comments/"
+     
+    def post(self, request, article_id):
+        service_url = f"{ARTICLE_SERVICE_URL}/articles/{article_id}/comments/" 
         response = requests.post(service_url, json=request.data, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
 
@@ -79,3 +79,9 @@ class CommentView(APIView):
         service_url = f"{ARTICLE_SERVICE_URL}/article-comments/{pk}/"
         response = requests.delete(service_url, headers=dict(request.headers))
         return Response(status=response.status_code)
+    
+class ArticleCommentView(APIView):
+    def get(self, request, pk):
+        service_url = f"{ARTICLE_SERVICE_URL}/articles/{pk}/comments/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)

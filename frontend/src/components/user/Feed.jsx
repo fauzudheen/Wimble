@@ -13,7 +13,7 @@ const Feed = () => {
       try {
         const response = await axios.get(`${GatewayUrl}api/articles/`)
         console.log("response", response.data)
-        setArticles(response.data.results)
+        setArticles(response.data)
       } catch (error) {
         console.error("Error fetching article details", error)
       }
