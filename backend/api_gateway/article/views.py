@@ -80,8 +80,3 @@ class CommentView(APIView):
         response = requests.delete(service_url, headers=dict(request.headers))
         return Response(status=response.status_code)
     
-class ArticleCommentView(APIView):
-    def get(self, request, pk):
-        service_url = f"{ARTICLE_SERVICE_URL}/articles/{pk}/comments/"
-        response = requests.get(service_url, headers=dict(request.headers))
-        return Response(response.json(), status=response.status_code)

@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { ArrowUturnLeftIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowUturnLeftIcon, PencilIcon, TrashIcon, XCircleIcon  } from '@heroicons/react/24/outline';
 import Colors from '../Colors';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { GatewayUrl } from '../../const/urls';
 import { useSelector } from 'react-redux';
+import Modal from '../Modal';
+import axios from 'axios';
 
 const CommentSection = ({ articleId, token }) => {
   const [comments, setComments] = useState([]);
@@ -12,12 +14,13 @@ const CommentSection = ({ articleId, token }) => {
   const [replyingTo, setReplyingTo] = useState(null);
   const commentInputRef = useRef(null);
   const userId = useSelector((state) => state.auth.userId);
+  const isAuthenticated = useSelector((state) => state.auth.isUserAuthenticated);
+  const [ isModalOpen, setIsModalOpen ] = useState(false);
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const axiosInstance = createAxiosInstance(token);
-        const response = await axiosInstance.get(`${GatewayUrl}api/articles/${articleId}/comments/`);
+        const response = await axios.get(`${GatewayUrl}api/articles/${articleId}/comments/`);
         setComments(response.data);
       } catch (error) {
         console.error('Error fetching comments:', error);
@@ -38,6 +41,10 @@ const CommentSection = ({ articleId, token }) => {
 
   const handleSubmitComment = async (event, parentId = null) => {
     event.preventDefault();
+    if (!isAuthenticated) {
+      setIsModalOpen(true);
+      return;
+    }
     const content = event.target.comment.value;
     if (!content.trim()) return;
 
@@ -91,6 +98,15 @@ const CommentSection = ({ articleId, token }) => {
       <button type="submit" className={`${Colors.tealBlueGradientText} mt-2 px-4 py-2 rounded-md font-medium transition-all duration-200 ease-in-out hover:opacity-80`}>
         Post Comment
       </button>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Authentication Required"
+        message="Please log in to perform this operation."
+        primaryButtonText="Log In"
+        primaryButtonUrl="/login"
+        secondaryButtonText="Cancel"
+      />
     </form>
   );
 
@@ -141,13 +157,24 @@ const CommentSection = ({ articleId, token }) => {
               <p className="mt-1 text-gray-700 dark:text-gray-300">{comment.text}</p>
             )}
             <div className="mt-2 flex items-center space-x-4">
+            {replyingTo === comment.id ? (
               <button
+              onClick={() => handleReply(comment.id)}
+              className="text-sm text-blue-600 dark:text-blue-400 flex items-center transition-all duration-200 ease-in-out hover:text-blue-800 dark:hover:text-blue-300"
+            >
+              <XCircleIcon  className="h-4 w-4 mr-1" />
+              Close
+            </button>
+            ) : 
+            <button
                 onClick={() => handleReply(comment.id)}
                 className="text-sm text-blue-600 dark:text-blue-400 flex items-center transition-all duration-200 ease-in-out hover:text-blue-800 dark:hover:text-blue-300"
               >
                 <ArrowUturnLeftIcon className="h-4 w-4 mr-1" />
                 Reply
               </button>
+              }
+              
               {isOwnComment && (
                 <>
                   <button

@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-from .permissions import IsOwnerOrAdmin, IsOwner, IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, IsAuthenticatedOrReadOnly
+from .permissions import IsOwnerOrAdmin, IsOwner, IsOwnerOrReadOnly, IsOwnerOrAdminForArticle
 from .models import Article, Like, Comment
 from .serializers import ArticleSerializer, LikeSerializer, CommentSerializer
 from django.core.cache import cache
@@ -15,7 +15,7 @@ class ArticleListCreateView(generics.ListCreateAPIView):
 class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
-    # permission_classes = [IsOwnerOrAdmin]
+    permission_classes = [IsOwnerOrAdminForArticle]
 
 class LikeView(generics.GenericAPIView):
     serializer_class = LikeSerializer
@@ -58,7 +58,7 @@ class LikeView(generics.GenericAPIView):
 
 class CommentListCreateView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         article_id = self.kwargs['pk']
@@ -73,11 +73,3 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrAdmin] 
 
-class ArticleCommentListView(generics.ListAPIView):
-    serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        article_id = self.kwargs['pk']
-        return Comment.objects.filter(article_id=article_id)
-    

@@ -4,11 +4,15 @@ import { formatDistanceToNow } from 'date-fns';
 import axios from 'axios';
 import { GatewayUrl } from '../../const/urls';
 import Colors from '../Colors';
-import { HandThumbUpIcon, ChatBubbleLeftIcon, ShareIcon, BookmarkIcon } from '@heroicons/react/24/outline';
+import { HandThumbUpIcon, ChatBubbleLeftIcon, FlagIcon , ShareIcon, BookmarkIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { HandThumbUpIcon as ThumbUpIconSolid } from '@heroicons/react/24/solid';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { useSelector } from 'react-redux';
 import CommentSection from './CommentSection';
+import Modal from '../Modal';
+import ConfirmModal from '../ComfirmModal';
+import NoContentPage from '../misc/NoContentPage';
+import SkeletonLoader from '../misc/SkeletonLoader';
 
 const ReadArticle = () => {
   const { id: articleId } = useParams();
@@ -16,6 +20,11 @@ const ReadArticle = () => {
   const [isLiked, setIsLiked] = useState(false);
   const token = useSelector((state) => state.auth.userAccess);
   const userId = useSelector((state) => state.auth.userId);
+  const isAuthenticated = useSelector((state) => state.auth.isUserAuthenticated);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isArticleDeleted, setIsArticleDeleted] = useState(false);
 
   const checkIfLiked = async () => {
     try {
@@ -37,10 +46,17 @@ const ReadArticle = () => {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
     checkIfLiked();
   }, []);
 
   const handleLike = async () => {
+    if (!isAuthenticated) {
+      setIsLoginModalOpen(true);
+      return;
+    }
     if (isLiked) {
       try {
         const axiosInstance = createAxiosInstance(token);
@@ -81,15 +97,54 @@ const ReadArticle = () => {
         thumbnail: response.data.thumbnail,
         likesCount: response.data.likes_count,
         commentsCount: response.data.comments_count,
+        author_id: response.data.user_data.id,
       });
     };
 
     fetchArticle();
   }, [articleId]);
 
-  if (!article) {
-    return <div className="flex justify-center items-center h-screen dark:bg-gray-800 dark:text-white">Loading...</div>;
+  const handleDeleteArticle = async () => {
+    try {
+      const axiosInstance = createAxiosInstance(token);
+      await axiosInstance.delete(`${GatewayUrl}api/articles/${article.articleId}/`);
+      setIsDeleteModalOpen(false);
+      setIsArticleDeleted(true); 
+    } catch (error) {
+      console.error('There was an error deleting the article!', error);
+    }
+  };
+
+  const handleReportArticle = async () => {
+    if (!isAuthenticated) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+    try {
+      const axiosInstance = createAxiosInstance(token);
+      await axiosInstance.post(`${GatewayUrl}api/article-report/`, {
+        article_id: articleId
+      });
+      setIsReportModalOpen(false);
+    } catch (error) {
+      console.error('There was an error reporting the article!', error);
+    }
+  };
+
+  if (isArticleDeleted) {
+    return (
+      <NoContentPage 
+        message="This article has been removed by the author."
+        linkText="Browse other articles"
+        linkHref="/home"
+      />
+    );
   }
+
+  if (!article) {
+    return <SkeletonLoader type="article" count={1} />;
+  }
+
 
   return (
     <div className='min-h-screen bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 md:p-10'>
@@ -115,6 +170,34 @@ const ReadArticle = () => {
               <button className={`${Colors.tealBlueGradientIcon}`}>
                 <BookmarkIcon className="h-6 w-6" />
               </button>
+              <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsReportModalOpen(true)}>
+                <FlagIcon className="h-6 w-6" />
+              </button>
+              <ConfirmModal
+                isOpen={isReportModalOpen}
+                onClose={() => setIsReportModalOpen(false)}
+                title="Confirm Report"
+                message={`Are you sure you want to report the article "${article.title}"?`}
+                onConfirm={handleReportArticle}
+                confirmButtonText="Report"
+                cancelButtonText="Cancel"
+              />
+              {article.author_id === userId && (
+                <>
+                  <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsDeleteModalOpen(true)}>
+                    <TrashIcon className="h-6 w-6" />
+                  </button>
+                  <ConfirmModal
+                    isOpen={isDeleteModalOpen}
+                    onClose={() => setIsDeleteModalOpen(false)}
+                    title="Confirm Deletion"
+                    message={`Are you sure you want to delete the article "${article.title}"?`}
+                    onConfirm={handleDeleteArticle}
+                    confirmButtonText="Delete"
+                    cancelButtonText="Cancel"
+                  />
+                </>
+              )}
             </div>
           </div>
         </header>
@@ -138,6 +221,15 @@ const ReadArticle = () => {
                 )}
                 <span>{article.likesCount}</span>
               </button>
+              <Modal
+                isOpen={isLoginModalOpen}
+                onClose={() => setIsLoginModalOpen(false)}
+                title="Authentication Required"
+                message="Please log in to perform this operation."
+                primaryButtonText="Log In"
+                primaryButtonUrl="/login"
+                secondaryButtonText="Cancel"
+              />
               <button className={`${Colors.tealBlueGradientIcon} flex items-center space-x-2`}>
                 <ChatBubbleLeftIcon className="h-6 w-6" />
                 <span>{article.commentsCount}</span>

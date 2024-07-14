@@ -40,3 +40,11 @@ class IsOwnerOrAdmin(BasePermission):
             return True
 
         return obj.user_id == request.user.id or request.user.is_staff
+    
+class IsOwnerOrAdminForArticle(BasePermission):
+    def has_object_permission(self, request, view, obj):
+
+        if request.method in SAFE_METHODS:
+            return True
+
+        return obj.author_id == request.user.id or request.user.is_staff

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DarkModeToggle from '../../components/user/DarkModeToggle';
 import logoImg from '../../assets/Logos/Brand and Logo.jpg';
+import circleLogoImg from '../../assets/Logos/Circle Logo.png';
 import axios from 'axios';
 import { GatewayUrl } from '../../components/const/urls';
 import { useForm } from 'react-hook-form';
@@ -64,8 +65,18 @@ const Signup = () => {
       }
     };
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-md shadow-md w-full max-w-3xl">
+      <div className="flex justify-center items-center min-h-screen dark:bg-gray-900">
+       {/* Background with repeating logos */}
+       <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 bg-repeat" style={{
+          backgroundImage: `url(${circleLogoImg})`,
+          backgroundSize: '30px 30px',
+          opacity: 0.3,
+          transform: 'rotate(-30deg) scale(1.9)',
+        }}></div> 
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-md shadow-md w-full max-w-md z-10 relative">
         <div className="flex justify-center mb-6">
           <img className="h-20 rounded-md max-w-xs" src={logoImg} alt="Logo" />
         </div>
