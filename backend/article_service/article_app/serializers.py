@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Article, User, Like, Comment
-
+from . import models
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,3 +46,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_user_data(self, obj):
         return UserSerializer(obj.user).data 
+    
+class ReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Report 
+        fields = '__all__'
+        read_only_fields = ['id', 'user', 'article','created_at']

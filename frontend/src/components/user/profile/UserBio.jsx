@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { GatewayUrl } from '../../const/urls';
 import { useSelector } from 'react-redux';
 import EditModal from '../EditModal';
-import { PencilIcon } from '@heroicons/react/24/outline';
+import { PencilIcon } from '@heroicons/react/24/solid';
 
 const UserBio = () => {
   const userId = useSelector(state => state.auth.userId);

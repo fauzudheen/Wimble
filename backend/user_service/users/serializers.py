@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import User
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
+from . import models
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
@@ -53,3 +54,31 @@ class AdminLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Unable to log in with provided credentials.")
             
         return user
+    
+class SkillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Skill
+        fields = "__all__"
+
+class UserSkillSerializer(serializers.ModelSerializer):
+    skill_name = serializers.SerializerMethodField()
+    class Meta:
+        model = models.UserSkill
+        fields = ["id", "skill", "skill_name"]
+
+    def get_skill_name(self, obj):
+        return obj.skill.name
+
+class InterestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Interest
+        fields = "__all__"
+
+class UserInterestSerializer(serializers.ModelSerializer):
+    interest_name = serializers.SerializerMethodField()
+    class Meta:
+        model = models.UserInterest
+        fields = ["id", "interest", "interest_name"]
+
+    def get_interest_name(self, obj):
+        return obj.interest.name

@@ -1,5 +1,5 @@
 import React from 'react';
-import Colors from "../Colors";
+import Colors from './Colors';
 
 const NoContentPage = ({ message , linkText, linkHref }) => {
   return (

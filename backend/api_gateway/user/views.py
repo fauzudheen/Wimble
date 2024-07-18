@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from utils.services import USER_SERVICE_URL
-import logging
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.http import HttpResponse
 
 class UserView(APIView):
     def get(self, request, pk=None):
@@ -23,8 +24,14 @@ class UserView(APIView):
         return Response(response.json(), status=response.status_code)
 
     def patch(self, request, pk):
+        print("--------request.data--------", request.data)
         service_url = f"{USER_SERVICE_URL}/users/{pk}/"
-        response = requests.patch(service_url, json=request.data, headers=dict(request.headers))
+        headers = dict(request.headers)
+        headers.pop('Content-Type', None) 
+        data = request.data.copy()
+        json_data = {key: value for key, value in data.items() if not isinstance(value, InMemoryUploadedFile)}
+        files_data = {key: (value.name, value, value.content_type) for key, value in data.items() if isinstance(value, InMemoryUploadedFile)}
+        response = requests.patch(service_url, data=json_data, files=files_data, headers=headers)
         return Response(response.json(), status=response.status_code)
 
     def delete(self, request, pk):
@@ -35,3 +42,93 @@ class UserView(APIView):
         except requests.exceptions.JSONDecodeError:
             return Response(status=response.status_code)
  
+    def proxy_media_request(request, path):
+        user_service_media_url = f"{USER_SERVICE_URL}/media/{path}" 
+        response = requests.get(user_service_media_url, stream=True)
+        
+        if response.status_code == 200:
+            response_content = response.content
+            content_type = response.headers['Content-Type']
+            return HttpResponse(response_content, content_type=content_type)
+        else:
+            return HttpResponse(status=response.status_code) 
+        
+class SkillView(APIView):
+    def get(self, request, pk=None):
+        if pk:
+            service_url = f"{USER_SERVICE_URL}/skills/{pk}/"
+        else:
+            service_url = f"{USER_SERVICE_URL}/skills/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def post(self, request):
+        service_url = f"{USER_SERVICE_URL}/skills/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def patch(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/skills/{pk}/"
+        response = requests.patch(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def delete(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/skills/{pk}/"
+        response = requests.delete(service_url, headers=dict(request.headers))
+        return Response(status=response.status_code)
+    
+class UserSkillView(APIView):
+    def get(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/users/{pk}/skills/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def post(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/users/{pk}/skills/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def delete(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/user-skills/{pk}/"
+        response = requests.delete(service_url, headers=dict(request.headers))
+        return Response(status=response.status_code)
+    
+class InterestView(APIView):
+    def get(self, request, pk=None):
+        if pk:
+            service_url = f"{USER_SERVICE_URL}/interests/{pk}/"
+        else:
+            service_url = f"{USER_SERVICE_URL}/interests/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def post(self, request):
+        service_url = f"{USER_SERVICE_URL}/interests/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def patch(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/interests/{pk}/"
+        response = requests.patch(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def delete(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/interests/{pk}/" 
+        response = requests.delete(service_url, headers=dict(request.headers))
+        return Response(status=response.status_code)
+    
+class UserInterestView(APIView):
+    def get(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/users/{pk}/interests/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def post(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/users/{pk}/interests/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def delete(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/user-interests/{pk}/"
+        response = requests.delete(service_url, headers=dict(request.headers))
+        return Response(status=response.status_code)

@@ -5,20 +5,20 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrAdmin, IsOwner, IsOwnerOrReadOnly, IsOwnerOrAdminForArticle
 from .models import Article, Like, Comment
-from .serializers import ArticleSerializer, LikeSerializer, CommentSerializer
+from . import serializers, permissions, models
 from django.core.cache import cache
 
 class ArticleListCreateView(generics.ListCreateAPIView):
     queryset = Article.objects.all()
-    serializer_class = ArticleSerializer
+    serializer_class = serializers.ArticleSerializer
   
 class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
-    serializer_class = ArticleSerializer
+    serializer_class = serializers.ArticleSerializer
     permission_classes = [IsOwnerOrAdminForArticle]
 
 class LikeView(generics.GenericAPIView):
-    serializer_class = LikeSerializer
+    serializer_class = serializers.LikeSerializer
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -57,7 +57,7 @@ class LikeView(generics.GenericAPIView):
 
 
 class CommentListCreateView(generics.ListCreateAPIView):
-    serializer_class = CommentSerializer
+    serializer_class = serializers.CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
@@ -70,6 +70,17 @@ class CommentListCreateView(generics.ListCreateAPIView):
 
 class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    serializer_class = serializers.CommentSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrAdmin] 
 
+class ReportListCreateView(generics.ListCreateAPIView):
+    serializer_class = serializers.ReportSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        article_id = self.kwargs['pk']
+        return models.Report.objects.filter(article_id=article_id) 
+    
+    def perform_create(self, serializer):
+        article_id = self.kwargs.get('pk')
+        serializer.save(user_id=self.request.user.id, article_id=article_id)

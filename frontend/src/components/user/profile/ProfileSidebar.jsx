@@ -3,7 +3,7 @@ import UserSkills from './UserSkills'
 import UserActivites from './UserActivites'
 import UserBio from './UserBio'
 
-const ProfileSidebar = ({}) => {
+const ProfileSidebar = () => {
   return (
     <div className="">
       <UserBio />

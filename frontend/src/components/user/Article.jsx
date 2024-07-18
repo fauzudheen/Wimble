@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { TrashIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import { GatewayUrl } from '../const/urls';
-import Colors from './Colors';
 
 const Article = ({ author, title, content, created_at, profile, thumbnail, tagline, id, likesCount, commentsCount }) => {
   const navigate = useNavigate();
@@ -16,10 +15,10 @@ const Article = ({ author, title, content, created_at, profile, thumbnail, tagli
   };
 
   return (
-    <article className="bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg mb-8 transition-all hover:shadow-xl">
+    <article className="bg-white dark:bg-gray-800 p-4 shadow-lg rounded-lg mb-8 transition-all hover:shadow-xl">
       <header className="flex items-center mb-4">
       {profile && (
-        <img src={profile} alt={author} className="h-12 w-12 rounded-full mr-4 border-2 border-blue-500" />
+        <img src={`${GatewayUrl}api/user_service/media/${profile.split('/media/')[1]}`}  alt={author} className="h-12 w-12 rounded-full mr-2 border-2 border-blue-500" />
       )}
 
         <div>

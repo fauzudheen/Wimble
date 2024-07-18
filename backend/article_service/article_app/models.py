@@ -35,4 +35,14 @@ class Comment(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+class Report(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='reports')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reports')
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'Report by {self.user} on {self.article}'
+    
+    class Meta:
+        ordering = ['-created_at']

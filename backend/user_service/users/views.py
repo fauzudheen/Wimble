@@ -1,5 +1,8 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, IsAuthenticatedOrReadOnly
+from . import permissions
+from . import models
+from . import serializers
 from .models import User
 from .serializers import UserSerializer, UserLoginSerializer, AdminLoginSerializer
 from rest_framework.response import Response
@@ -87,4 +90,62 @@ class LoginView(APIView):
             print("--------------error----------", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class SkillListCreateView(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAdminOrReadOnly]
+    serializer_class = serializers.SkillSerializer
+    queryset = models.Skill.objects.all()
+    pagination_class = None
+
+class SkillRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAdminOrReadOnly]
+    serializer_class = serializers.SkillSerializer
+    queryset = models.Skill.objects.all()
         
+class UserSkillListCreateView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = serializers.UserSkillSerializer
+    queryset = models.UserSkill.objects.all()
+    pagination_class = None
+
+    def perform_create(self, serializer):
+        skill_id = self.request.data['skill']
+        serializer.save(user_id=self.request.user.id, skill_id=skill_id)
+
+    def get_queryset(self):
+        user_id = self.kwargs['pk']
+        return self.queryset.filter(user_id=user_id)
+
+class UserSkillDestroyView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.UserSkillSerializer
+    queryset = models.UserSkill.objects.all()
+
+class InterestListCreateView(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAdminOrReadOnly]
+    serializer_class = serializers.InterestSerializer
+    queryset = models.Interest.objects.all()
+    pagination_class = None
+
+class InterestRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAdminOrReadOnly]
+    serializer_class = serializers.InterestSerializer
+    queryset = models.Interest.objects.all()
+
+class UserInterestListCreateView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = serializers.UserInterestSerializer
+    queryset = models.UserInterest.objects.all()
+    pagination_class = None
+
+    def perform_create(self, serializer):
+        interest_id = self.request.data['interest']
+        serializer.save(user_id=self.request.user.id, interest_id=interest_id)
+
+    def get_queryset(self):
+        user_id = self.kwargs['pk']
+        return self.queryset.filter(user_id=user_id)
+    
+class UserInterestDestroyView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.UserInterestSerializer
+    queryset = models.UserInterest.objects.all()

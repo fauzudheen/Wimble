@@ -36,3 +36,44 @@ class User(AbstractUser):
         }
 
         kafka_producer.produce_message('users', self.id, user_data)
+
+class Skill(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+class UserSkill(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'skill')
+        ordering = ['-id']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.skill.name}"
+
+    
+class Interest(models.Model):
+    name = models.CharField(max_length=50, unique=True) 
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ['name'] 
+
+class UserInterest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    interest = models.ForeignKey(Interest, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'interest')
+        ordering = ['-id']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.interest.name}"

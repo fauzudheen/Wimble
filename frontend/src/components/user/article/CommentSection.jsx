@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ArrowUturnLeftIcon, PencilIcon, TrashIcon, XCircleIcon  } from '@heroicons/react/24/outline';
-import Colors from '../Colors';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { GatewayUrl } from '../../const/urls';
 import { useSelector } from 'react-redux';
 import Modal from '../Modal';
 import axios from 'axios';
+import Colors from '../misc/Colors';
 
 const CommentSection = ({ articleId, token }) => {
   const [comments, setComments] = useState([]);
@@ -132,7 +132,7 @@ const CommentSection = ({ articleId, token }) => {
     return (
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md transition-all duration-200 ease-in-out hover:shadow-lg">
         <div className="flex items-start space-x-3">
-          <img src={comment.user_data.profile || 'https://via.placeholder.com/40'} alt={`${comment.user_data.first_name} ${comment.user_data.last_name}`} className="w-10 h-10 rounded-full" />
+          <img src={`${GatewayUrl}api/user_service/media/${comment.user_data.profile.split('/media/')[1]}`} alt={`${comment.user_data.first_name} ${comment.user_data.last_name}`} className="w-10 h-10 rounded-full" />
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <h4 className="font-semibold text-gray-900 dark:text-white">{`${comment.user_data.first_name} ${comment.user_data.last_name}`}</h4>

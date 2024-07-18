@@ -61,7 +61,7 @@ const Users = () => {
   return (
     <div className="container mx-auto px-4 dark:bg-gray-800">
       <div className="py-8">
-        <h2 className="text-2xl font-semibold leading-tight mb-4 dark:text-white">Users</h2>
+        <h2 className="text-2xl font-semibold leading-tight mb-4 dark:text-white text-center">Users</h2>
         
         <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
           <div className="w-full sm:w-auto relative">

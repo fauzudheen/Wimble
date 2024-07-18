@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import axios from 'axios';
 import { GatewayUrl } from '../../const/urls';
-import Colors from '../Colors';
+import Colors from '../misc/Colors';
 import { HandThumbUpIcon, ChatBubbleLeftIcon, FlagIcon , ShareIcon, BookmarkIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { HandThumbUpIcon as ThumbUpIconSolid } from '@heroicons/react/24/solid';
 import createAxiosInstance from '../../../api/axiosInstance';
@@ -12,7 +12,8 @@ import CommentSection from './CommentSection';
 import Modal from '../Modal';
 import ConfirmModal from '../ComfirmModal';
 import NoContentPage from '../misc/NoContentPage';
-import SkeletonLoader from '../misc/SkeletonLoader';
+import FormModal from '../FormModal';
+import LoadSpinner from '../misc/LoadSpinner';
 
 const ReadArticle = () => {
   const { id: articleId } = useParams();
@@ -115,21 +116,30 @@ const ReadArticle = () => {
     }
   };
 
-  const handleReportArticle = async () => {
+  const handleReportArticle = async (formData) => {
     if (!isAuthenticated) {
+      setIsReportModalOpen(false);
       setIsLoginModalOpen(true);
       return;
     }
     try {
       const axiosInstance = createAxiosInstance(token);
-      await axiosInstance.post(`${GatewayUrl}api/article-report/`, {
-        article_id: articleId
+      await axiosInstance.post(`${GatewayUrl}api/articles/${article.articleId}/reports/`, {
+        text: formData.reason
       });
       setIsReportModalOpen(false);
     } catch (error) {
       console.error('There was an error reporting the article!', error);
     }
   };
+  const reportFields = [
+    {
+      name: 'reason',
+      label: 'Reason for reporting',
+      type: 'textarea',
+      required: true
+    }
+  ];
 
   if (isArticleDeleted) {
     return (
@@ -142,7 +152,7 @@ const ReadArticle = () => {
   }
 
   if (!article) {
-    return <SkeletonLoader type="article" count={1} />;
+    return <LoadSpinner size="medium" text="Fetching data..." />
   }
 
 
@@ -164,23 +174,22 @@ const ReadArticle = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-              <button className={`${Colors.tealBlueGradientIcon}`}>
+              <button className={`${Colors.tealBlueGradientIcon}`} title="Share">
                 <ShareIcon className="h-6 w-6" />
               </button>
-              <button className={`${Colors.tealBlueGradientIcon}`}>
+              <button className={`${Colors.tealBlueGradientIcon}`} title="Save">
                 <BookmarkIcon className="h-6 w-6" />
               </button>
-              <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsReportModalOpen(true)}>
+              <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsReportModalOpen(true)} title="Report">
                 <FlagIcon className="h-6 w-6" />
               </button>
-              <ConfirmModal
+              <FormModal
                 isOpen={isReportModalOpen}
                 onClose={() => setIsReportModalOpen(false)}
                 title="Confirm Report"
-                message={`Are you sure you want to report the article "${article.title}"?`}
-                onConfirm={handleReportArticle}
-                confirmButtonText="Report"
-                cancelButtonText="Cancel"
+                fields={reportFields}
+                onSubmit={handleReportArticle}
+                submitButtonText="Submit Report"
               />
               {article.author_id === userId && (
                 <>

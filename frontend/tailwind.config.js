@@ -12,6 +12,9 @@ export default {
           button: 'bg-gradient-to-r from-teal-400 to-blue-500',
           hover: 'bg-gradient-to-r from-teal-500 to-blue-600',
         },
+        fontFamily: {
+          sans: ['Your-Font-Name', 'sans-serif'],
+        },
       },
     },
   },

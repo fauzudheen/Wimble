@@ -23,7 +23,7 @@ const Feed = () => {
   }, [])
 
   return (
-    <main className="flex-1 p-4">
+    <main className="flex-1 px-4">
       {articles.map((article) => (
     article.user_data ? (
       <Article

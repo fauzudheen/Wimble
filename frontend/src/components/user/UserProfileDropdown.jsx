@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UserCircleIcon, CogIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/solid'; // Importing Heroicons
 import DarkModeToggle from './DarkModeToggle'; // Importing the DarkModeToggle component
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserLogout } from '../../redux/authSlice';
+import { GatewayUrl } from '../const/urls';
+import axios from 'axios';
 
 const UserProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch()
   const isAuthenticated = useSelector(state => state.auth.isUserAuthenticated)
+  const userId = useSelector(state => state.auth.userId)
+  const [userProfile, setUserProfile] = useState(null)
+
+  useEffect(() => {
+    fetchUserDetails()
+  }, [userId])
+  const fetchUserDetails = async () => {
+  try {
+    const response = await axios.get(`${GatewayUrl}api/users/${userId}/`)
+    setUserProfile(response.data.profile)
+  } catch (error) {
+    console.error('Error fetching user details:', error)
+  }
+}
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -25,7 +41,13 @@ const UserProfileDropdown = () => {
         onClick={toggleDropdown}
       >
         {/* Placeholder for profile avatar */}
-        <div className="w-8 h-8 rounded-full bg-gray-300"></div>
+        <div className="w-10 h-10 rounded-full bg-gray-300">
+          {userProfile && (
+            <img 
+              className="w-full h-full object-cover rounded-full" 
+              src={`${GatewayUrl}api/user_service/media/${userProfile.split('/media/')[1]}`} />
+          )}
+        </div>
       </button>
 
       {/* Dropdown menu */}

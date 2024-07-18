@@ -1,6 +1,6 @@
 // ConfirmModal.jsx
 import React from 'react';
-import Colors from './Colors';
+import Colors from './misc/Colors';
 
 const ConfirmModal = ({ isOpen, onClose, title, message, onConfirm, confirmButtonText, cancelButtonText }) => {
   if (!isOpen) return null;

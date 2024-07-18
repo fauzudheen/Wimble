@@ -5,6 +5,7 @@ import Dashboard from '../components/admin/Dashboard';
 import Users from '../components/admin/Users';
 import AdminProtectedRoutes from './AdminProtectedRoutes';
 import AdminPublicRoutes from './AdminPublicRoutes';
+import SkillsAndInterests from '../components/admin/SkillsAndInterests';
 
 const AdminRoutes = () => {
   return (
@@ -17,6 +18,7 @@ const AdminRoutes = () => {
       <Route element={<AdminProtectedRoutes />}>
         <Route path="admin/dashboard" element={<AdminLayout><Dashboard/></AdminLayout>} />
         <Route path="admin/users" element={<AdminLayout><Users/></AdminLayout>} />
+        <Route path="admin/skills-and-interests" element={<AdminLayout><SkillsAndInterests/></AdminLayout>} />
       </Route>
 
     </Routes>

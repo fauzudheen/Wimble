@@ -40,7 +40,7 @@ const UserProtectedRoutes = () => {
     useEffect(() => {
         let interval;
       if (isAuthenticated) {
-        interval = setInterval(updateToken, 28 * 60 * 1000); 
+        interval = setInterval(updateToken, 110 * 60 * 1000); 
       }
       return () => clearInterval(interval);
     }, [isAuthenticated, refreshToken, dispatch, navigate ])

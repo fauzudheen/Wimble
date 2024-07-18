@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // Assuming you're using React Router
-import Colors from './Colors'; // Assuming you have a Colors utility
+import Colors from './misc/Colors';
 
 const Modal = ({ isOpen, onClose, title, message, primaryButtonText, primaryButtonUrl, secondaryButtonText, secondaryButtonAction }) => {
   if (!isOpen) return null;
