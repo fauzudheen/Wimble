@@ -8,7 +8,7 @@ const MainLayout = () => {
   
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-700">
-      <div className="container mx-auto p-4 flex flex-wrap">
+      <div className="container mx-auto pt-4 flex flex-wrap">
         <div className="w-full md:w-1/5">
           { isAuthenticated ? null : <CommunityPromotion />}
           <HomeSidebar />

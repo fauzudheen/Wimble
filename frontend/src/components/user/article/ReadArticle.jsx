@@ -163,7 +163,8 @@ const ReadArticle = () => {
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">{article.title}</h1>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center mb-4 sm:mb-0">
-              <img src={article.profile} alt={article.author} className="h-12 w-12 rounded-full mr-4" />
+            
+              <img src={`${GatewayUrl}api/user_service/media/${article.profile.split('/media/')[1]}`} alt={article.author} className="h-12 w-12 rounded-full mr-4" />
               <div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">{article.author}</h3>
                 <div className="text-sm text-gray-600 dark:text-gray-400 flex flex-wrap items-center">

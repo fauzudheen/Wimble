@@ -3,8 +3,10 @@ import { Editor } from '@tinymce/tinymce-react';
 import axios from 'axios';
 import { GatewayUrl } from '../../components/const/urls';
 import { useSelector } from 'react-redux';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import Colors from '../../components/user/misc/Colors';
+import Buttons from '../../components/user/misc/Buttons';
 
 const CreateArticle = () => {
   const [title, setTitle] = useState('');
@@ -12,15 +14,29 @@ const CreateArticle = () => {
   const [user_id, setUserId] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
   const token = useSelector(state => state.auth.userAccess);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  
   useEffect(() => {
     const fetchUserId = async () => {
       const decodedToken = jwtDecode(token);
       setUserId(decodedToken.user_id);
     };
     fetchUserId();
+  }, [token]);
+
+  useEffect(() => {
+    // Check if dark mode is active
+    const isDark = document.documentElement.classList.contains('dark');
+    setIsDarkMode(isDark);
+
+    // Optional: Listen for changes in dark mode
+    const observer = new MutationObserver(() => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
   }, []);
 
   const handleEditorChange = (content, editor) => {
@@ -49,74 +65,85 @@ const CreateArticle = () => {
       setTitle('');
       setContent('');
       setThumbnail(null);
-      navigate('/home')
+      navigate('/home');
     } catch (error) {
       console.error('Error creating article:', error);
     }
-    
   };
 
   return (
-    <div className='min-h-screen bg-gray-100 dark:bg-gray-700 p-10'>
-    <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Create New Article</h2>
-      
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="title" className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:text-white dark:border-gray-600"
-            required
-          />
+    <div className='min-h-screen bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 lg:p-8'>
+      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden">
+        <div className="p-6">
+          <h2 className={`text-3xl font-bold mb-6 ${Colors.tealBlueGradientText}`}>Create New Article</h2>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                required
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Content
+              </label>
+              <Editor
+                apiKey="bwdlxfvbfyhel85gm574u32xo6btkf8ngrstzm21syfw6ono"
+                init={{
+                  height: 500,
+                  menubar: true,
+                  plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                  toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                  tinycomments_mode: 'embedded',
+                  tinycomments_author: 'Author name',
+                  skin: isDarkMode ? 'oxide-dark' : 'oxide',
+                  content_css: isDarkMode ? 'dark' : 'default',
+                }}
+                onEditorChange={handleEditorChange}
+                key={isDarkMode} // Re-render Editor component when isDarkMode changes
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="thumbnail" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Thumbnail
+              </label>
+              <input
+                type="file"
+                id="thumbnail"
+                onChange={handleThumbnailChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                accept="image/*"
+              />
+            </div>
+            
+            <div className="flex items-center justify-end space-x-4">
+              <button
+                type="button"
+                onClick={() => navigate('/home')}
+                className={Buttons.cancelButton}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className={Buttons.tealBlueGradientButton}
+              >
+                Create Article
+              </button>
+            </div>
+          </form>
         </div>
-        
-        <div className="mb-4">
-          <label htmlFor="content" className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
-            Content
-          </label>
-          <Editor
-            apiKey="bwdlxfvbfyhel85gm574u32xo6btkf8ngrstzm21syfw6ono" // TinyMCE API key
-            init={{
-              height: 500,
-              menubar: true,
-              plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
-              toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-              tinycomments_mode: 'embedded',
-              tinycomments_author: 'Author name',
-            }}
-            onEditorChange={handleEditorChange}
-          />
-        </div>
-        
-        <div className="mb-4">
-          <label htmlFor="thumbnail" className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
-            Thumbnail
-          </label>
-          <input
-            type="file"
-            id="thumbnail"
-            onChange={handleThumbnailChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:text-white dark:border-gray-600"
-            accept="image/*"
-          />
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Create Article
-          </button>
-        </div>
-      </form>
-    </div>
+      </div>
     </div>
   );
 };
