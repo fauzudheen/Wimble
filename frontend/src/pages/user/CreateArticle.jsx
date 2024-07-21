@@ -164,6 +164,6 @@ const CreateArticle = () => {
       </div>
     </div>
   );
-};
+}; 
 
 export default CreateArticle;
