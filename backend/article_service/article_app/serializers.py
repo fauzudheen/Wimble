@@ -7,14 +7,20 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = "__all__"
 
+class InterestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Interest
+        fields = '__all__'
+
 class ArticleSerializer(serializers.ModelSerializer):
+    tags = InterestSerializer(many=True)
     user_data = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
     class Meta:
         model = Article
         fields = "__all__"
-
+            
     def get_user_data(self, obj):
         user_data = User.objects.get(id=obj.author_id)
         return UserSerializer(user_data).data
@@ -25,6 +31,21 @@ class ArticleSerializer(serializers.ModelSerializer):
     def get_comments_count(self, obj):
         return Comment.objects.filter(article_id=obj.id).count()
     
+    def create(self, validated_data):
+        tags_data = validated_data.pop('tags')
+        article = Article.objects.create(**validated_data)
+        for tag_data in tags_data:
+            tag, created = models.Interest.objects.get_or_create(**tag_data)
+            article.tags.add(tag)
+        return article
+    
+    def update(self, instance, validated_data):
+        tags_data = validated_data.pop('tags')
+        for tag_data in tags_data:
+            tag, created = models.Interest.objects.get_or_create(**tag_data)
+            instance.tags.add(tag)
+        return super().update(instance, validated_data)
+
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like

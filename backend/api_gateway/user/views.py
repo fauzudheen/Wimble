@@ -32,6 +32,7 @@ class UserView(APIView):
         json_data = {key: value for key, value in data.items() if not isinstance(value, InMemoryUploadedFile)}
         files_data = {key: (value.name, value, value.content_type) for key, value in data.items() if isinstance(value, InMemoryUploadedFile)}
         response = requests.patch(service_url, data=json_data, files=files_data, headers=headers)
+        # This is a general approach to pop image from request.data
         return Response(response.json(), status=response.status_code)
 
     def delete(self, request, pk):

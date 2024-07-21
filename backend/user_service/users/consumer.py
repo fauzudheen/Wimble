@@ -8,33 +8,21 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
 # Set up Django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'article_service.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'user_service.settings')
 django.setup()
 
 from django.db import transaction
-from article_app.models import User, Interest
+from users.models import User, Interest
 
 # Kafka configuration
 consumer = Consumer({
     'bootstrap.servers': 'kafka:9092',
-    'group.id': 'article_service_group',
+    'group.id': 'user_service_group',
     'auto.offset.reset': 'earliest'
 })
 
-consumer.subscribe(['users', 'interests'])
+consumer.subscribe(['article_interests'])
 
-def store_user_in_db(user_data):
-    with transaction.atomic():
-        User.objects.update_or_create(
-            id=user_data['id'],
-            defaults={
-                'first_name': user_data.get('first_name', ''),
-                'last_name': user_data.get('last_name', ''),
-                'tagline': user_data.get('tagline', ''),
-                'profile': user_data.get('profile', ''),
-                'is_staff': user_data.get('is_staff', False),
-            }
-        )
 
 def store_interest_in_db(interest_data):
     with transaction.atomic():
@@ -47,7 +35,7 @@ def store_interest_in_db(interest_data):
 
 def consume_messages():
     try:
-        print("-----------------Article service Consuming messages...-----------------")
+        print("-----------------User service Consuming messages...-----------------")
         while True:
             msg = consumer.poll(1.0)
             if msg is None:
@@ -62,10 +50,7 @@ def consume_messages():
                 topic = msg.topic()
                 message_data = json.loads(msg.value().decode('utf-8'))
                 
-                if topic == 'users':
-                    store_user_in_db(message_data)
-                    print(f"User {message_data['id']} data stored in database")
-                elif topic == 'interests':
+                if topic == 'article_interests':
                     store_interest_in_db(message_data)
                     print(f"Interest {message_data['id']} data stored in database")
 

@@ -14,6 +14,7 @@ import Notifications from '../components/user/settings/Notifications';
 import Account from '../components/user/settings/Account';
 import MainLayout from '../pages/user/MainLayout';
 import Tags from '../pages/user/Tags';
+import EditArticle from '../components/user/article/EditArticle';
 
 const UserRoutes = () => {
   return (
@@ -31,6 +32,7 @@ const UserRoutes = () => {
           <Route element={<UserProtectedRoutes />}>
               <Route path='/profile' element={<ProfilePage />} />
               <Route path='/create-article' element={<CreateArticle />} />
+              <Route path="/edit-article/:id" element={<EditArticle />} />
               <Route path="settings" element={<SettingsLayout />}>
                 <Route index element={<General />} />
                 <Route path="general" element={<General />} />

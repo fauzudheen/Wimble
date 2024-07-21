@@ -7,10 +7,13 @@ from .permissions import IsOwnerOrAdmin, IsOwner, IsOwnerOrReadOnly, IsOwnerOrAd
 from .models import Article, Like, Comment
 from . import serializers, permissions, models
 from django.core.cache import cache
+from rest_framework.parsers import MultiPartParser, FormParser
+
 
 class ArticleListCreateView(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = serializers.ArticleSerializer
+    parser_classes = (MultiPartParser, FormParser)
   
 class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()

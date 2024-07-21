@@ -31,7 +31,7 @@ const Article = ({ author, title, content, created_at, profile, thumbnail, tagli
       </header>
       
       {thumbnail && (
-        <img src={thumbnail} alt={title} className="w-full h-64 object-cover rounded-lg mb-4" />
+        <img src={thumbnail.replace('8000', '8002')} className="w-full h-64 object-cover rounded-lg mb-4" />
       )}
       
       <h2 

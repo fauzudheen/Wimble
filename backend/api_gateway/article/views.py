@@ -3,7 +3,8 @@ from utils.services import ARTICLE_SERVICE_URL
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.http import HttpResponse
 
 class ArticleView(APIView):
     def get(self, request, pk=None):
@@ -15,8 +16,20 @@ class ArticleView(APIView):
         return Response(response.json(), status=response.status_code)
 
     def post(self, request):
-        service_url = f"{ARTICLE_SERVICE_URL}/articles/" 
-        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        service_url = f"{ARTICLE_SERVICE_URL}/articles/"
+        
+        files = {}
+        if 'thumbnail' in request.data:
+            files = {'thumbnail': request.data['thumbnail']}
+            request.data.pop('thumbnail', None) # Remove the 'thumbnail' key from request.data to avoid treating it as a file
+
+        response = requests.post(
+            service_url, 
+            data=request.data,
+            files=files,
+            headers={key: value for key, value in request.headers.items() if key != 'Content-Type'}
+        )
+
         return Response(response.json(), status=response.status_code)
 
     def put(self, request, pk):
@@ -26,14 +39,23 @@ class ArticleView(APIView):
     
     def patch(self, request, pk):
         service_url = f"{ARTICLE_SERVICE_URL}/articles/{pk}/"
-        response = requests.patch(service_url, data=request.data, headers=dict(request.headers))
+        files = {}
+        if 'thumbnail' in request.data:
+            files = {'thumbnail': request.data['thumbnail']}
+            request.data.pop('thumbnail', None) # Remove the 'thumbnail' key from request.data to avoid treating it as a file
+
+        response = requests.patch(
+            service_url, 
+            data=request.data,
+            files=files,
+            headers={key: value for key, value in request.headers.items() if key != 'Content-Type'}
+        )
         return Response(response.json(), status=response.status_code)
 
     def delete(self, request, pk):
         service_url = f"{ARTICLE_SERVICE_URL}/articles/{pk}/"
         response = requests.delete(service_url, headers=dict(request.headers))
         return Response(status=response.status_code)  
-
 
 class LikeView(APIView):
     def get(self, request):

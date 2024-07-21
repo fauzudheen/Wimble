@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import axios from 'axios';
 import { GatewayUrl } from '../../const/urls';
 import Colors from '../misc/Colors';
-import { HandThumbUpIcon, ChatBubbleLeftIcon, FlagIcon , ShareIcon, BookmarkIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { HandThumbUpIcon, ChatBubbleLeftIcon, FlagIcon, ShareIcon, BookmarkIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { HandThumbUpIcon as ThumbUpIconSolid } from '@heroicons/react/24/solid';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { useSelector } from 'react-redux';
@@ -16,6 +16,7 @@ import FormModal from '../FormModal';
 import LoadSpinner from '../misc/LoadSpinner';
 
 const ReadArticle = () => {
+  const navigate = useNavigate();
   const { id: articleId } = useParams();
   const [article, setArticle] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
@@ -35,7 +36,7 @@ const ReadArticle = () => {
           article_id: articleId
         }
       });
-      console.log(response.data)
+      console.log(response.data);
       if (response.data.liked === true) {
         setIsLiked(true);
       } else {
@@ -51,7 +52,7 @@ const ReadArticle = () => {
       return;
     }
     checkIfLiked();
-  }, []);
+  }, [isAuthenticated, articleId, token]);
 
   const handleLike = async () => {
     if (!isAuthenticated) {
@@ -71,7 +72,7 @@ const ReadArticle = () => {
     } else {
       try {
         const axiosInstance = createAxiosInstance(token);
-        const response = await axiosInstance.post(`${GatewayUrl}api/article-like/`, { 
+        const response = await axiosInstance.post(`${GatewayUrl}api/article-like/`, {
           article_id: articleId,
         });
         console.log(response.data);
@@ -81,7 +82,7 @@ const ReadArticle = () => {
         console.error('Error liking article:', error);
       }
     }
-  }
+  };
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -110,7 +111,7 @@ const ReadArticle = () => {
       const axiosInstance = createAxiosInstance(token);
       await axiosInstance.delete(`${GatewayUrl}api/articles/${article.articleId}/`);
       setIsDeleteModalOpen(false);
-      setIsArticleDeleted(true); 
+      setIsArticleDeleted(true);
     } catch (error) {
       console.error('There was an error deleting the article!', error);
     }
@@ -132,6 +133,7 @@ const ReadArticle = () => {
       console.error('There was an error reporting the article!', error);
     }
   };
+
   const reportFields = [
     {
       name: 'reason',
@@ -155,7 +157,6 @@ const ReadArticle = () => {
     return <LoadSpinner size="medium" text="Fetching data..." />
   }
 
-
   return (
     <div className='min-h-screen bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 md:p-10'>
       <article className="max-w-4xl mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden">
@@ -163,7 +164,6 @@ const ReadArticle = () => {
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">{article.title}</h1>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center mb-4 sm:mb-0">
-            
               <img src={`${GatewayUrl}api/user_service/media/${article.profile.split('/media/')[1]}`} alt={article.author} className="h-12 w-12 rounded-full mr-4" />
               <div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">{article.author}</h3>
@@ -181,20 +181,24 @@ const ReadArticle = () => {
               <button className={`${Colors.tealBlueGradientIcon}`} title="Save">
                 <BookmarkIcon className="h-6 w-6" />
               </button>
-              <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsReportModalOpen(true)} title="Report">
-                <FlagIcon className="h-6 w-6" />
-              </button>
-              <FormModal
-                isOpen={isReportModalOpen}
-                onClose={() => setIsReportModalOpen(false)}
-                title="Confirm Report"
-                fields={reportFields}
-                onSubmit={handleReportArticle}
-                submitButtonText="Submit Report"
-              />
+              {article.author_id !== userId && (
+                <>
+                  <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsReportModalOpen(true)} title="Report">
+                    <FlagIcon className="h-6 w-6" />
+                  </button>
+                  <FormModal
+                    isOpen={isReportModalOpen}
+                    onClose={() => setIsReportModalOpen(false)}
+                    title="Confirm Report"
+                    fields={reportFields}
+                    onSubmit={handleReportArticle}
+                    submitButtonText="Submit Report"
+                  />
+                </>
+              )}
               {article.author_id === userId && (
                 <>
-                  <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsDeleteModalOpen(true)}>
+                  <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsDeleteModalOpen(true)} title="Delete">
                     <TrashIcon className="h-6 w-6" />
                   </button>
                   <ConfirmModal
@@ -206,12 +210,22 @@ const ReadArticle = () => {
                     confirmButtonText="Delete"
                     cancelButtonText="Cancel"
                   />
+                  <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => navigate(`/edit-article/${article.articleId}`)} title="Edit">
+                    <PencilIcon className="h-5 w-5" />
+                  </button>
                 </>
               )}
             </div>
           </div>
         </header>
-        
+
+        {/* Thumbnail Section */}
+        {article.thumbnail && (
+          <div className="relative">
+            <img src={article.thumbnail.replace('8000', '8002')} alt="Article Thumbnail" className="w-full h-64 object-cover" />
+          </div>
+        )}
+
         <div 
           className="max-w-none p-6 dark:text-gray-50"
           dangerouslySetInnerHTML={{ __html: article.content }}

@@ -67,6 +67,18 @@ class Interest(models.Model):
     class Meta:
         ordering = ['name'] 
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.publish_interest_update()
+
+    def publish_interest_update(self):
+        interest_data = { 
+            'id': self.id,
+            'name': self.name
+        }
+
+        kafka_producer.produce_message('interests', self.id, interest_data)
+
 class UserInterest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     interest = models.ForeignKey(Interest, on_delete=models.CASCADE)

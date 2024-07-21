@@ -1,36 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import axios from 'axios';
-import { GatewayUrl } from '../../components/const/urls';
 import { useSelector } from 'react-redux';
-import {jwtDecode} from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
-import Colors from '../../components/user/misc/Colors';
-import Buttons from '../../components/user/misc/Buttons';
+import { useNavigate, useParams } from 'react-router-dom';
+import createAxiosInstance from '../../../api/axiosInstance';
+import { GatewayUrl } from '../../const/urls';
+import Colors from '../misc/Colors';
+import Buttons from '../misc/Buttons';
+import LoadSpinner from '../misc/LoadSpinner';
 
-const CreateArticle = () => {
+const EditArticle = () => {
+  const { id: articleId } = useParams();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [user_id, setUserId] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
+  const [currentThumbnail, setCurrentThumbnail] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const token = useSelector(state => state.auth.userAccess);
   const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    const fetchUserId = async () => {
-      const decodedToken = jwtDecode(token);
-      setUserId(decodedToken.user_id);
+    const fetchArticle = async () => {
+      try {
+        const axiosInstance = createAxiosInstance(token);
+        const response = await axiosInstance.get(`${GatewayUrl}api/articles/${articleId}/`);
+        setTitle(response.data.title);
+        setContent(response.data.content);
+        setCurrentThumbnail(response.data.thumbnail);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching article:', error);
+        setIsLoading(false);
+      }
     };
-    fetchUserId();
-  }, [token]);
+
+    fetchArticle();
+  }, [articleId, token]);
 
   useEffect(() => {
-    // Check if dark mode is active
     const isDark = document.documentElement.classList.contains('dark');
     setIsDarkMode(isDark);
 
-    // Optional: Listen for changes in dark mode
     const observer = new MutationObserver(() => {
       setIsDarkMode(document.documentElement.classList.contains('dark'));
     });
@@ -43,50 +54,49 @@ const CreateArticle = () => {
     setContent(content);
   };
 
-  const [previewUrl, setPreviewUrl] = useState('');
-
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     setThumbnail(file);
-    setPreviewUrl(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('author', user_id);
-    formData.append('title', title);
-    formData.append('content', content);
+    setIsLoading(true);
+  
+    const articleData = new FormData();
+    articleData.append('title', title);
+    articleData.append('content', content);
     if (thumbnail) {
-      formData.append('thumbnail', thumbnail);
+      articleData.append('thumbnail', thumbnail);
     }
   
-    console.log('Submitting article:', formData);
+    // Log FormData contents
+    for (let [key, value] of articleData.entries()) {
+      console.log(key, value);
+    }
   
     try {
-      const response = await axios.post(`${GatewayUrl}api/articles/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}` // Add this line to include the token
-        }
-      });
-      console.log('Article created:', response.data);
-      setTitle('');
-      setContent('');
-      setThumbnail(null);
-      navigate('/home');
+      const axiosInstance = createAxiosInstance(token);
+      const response = await axiosInstance.patch(`${GatewayUrl}api/articles/${articleId}/`, articleData);
+      console.log('Article updated:', response.data);
+      navigate(`/article/${articleId}`);
     } catch (error) {
-      console.error('Error creating article:', error.response?.data || error.message);
+      console.error('Error updating article:', error.response ? error.response.data : error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
-
   
+  
+  if (isLoading) {
+    return <LoadSpinner size="large" text="Loading article..." />;
+  }
 
   return (
     <div className='min-h-screen bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 lg:p-8'>
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden">
         <div className="p-6">
-          <h2 className={`text-3xl font-bold mb-6 ${Colors.tealBlueGradientText}`}>Create New Article</h2>
+          <h2 className={`text-3xl font-bold mb-6 ${Colors.tealBlueGradientText}`}>Edit Article</h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -109,6 +119,7 @@ const CreateArticle = () => {
               </label>
               <Editor
                 apiKey="bwdlxfvbfyhel85gm574u32xo6btkf8ngrstzm21syfw6ono"
+                value={content}
                 init={{
                   height: 500,
                   menubar: true,
@@ -120,7 +131,7 @@ const CreateArticle = () => {
                   content_css: isDarkMode ? 'dark' : 'default',
                 }}
                 onEditorChange={handleEditorChange}
-                key={isDarkMode} // Re-render Editor component when isDarkMode changes
+                key={isDarkMode}
               />
             </div>
             
@@ -128,12 +139,8 @@ const CreateArticle = () => {
               <label htmlFor="thumbnail" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Thumbnail
               </label>
-              {previewUrl && (
-                <img 
-                  src={previewUrl} 
-                  alt="Thumbnail preview"   
-                  className="mb-2 max-w-xs rounded-md" 
-                />
+              {currentThumbnail && (
+                <img src={currentThumbnail.replace('8000', '8002')} alt="Current thumbnail" className="mb-2 max-w-xs rounded-md" />
               )}
               <input
                 type="file"
@@ -147,7 +154,7 @@ const CreateArticle = () => {
             <div className="flex items-center justify-end space-x-4">
               <button
                 type="button"
-                onClick={() => navigate('/home')}
+                onClick={() => navigate(`/article/${articleId}`)}
                 className={Buttons.cancelButton}
               >
                 Cancel
@@ -156,7 +163,7 @@ const CreateArticle = () => {
                 type="submit"
                 className={Buttons.tealBlueGradientButton}
               >
-                Create Article
+                Update Article
               </button>
             </div>
           </form>
@@ -166,4 +173,4 @@ const CreateArticle = () => {
   );
 };
 
-export default CreateArticle;
+export default EditArticle;
