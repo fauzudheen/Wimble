@@ -3,16 +3,19 @@ import { Editor } from '@tinymce/tinymce-react';
 import axios from 'axios';
 import { GatewayUrl } from '../../components/const/urls';
 import { useSelector } from 'react-redux';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import Colors from '../../components/user/misc/Colors';
 import Buttons from '../../components/user/misc/Buttons';
+import Select from 'react-select';
 
 const CreateArticle = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [user_id, setUserId] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
+  const [tags, setTags] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
   const token = useSelector(state => state.auth.userAccess);
   const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -23,14 +26,25 @@ const CreateArticle = () => {
       setUserId(decodedToken.user_id);
     };
     fetchUserId();
+
+    // Fetch available tags
+    const fetchTags = async () => {
+      try {
+        const response = await axios.get(`${GatewayUrl}api/interests/`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        setAvailableTags(response.data.map(tag => ({ value: tag.id, label: tag.name })));
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+      }
+    };
+    fetchTags();
   }, [token]);
 
   useEffect(() => {
-    // Check if dark mode is active
     const isDark = document.documentElement.classList.contains('dark');
     setIsDarkMode(isDark);
 
-    // Optional: Listen for changes in dark mode
     const observer = new MutationObserver(() => {
       setIsDarkMode(document.documentElement.classList.contains('dark'));
     });
@@ -67,20 +81,32 @@ const CreateArticle = () => {
       const response = await axios.post(`${GatewayUrl}api/articles/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}` // Add this line to include the token
+          'Authorization': `Bearer ${token}`
         }
       });
       console.log('Article created:', response.data);
+
+      // Add tags to the article
+      const articleId = response.data.id;
+      const tagData = { interest_ids: tags.map(tag => tag.value) };
+      console.log('Tag data:', tagData);
+      console.log('tags:', tags);
+      await axios.post(`${GatewayUrl}api/articles/${articleId}/tags/`, tagData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
       setTitle('');
       setContent('');
       setThumbnail(null);
+      setTags([]);
       navigate('/home');
     } catch (error) {
-      console.error('Error creating article:', error.response?.data || error.message);
+      console.error('Error creating article or tags:', error.response?.data || error.message);
     }
   };
-
-  
 
   return (
     <div className='min-h-screen bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 lg:p-8'>
@@ -120,7 +146,7 @@ const CreateArticle = () => {
                   content_css: isDarkMode ? 'dark' : 'default',
                 }}
                 onEditorChange={handleEditorChange}
-                key={isDarkMode} // Re-render Editor component when isDarkMode changes
+                key={isDarkMode}
               />
             </div>
             
@@ -141,6 +167,59 @@ const CreateArticle = () => {
                 onChange={handleThumbnailChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 accept="image/*"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Tags
+              </label>
+              <Select
+                isMulti
+                name="tags"
+                options={availableTags}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                onChange={setTags}
+                value={tags}
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    backgroundColor: isDarkMode ? '#374151' : 'white',
+                    borderColor: isDarkMode ? '#4B5563' : '#D1D5DB',
+                  }),
+                  menu: (baseStyles) => ({
+                    ...baseStyles,
+                    backgroundColor: isDarkMode ? '#374151' : 'white',
+                  }),
+                  option: (baseStyles, state) => ({
+                    ...baseStyles,
+                    backgroundColor: isDarkMode
+                      ? state.isFocused
+                        ? '#4B5563'
+                        : '#374151'
+                      : state.isFocused
+                      ? '#F3F4F6'
+                      : 'white',
+                    color: isDarkMode ? 'white' : 'black',
+                  }),
+                  multiValue: (baseStyles) => ({
+                    ...baseStyles,
+                    backgroundColor: isDarkMode ? '#4B5563' : '#E5E7EB',
+                  }),
+                  multiValueLabel: (baseStyles) => ({
+                    ...baseStyles,
+                    color: isDarkMode ? 'white' : 'black',
+                  }),
+                  multiValueRemove: (baseStyles) => ({
+                    ...baseStyles,
+                    color: isDarkMode ? 'white' : 'black',
+                    ':hover': {
+                      backgroundColor: isDarkMode ? '#6B7280' : '#D1D5DB',
+                      color: isDarkMode ? 'white' : 'black',
+                    },
+                  }),
+                }}
               />
             </div>
             

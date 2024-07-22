@@ -109,7 +109,7 @@ class UserSkillListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         skill_id = self.request.data['skill']
-        serializer.save(user_id=self.request.user.id, skill_id=skill_id)
+        serializer.save(user_id=self.request.user.id, skill_id=skill_id) 
 
     def get_queryset(self):
         user_id = self.kwargs['pk']
@@ -121,7 +121,7 @@ class UserSkillDestroyView(generics.DestroyAPIView):
     queryset = models.UserSkill.objects.all()
 
 class InterestListCreateView(generics.ListCreateAPIView):
-    permission_classes = [permissions.IsAdminOrReadOnly]
+    permission_classes = [permissions.IsAdminOrCreateOnly]
     serializer_class = serializers.InterestSerializer
     queryset = models.Interest.objects.all()
     pagination_class = None

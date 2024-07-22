@@ -7,19 +7,26 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = "__all__"
 
-class InterestSerializer(serializers.ModelSerializer):
+class TagSerializer(serializers.ModelSerializer):
+    interest_ids = serializers.ListField(write_only=True)
+    interest_name = serializers.SerializerMethodField()
     class Meta:
-        model = models.Interest
-        fields = '__all__'
+        model = models.Tag
+        fields = ["id", "interest", "interest_name", "interest_ids"]
+
+    def get_interest_name(self, obj):
+        return obj.interest.name
+    
+    
 
 class ArticleSerializer(serializers.ModelSerializer):
-    tags = InterestSerializer(many=True)
     user_data = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
+    tags = TagSerializer(many=True, required=False) 
     class Meta:
         model = Article
-        fields = "__all__"
+        fields = "__all__"  
             
     def get_user_data(self, obj):
         user_data = User.objects.get(id=obj.author_id)
@@ -31,20 +38,6 @@ class ArticleSerializer(serializers.ModelSerializer):
     def get_comments_count(self, obj):
         return Comment.objects.filter(article_id=obj.id).count()
     
-    def create(self, validated_data):
-        tags_data = validated_data.pop('tags')
-        article = Article.objects.create(**validated_data)
-        for tag_data in tags_data:
-            tag, created = models.Interest.objects.get_or_create(**tag_data)
-            article.tags.add(tag)
-        return article
-    
-    def update(self, instance, validated_data):
-        tags_data = validated_data.pop('tags')
-        for tag_data in tags_data:
-            tag, created = models.Interest.objects.get_or_create(**tag_data)
-            instance.tags.add(tag)
-        return super().update(instance, validated_data)
 
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:

@@ -15,7 +15,7 @@ const Article = ({ author, title, content, created_at, profile, thumbnail, tagli
   };
 
   return (
-    <article className="bg-white dark:bg-gray-800 p-4 shadow-lg rounded-lg mb-8 transition-all hover:shadow-xl">
+    <article className="bg-white dark:bg-gray-800 p-4 shadow-lg rounded-lg mb-4 transition-all hover:shadow-md">
       <header className="flex items-center mb-4">
       {profile && (
         <img src={`${GatewayUrl}api/user_service/media/${profile.split('/media/')[1]}`}  alt={author} className="h-12 w-12 rounded-full mr-2" />

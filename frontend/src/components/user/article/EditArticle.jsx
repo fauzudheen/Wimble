@@ -8,6 +8,7 @@ import { GatewayUrl } from '../../const/urls';
 import Colors from '../misc/Colors';
 import Buttons from '../misc/Buttons';
 import LoadSpinner from '../misc/LoadSpinner';
+import { TagIcon } from '@heroicons/react/24/outline';
 
 const EditArticle = () => {
   const { id: articleId } = useParams();
@@ -16,26 +17,42 @@ const EditArticle = () => {
   const [thumbnail, setThumbnail] = useState(null);
   const [currentThumbnail, setCurrentThumbnail] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [tags, setTags] = useState([]);
+  const [availableInterests, setAvailableInterests] = useState([]);
   const token = useSelector(state => state.auth.userAccess);
   const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [initialTags, setInitialTags] = useState([]);
 
   useEffect(() => {
     const fetchArticle = async () => {
+        try {
+          const axiosInstance = createAxiosInstance(token);
+          const response = await axiosInstance.get(`${GatewayUrl}api/articles/${articleId}/`);
+          setTitle(response.data.title);
+          setContent(response.data.content);
+          setCurrentThumbnail(response.data.thumbnail);
+          setTags(response.data.tags);
+          setInitialTags(response.data.tags.map(tag => tag.interest));
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Error fetching article:', error);
+          setIsLoading(false);
+        }
+    };
+
+    const fetchInterests = async () => {
       try {
         const axiosInstance = createAxiosInstance(token);
-        const response = await axiosInstance.get(`${GatewayUrl}api/articles/${articleId}/`);
-        setTitle(response.data.title);
-        setContent(response.data.content);
-        setCurrentThumbnail(response.data.thumbnail);
-        setIsLoading(false);
+        const response = await axiosInstance.get(`${GatewayUrl}api/interests/`);
+        setAvailableInterests(response.data);
       } catch (error) {
-        console.error('Error fetching article:', error);
-        setIsLoading(false);
+        console.error('Error fetching interests:', error);
       }
     };
 
     fetchArticle();
+    fetchInterests();
   }, [articleId, token]);
 
   useEffect(() => {
@@ -59,10 +76,18 @@ const EditArticle = () => {
     setThumbnail(file);
   };
 
+  const handleTagChange = (interestId) => {
+    const updatedTags = tags.some(tag => tag.interest === interestId)
+      ? tags.filter(tag => tag.interest !== interestId)
+      : [...tags, { interest: interestId, interest_name: availableInterests.find(i => i.id === interestId).name }];
+    setTags(updatedTags);
+  };
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-  
+    
     const articleData = new FormData();
     articleData.append('title', title);
     articleData.append('content', content);
@@ -70,18 +95,42 @@ const EditArticle = () => {
       articleData.append('thumbnail', thumbnail);
     }
   
-    // Log FormData contents
-    for (let [key, value] of articleData.entries()) {
-      console.log(key, value);
-    }
+    // Determine tags to add and remove
+    const currentTagIds = tags.map(tag => tag.interest);
+    const tagsToAdd = tags.filter(tag => !initialTags.includes(tag.interest)).map(tag => tag.interest);
+    const tagsToRemove = initialTags.filter(id => !currentTagIds.includes(id));
   
     try {
       const axiosInstance = createAxiosInstance(token);
+      
+      // Update article
       const response = await axiosInstance.patch(`${GatewayUrl}api/articles/${articleId}/`, articleData);
       console.log('Article updated:', response.data);
+      
+      // Add new tags
+      if (tagsToAdd.length > 0) {
+        await axiosInstance.post(`${GatewayUrl}api/articles/${articleId}/tags/`, { interest_ids: tagsToAdd }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }
+  
+      // Remove old tags
+      if (tagsToRemove.length > 0) {
+        await axiosInstance.delete(`${GatewayUrl}api/articles/${articleId}/tags/`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          data: { interest_ids: tagsToRemove }
+        });
+      }
+  
       navigate(`/article/${articleId}`);
     } catch (error) {
-      console.error('Error updating article:', error.response ? error.response.data : error.message);
+      console.error('Error updating article or tags:', error.response ? error.response.data : error.message);
     } finally {
       setIsLoading(false);
     }
@@ -149,6 +198,29 @@ const EditArticle = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 accept="image/*"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Tags
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {availableInterests.map((interest) => (
+                  <button
+                    key={interest.id}
+                    type="button"
+                    onClick={() => handleTagChange(interest.id)}
+                    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
+                      tags.some(tag => tag.interest === interest.id)
+                        ? 'bg-teal-500 text-white'
+                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    <TagIcon className="h-4 w-4 mr-1" />
+                    {interest.name}
+                  </button>
+                ))}
+              </div>
             </div>
             
             <div className="flex items-center justify-end space-x-4">

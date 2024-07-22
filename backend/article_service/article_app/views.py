@@ -20,9 +20,36 @@ class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.ArticleSerializer
     permission_classes = [IsOwnerOrAdminForArticle]
 
+class TagListCreateView(generics.ListCreateAPIView):
+    queryset = models.Tag.objects.all()
+    serializer_class = serializers.TagSerializer
+
+    def create(self, request, *args, **kwargs):
+        article_id = self.kwargs.get('pk')
+        interest_ids = request.data.get('interest_ids', [])
+        tags = []
+        for interest_id in interest_ids:
+            tag = models.Tag.objects.create(
+                article_id=article_id,
+                interest_id=interest_id
+            )
+            tags.append(tag)
+        
+        serializer = self.get_serializer(tags, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)  
+    
+class TagDestroyView(generics.DestroyAPIView):
+    queryset = models.Tag.objects.all()
+    serializer_class = serializers.TagSerializer
+
+    def delete(self, request, *args, **kwargs):
+        interest_ids = request.data.get('interest_ids', [])
+        models.Tag.objects.filter(interest_id__in=interest_ids).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class LikeView(generics.GenericAPIView):
     serializer_class = serializers.LikeSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated] 
 
     def post(self, request):
         article_id = request.data.get('article_id')

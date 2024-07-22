@@ -57,6 +57,22 @@ class ArticleView(APIView):
         response = requests.delete(service_url, headers=dict(request.headers))
         return Response(status=response.status_code)  
 
+class TagView(APIView):
+    def get(self, request, pk):
+        service_url = f"{ARTICLE_SERVICE_URL}/articles/{pk}/tags/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def post(self, request, pk):
+        service_url = f"{ARTICLE_SERVICE_URL}/articles/{pk}/tags/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def delete(self, request, pk):
+        service_url = f"{ARTICLE_SERVICE_URL}/article-tags/{pk}/"
+        response = requests.delete(service_url, json=request.data, headers=dict(request.headers))
+        return Response(status=response.status_code)
+ 
 class LikeView(APIView):
     def get(self, request):
         article_id = request.query_params.get('article_id')

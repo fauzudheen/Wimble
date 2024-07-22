@@ -82,7 +82,7 @@ class UserSkillView(APIView):
     def get(self, request, pk):
         service_url = f"{USER_SERVICE_URL}/users/{pk}/skills/"
         response = requests.get(service_url, headers=dict(request.headers))
-        return Response(response.json(), status=response.status_code)
+        return Response(response.json(), status=response.status_code) 
     
     def post(self, request, pk):
         service_url = f"{USER_SERVICE_URL}/users/{pk}/skills/"

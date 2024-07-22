@@ -4,7 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import axios from 'axios';
 import { GatewayUrl } from '../../const/urls';
 import Colors from '../misc/Colors';
-import { HandThumbUpIcon, ChatBubbleLeftIcon, FlagIcon, ShareIcon, BookmarkIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { HandThumbUpIcon, ChatBubbleLeftIcon, FlagIcon, ShareIcon, BookmarkIcon, TrashIcon, PencilIcon, TagIcon } from '@heroicons/react/24/outline';
 import { HandThumbUpIcon as ThumbUpIconSolid } from '@heroicons/react/24/solid';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { useSelector } from 'react-redux';
@@ -100,6 +100,7 @@ const ReadArticle = () => {
         likesCount: response.data.likes_count,
         commentsCount: response.data.comments_count,
         author_id: response.data.user_data.id,
+        tags: response.data.tags,
       });
     };
 
@@ -217,6 +218,7 @@ const ReadArticle = () => {
               )}
             </div>
           </div>
+          
         </header>
 
         {/* Thumbnail Section */}
@@ -264,6 +266,23 @@ const ReadArticle = () => {
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
             </p>
+          </div>
+
+          {/* Related Tags Section */}
+          <div className="mt-4">
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Related Topics</h4>
+            <div className="flex flex-wrap gap-2">
+              {article.tags.map((tag) => (
+                <button
+                  key={tag.id}
+                  onClick={() => navigate(`/topics/${tag.interest}`)}
+                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+                >
+                  #
+                  {tag.interest_name}
+                </button>
+              ))}
+            </div>
           </div>
 
           <CommentSection articleId={articleId} token={token} />
