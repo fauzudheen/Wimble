@@ -16,6 +16,7 @@
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.4",
     "@reduxjs/toolkit": "^2.2.5",
+    "@tailwindcss/typography": "^0.5.13",
     "@tinymce/tinymce-react": "^5.1.1",
     "axios": "^1.7.2",
     "date-fns": "^3.6.0",

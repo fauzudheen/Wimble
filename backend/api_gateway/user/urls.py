@@ -17,4 +17,7 @@ urlpatterns = [
     path('interests/<int:pk>/', views.InterestView.as_view()),
     path('users/<int:pk>/interests/', views.UserInterestView.as_view()),
     path('user-interests/<int:pk>/', views.UserInterestView.as_view()),
+    path('relations/<int:pk>/', views.RelationView.as_view()),
+    path('followers/', views.FollowerView.as_view()),
+    path('followings/', views.FollowingView.as_view()),
 ]

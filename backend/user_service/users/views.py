@@ -149,3 +149,42 @@ class UserInterestDestroyView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserInterestSerializer
     queryset = models.UserInterest.objects.all()
+
+class RelationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        follower_id = request.user.id
+        following_id = pk
+        try:
+            relation = models.Relation.objects.get(follower_id=follower_id, following_id=following_id)
+            return Response({"message": "Followed"}, status=status.HTTP_200_OK)
+        except models.Relation.DoesNotExist:
+            return Response({"message": "No relation found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, pk):
+        follower_id = request.user.id
+        following_id = pk
+        try:
+            relation = models.Relation.objects.get(follower_id=follower_id, following_id=following_id)
+            relation.delete()
+            return Response({"message": "Unfollowed successfully"}, status=status.HTTP_200_OK)
+        except models.Relation.DoesNotExist:
+            relation = models.Relation.objects.create(follower_id=follower_id, following_id=following_id)
+            return Response({"message": "Followed successfully"}, status=status.HTTP_201_CREATED)
+
+class FollowersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        queryset = models.Relation.objects.filter(following_id=pk)
+        serializer = serializers.RelationSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+class FollowingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        queryset = models.Relation.objects.filter(follower_id=pk)
+        serializer = serializers.RelationSerializer(queryset, many=True)
+        return Response(serializer.data)

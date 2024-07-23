@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import axios from 'axios';
-import { GatewayUrl } from '../../components/const/urls';
+import { GatewayUrl } from '../../../components/const/urls';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import Colors from '../../components/user/misc/Colors';
-import Buttons from '../../components/user/misc/Buttons';
+import Colors from '../../../components/user/misc/Colors';
+import Buttons from '../../../components/user/misc/Buttons';
 import Select from 'react-select';
 
 const CreateArticle = () => {

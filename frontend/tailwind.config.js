@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+import typography from '@tailwindcss/typography';
+
 export default {
   darkMode: 'class',
   content: [
@@ -7,17 +9,22 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        tealBlueGradient: {
-          button: 'bg-gradient-to-r from-teal-400 to-blue-500',
-          hover: 'bg-gradient-to-r from-teal-500 to-blue-600',
-        },
-        fontFamily: {
-          sans: ['Your-Font-Name', 'sans-serif'],
-        },
+      utilities: {
+        '.no-scrollbar': {
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          }
+        }
+      }, 
+      scale: {
+        '101': '1.01',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    typography,
+  ],
 }
 

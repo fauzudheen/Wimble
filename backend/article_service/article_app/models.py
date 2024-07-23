@@ -42,11 +42,13 @@ class Interest(models.Model):
 
 class Tag(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='tags')
-    interest = models.ForeignKey(Interest, on_delete=models.CASCADE, related_name='articles')
+    interest = models.ForeignKey(Interest, on_delete=models.CASCADE, related_name='tagged_articles')
 
     class Meta:
         unique_together = ('article', 'interest')
 
+    def __str__(self):
+        return f'{self.article} tagged with {self.interest}'
 
 class Like(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='likes')

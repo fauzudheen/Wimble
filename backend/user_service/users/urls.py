@@ -19,5 +19,7 @@ urlpatterns = [
     path('user-skills/<int:pk>/', views.UserSkillDestroyView.as_view()),
     path('users/<int:pk>/interests/', views.UserInterestListCreateView.as_view()),
     path('user-interests/<int:pk>/', views.UserInterestDestroyView.as_view()),
-
+    path('relations/<int:pk>/', views.RelationView.as_view(), name='relation-toggle'),
+    path('followers/<int:pk>/', views.FollowersView.as_view(), name='followers'),
+    path('followings/<int:pk>/', views.FollowingsView.as_view(), name='followings'),
 ]

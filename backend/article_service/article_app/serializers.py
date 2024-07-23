@@ -7,6 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = "__all__"
 
+
 class TagSerializer(serializers.ModelSerializer):
     interest_ids = serializers.ListField(write_only=True)
     interest_name = serializers.SerializerMethodField()

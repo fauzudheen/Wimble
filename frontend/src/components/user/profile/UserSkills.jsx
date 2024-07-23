@@ -4,12 +4,16 @@ import EditSkillsModal from './EditSkillsModal';
 import axios from 'axios';
 import { GatewayUrl } from '../../const/urls';
 import { useSelector } from 'react-redux';
+import { useLocation, useParams } from 'react-router-dom';
 
 const UserSkills = () => {
   const [showAll, setShowAll] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [userSkills, setUserSkills] = useState([]);
-  const userId = useSelector(state => state.auth.userId);
+  const { id } = useParams(); 
+  const location = useLocation();
+  const isMyProfile = location.pathname === '/my-profile'; 
+  const userId = isMyProfile ? useSelector(state => state.auth.userId) : id;
 
   useEffect(() => {
     const fetchUserSkills = async () => {
@@ -36,13 +40,13 @@ const UserSkills = () => {
     <div className='mb-4 bg-white dark:bg-gray-800 p-6 rounded-md shadow-md'>
       <div className='flex justify-between mb-2'> 
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Skills</h2>
-        <button 
+        {isMyProfile && (<button 
           onClick={() => setIsEditing(true)} 
           className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200"
           aria-label="Edit Skills"
         >
           <PencilIcon className="h-5 w-5" />
-        </button>
+        </button>)}
       </div>
       <ul className="space-y-2 text-gray-600 dark:text-gray-300">
         {userSkills.slice(0, showAll ? userSkills.length : 4).map((userSkill) => (

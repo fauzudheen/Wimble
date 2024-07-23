@@ -2,16 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom styles for scrollbar */
-body::-webkit-scrollbar {
-    width: 12px;
-  }
-  
-  body::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #38b2ac, #4299e1);
-    border-radius: 10px;
-  }
-  
-  body::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
+/* Hide scrollbar for all elements */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer and Edge */
+}
+
+/* Hide scrollbar for webkit browsers */
+*::-webkit-scrollbar {
+  display: none;
+}

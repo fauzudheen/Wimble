@@ -47,8 +47,8 @@ class Skill(models.Model):
         ordering = ['name']
 
 class UserSkill(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="skills")
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="users")
 
     class Meta:
         unique_together = ('user', 'skill')
@@ -91,7 +91,7 @@ class UserInterest(models.Model):
         return f"{self.user.username} - {self.interest.name}"
 
 class Relation(models.Model):
-    follower = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, related_name='followings', on_delete=models.CASCADE)
     following = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 

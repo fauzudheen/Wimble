@@ -55,7 +55,7 @@ const UserProfileDropdown = () => {
         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-md shadow-lg py-1">
             {isAuthenticated ? (
           <Link
-            to="/profile"
+            to="/my-profile"
             className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
             onClick={() => setIsOpen(false)}
           >

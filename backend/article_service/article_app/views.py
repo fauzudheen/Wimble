@@ -8,7 +8,7 @@ from .models import Article, Like, Comment
 from . import serializers, permissions, models
 from django.core.cache import cache
 from rest_framework.parsers import MultiPartParser, FormParser
-
+from rest_framework.views import APIView
 
 class ArticleListCreateView(generics.ListCreateAPIView):
     queryset = Article.objects.all()
@@ -114,3 +114,30 @@ class ReportListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         article_id = self.kwargs.get('pk')
         serializer.save(user_id=self.request.user.id, article_id=article_id)
+
+class ArticleByTagView(generics.ListAPIView):
+    serializer_class = serializers.ArticleSerializer
+
+    def get_queryset(self):
+        print("-----------------get_queryset---------------", self.kwargs)
+        interest_id = self.kwargs['pk']
+        return Article.objects.filter(tags__interest_id=interest_id)
+    
+class UserInteractionsView(APIView):
+
+    def get(self, request, pk):
+        user = models.User.objects.get(id=pk)
+
+        articles = Article.objects.filter(author_id=user.id)
+        likes = Like.objects.filter(user_id=user.id)
+        comments = Comment.objects.filter(user_id=user.id)
+
+        articles_serializer = serializers.ArticleSerializer(articles, many=True)
+        likes_serializer = serializers.LikeSerializer(likes, many=True)
+        comments_serializer = serializers.CommentSerializer(comments, many=True)
+
+        return Response({
+            'articles': articles_serializer.data,
+            'likes': likes_serializer.data,
+            'comments': comments_serializer.data
+        }, status=status.HTTP_200_OK)

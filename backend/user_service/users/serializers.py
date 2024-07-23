@@ -6,14 +6,28 @@ from . import models
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-
+    followers_count = serializers.SerializerMethodField()
+    followings_count = serializers.SerializerMethodField()
+    skill_count = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 'profile', 'date_joined', 'is_superuser', 'is_staff', 'is_active', 'tagline', 'bio']
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 
+                  'profile', 'date_joined', 'is_superuser', 'is_staff', 'is_active', 
+                  'tagline', 'bio', 'followers_count', 'followings_count', 'account_tier',
+                  'skill_count']   
      
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+
+    def get_followings_count(self, obj):
+        return obj.followings.count() 
+    
+    def get_skill_count(self, obj):
+        return obj.skills.count()
     
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -82,3 +96,8 @@ class UserInterestSerializer(serializers.ModelSerializer):
 
     def get_interest_name(self, obj):
         return obj.interest.name
+    
+class RelationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Relation
+        fields = "__all__"

@@ -25,22 +25,10 @@ const Feed = () => {
   return (
     <main className="flex-1 px-4">
       {articles.map((article) => (
-    article.user_data ? (
-      <Article
-        key={article.id}
-        id={article.id}
-        profile={article.user_data.profile}
-        author={`${article.user_data.first_name} ${article.user_data.last_name}`}
-        tagline={article.user_data.tagline}
-        thumbnail={article.thumbnail}
-        title={article.title}
-        content={article.content}
-        created_at={article.created_at}
-        likesCount={article.likes_count}
-        commentsCount={article.comments_count}
-      />
-    ) : null
-  ))}
+        article.user_data ? (
+          <Article key={article.id} article={article} />
+        ) : null
+      ))}
     </main>
   )
 }

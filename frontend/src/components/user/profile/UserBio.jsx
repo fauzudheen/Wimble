@@ -4,9 +4,14 @@ import { GatewayUrl } from '../../const/urls';
 import { useSelector } from 'react-redux';
 import EditModal from '../EditModal';
 import { PencilIcon } from '@heroicons/react/24/solid';
+import { useLocation, useParams } from 'react-router-dom';
 
 const UserBio = () => {
-  const userId = useSelector(state => state.auth.userId);
+  const { id } = useParams(); 
+  const location = useLocation();
+  const isMyProfile = location.pathname === '/my-profile'; 
+  const userId = isMyProfile ? useSelector(state => state.auth.userId) : id;
+
   const [bio, setBio] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
@@ -46,13 +51,13 @@ const UserBio = () => {
     <div className="mb-4 bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Bio</h2>
-        <button 
+        {isMyProfile && (<button 
           onClick={toggleEdit} 
           className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200"
           aria-label="Edit Bio"
         >
           <PencilIcon className="h-5 w-5" />
-        </button>
+        </button>)}
       </div>
       <p className="text-gray-700 dark:text-gray-300">{bio}</p>
       {isEditing && (

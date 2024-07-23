@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import EditProfileModal from './EditProfileModal';
 import axios from 'axios';
 import { GatewayUrl } from '../../const/urls';
@@ -6,10 +7,14 @@ import { EnvelopeIcon, UserIcon, PencilIcon } from '@heroicons/react/24/solid';
 import { useSelector } from 'react-redux';
 import EditModal from '../EditModal';
 import Colors from '../misc/Colors';
+import createAxiosInstance from '../../../api/axiosInstance';
+import Buttons from '../misc/Buttons';
 
 const ProfileHeader = () => {
-  const [showEditModal, setShowEditModal] = useState(false);
-  const userId = useSelector(state => state.auth.userId);
+  const { id } = useParams(); // Get the user ID from URL params
+  const location = useLocation(); // Get current URL path
+  const isMyProfile = location.pathname === '/my-profile'; // Check if the path is for my profile
+  const userId = isMyProfile ? useSelector(state => state.auth.userId) : id; // Set user ID based on path
   const [user, setUser] = useState({
     first_name: '',
     last_name: '',
@@ -17,7 +22,10 @@ const ProfileHeader = () => {
     email: '',
     profile: '',
   });
+  const [showEditModal, setShowEditModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const token = useSelector(state => state.auth.userAccess);
 
   const handleEditProfile = () => {
     setShowEditModal(true);
@@ -30,23 +38,41 @@ const ProfileHeader = () => {
 
   useEffect(() => {
     fetchUserDetails();
+    fetchRelation();
   }, [userId]);
 
   const fetchUserDetails = async () => {
     try {
-      const response = await axios.get(`${GatewayUrl}api/users/${userId}/`)
+      const response = await axios.get(`${GatewayUrl}api/users/${userId}/`);
       setUser({
         first_name: response.data.first_name,
         last_name: response.data.last_name,
         profile: response.data.profile,
         tagline: response.data.tagline,
         email: response.data.email,
+        followers_count: response.data.followers_count,
+        followings_count: response.data.followings_count,
       });
     } catch (err) {
-      console.error("Error getting User", err)
+      console.error("Error getting User", err);
     }
   };
 
+  const fetchRelation = async () => {
+    console.log("fetching relation")
+    try {
+      const axiosInstance = createAxiosInstance(token);
+      const response = await axiosInstance.get(`${GatewayUrl}api/relations/${userId}/`);
+      if (response.data.message === "Followed") {
+        setIsFollowing(true);
+      } else {
+        setIsFollowing(false);
+      }
+    } catch (err) {
+      console.error("Error getting User", err);
+      setIsFollowing(false);
+    }
+  };
   const handleEditProfilePicture = () => {
     setIsEditing(true);
   };
@@ -54,6 +80,18 @@ const ProfileHeader = () => {
   const handleSaveProfilePicture = (profile) => {
     setUser(prev => ({ ...prev, profile }));
     setIsEditing(false);
+  };
+
+  const handleFollowToggle = async () => {
+    try {
+      const axiosInstance = createAxiosInstance(token);
+      const response = await axiosInstance.post(`${GatewayUrl}api/relations/${userId}/`);
+      console.log(response.data);
+      isFollowing ? setUser(prev => ({ ...prev, followers_count: prev.followers_count - 1 })) : setUser(prev => ({ ...prev, followers_count: prev.followers_count + 1 }));
+      setIsFollowing(prev => !prev);
+    } catch (err) {
+      console.error("Error following User", err);
+    }
   };
 
   return (
@@ -65,19 +103,21 @@ const ProfileHeader = () => {
             <div className="relative">
               {user.profile ? (
                 <img
-                src={`${GatewayUrl}api/user_service/media/${user.profile.split('/media/')[1]}`} 
+                  src={`${GatewayUrl}api/user_service/media/${user.profile.split('/media/')[1]}`} 
                   alt={user.first_name}
                   className="w-24 h-24 rounded-full border-4 border-teal-500 dark:border-gray-700"
                 />
               ) : (
                 <UserIcon className="w-24 h-24 bg-teal-100 text-gray-500 border-4 border-teal-100 dark:border-gray-700 rounded-full" />
               )}
-              <button 
-                onClick={handleEditProfilePicture} 
-                className="absolute bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-1 shadow-md"
-              >
-                <PencilIcon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-              </button>
+              {isMyProfile && (
+                <button 
+                  onClick={handleEditProfilePicture} 
+                  className="absolute bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-1 shadow-md"
+                >
+                  <PencilIcon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                </button>
+              )}
             </div>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{user.first_name} {user.last_name}</h1>
@@ -88,18 +128,37 @@ const ProfileHeader = () => {
           </div>
           <div className="mt-4 flex justify-center space-x-4">
             <div className="text-gray-700 dark:text-gray-300">
-              <span className="font-bold">234</span> followers
+              <span className="font-bold">{user.followers_count}</span> followers
             </div>
             <div className="text-gray-700 dark:text-gray-300">
-              <span className="font-bold">154</span> following
+              <span className="font-bold">{user.followings_count}</span> following
             </div>
           </div>
-          <button
-            className={`mt-4 ${Colors.tealBlueGradientButton} px-4 py-2 rounded-md text-sm font-medium`}
-            onClick={handleEditProfile}
-          >
-            Edit Profile
-          </button>
+          {isMyProfile ? (
+            <button
+              className={`mt-4 ${Colors.tealBlueGradientButton} px-4 py-2 rounded-md text-sm font-medium`}
+              onClick={handleEditProfile}
+            >
+              Edit Profile
+            </button>
+          ) : (
+            isFollowing ? (
+              <button
+                className={`mt-4 ${Buttons.cancelButton} px-4 py-2 rounded-md text-sm font-medium`}
+                onClick={handleFollowToggle}
+              >
+                Following
+              </button>
+            ) : (
+              <button
+                className={`mt-4 ${Buttons.tealBlueGradientButton} px-4 py-2 rounded-md text-sm font-medium`}
+                onClick={handleFollowToggle}
+              >
+                Follow
+              </button>
+            )
+          )}
+
         </div>
       </div>
       {showEditModal && <EditProfileModal onClose={handleCloseModal}/>}

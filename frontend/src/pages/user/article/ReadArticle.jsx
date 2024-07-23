@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import axios from 'axios';
-import { GatewayUrl } from '../../const/urls';
-import Colors from '../misc/Colors';
+import { GatewayUrl } from '../../../components/const/urls';
+import Colors from '../../../components/user/misc/Colors';
 import { HandThumbUpIcon, ChatBubbleLeftIcon, FlagIcon, ShareIcon, BookmarkIcon, TrashIcon, PencilIcon, TagIcon } from '@heroicons/react/24/outline';
 import { HandThumbUpIcon as ThumbUpIconSolid } from '@heroicons/react/24/solid';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { useSelector } from 'react-redux';
-import CommentSection from './CommentSection';
-import Modal from '../Modal';
-import ConfirmModal from '../ComfirmModal';
-import NoContentPage from '../misc/NoContentPage';
-import FormModal from '../FormModal';
-import LoadSpinner from '../misc/LoadSpinner';
+import CommentSection from '../../../components/user/article/CommentSection';
+import Modal from '../../../components/user/Modal';
+import ConfirmModal from '../../../components/user/ComfirmModal';
+import NoContentPage from '../../../components/user/misc/NoContentPage';
+import FormModal from '../../../components/user/FormModal';
+import LoadSpinner from '../../../components/user/misc/LoadSpinner';
 
 const ReadArticle = () => {
   const navigate = useNavigate();
@@ -228,10 +228,10 @@ const ReadArticle = () => {
           </div>
         )}
 
-        <div 
-          className="max-w-none p-6 dark:text-gray-50"
-          dangerouslySetInnerHTML={{ __html: article.content }}
-        />
+          <div 
+            className="max-w-none p-6 dark:text-gray-50 prose dark:prose-invert prose-img:rounded-md prose-a:text-blue-600"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
 
         <footer className="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between pb-4">
@@ -275,7 +275,7 @@ const ReadArticle = () => {
               {article.tags.map((tag) => (
                 <button
                   key={tag.id}
-                  onClick={() => navigate(`/topics/${tag.interest}`)}
+                  onClick={() => navigate(`/articles-by-tag/${tag.interest}`)}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
                 >
                   #

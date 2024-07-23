@@ -4,10 +4,10 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import createAxiosInstance from '../../../api/axiosInstance';
-import { GatewayUrl } from '../../const/urls';
-import Colors from '../misc/Colors';
-import Buttons from '../misc/Buttons';
-import LoadSpinner from '../misc/LoadSpinner';
+import { GatewayUrl } from '../../../components/const/urls';
+import Colors from '../../../components/user/misc/Colors';
+import Buttons from '../../../components/user/misc/Buttons';
+import LoadSpinner from '../../../components/user/misc/LoadSpinner';
 import { TagIcon } from '@heroicons/react/24/outline';
 
 const EditArticle = () => {

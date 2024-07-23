@@ -133,3 +133,28 @@ class UserInterestView(APIView):
         service_url = f"{USER_SERVICE_URL}/user-interests/{pk}/"
         response = requests.delete(service_url, headers=dict(request.headers))
         return Response(status=response.status_code)
+
+class RelationView(APIView):
+
+    def get(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/relations/{pk}/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def post(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/relations/{pk}/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+class FollowerView(APIView):
+    def get(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/followers/{pk}/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+
+class FollowingView(APIView):
+    def get(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/followings/{pk}/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    

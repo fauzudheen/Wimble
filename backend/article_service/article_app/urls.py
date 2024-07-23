@@ -10,4 +10,6 @@ urlpatterns = [
     path('articles/<int:pk>/comments/', views.CommentListCreateView.as_view()), 
     path('article-comments/<int:pk>/', views.CommentRetrieveUpdateDestroyView.as_view()),
     path('articles/<int:pk>/reports/', views.ReportListCreateView.as_view()),
+    path('articles/by-tag/<int:pk>/', views.ArticleByTagView.as_view()),
+    path('user-interactions/<int:pk>/', views.UserInteractionsView.as_view()),
 ]
