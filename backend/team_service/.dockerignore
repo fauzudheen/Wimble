@@ -1,0 +1,30 @@
+*/__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+venv/
+team_env/
+
+# Ignore Django migrations
+# */migrations/*
+# !*/migrations/__init__.py
+
+.git
+.gitignore
+
+Dockerfile
+docker-compose.yml
+
+media/
+static/
+
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+.coverage
+coverage/
+htmlcov/
+

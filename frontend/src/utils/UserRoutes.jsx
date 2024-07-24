@@ -16,6 +16,7 @@ import MainLayout from '../pages/user/MainLayout';
 import Tags from '../pages/user/Tags';
 import EditArticle from '../pages/user/article/EditArticle';
 import ArticlesByTag from '../pages/user/article/ArticlesByTag';
+import CommunitiesLayout from '../pages/user/community/CommunitiesLayout';
 
 const UserRoutes = () => {
   return (
@@ -30,6 +31,7 @@ const UserRoutes = () => {
             <Route path="home" element={<UserHome />} />
             <Route path="tags" element={<Tags />} />
             <Route path="/articles-by-tag/:interestId" element={<ArticlesByTag />} />
+            <Route path="/communities" element={<CommunitiesLayout />} />
           </Route>
             <Route path='/user-profile/:id' element={<ProfilePage />} />
           <Route element={<UserProtectedRoutes />}>

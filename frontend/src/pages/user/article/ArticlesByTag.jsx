@@ -14,17 +14,26 @@ const ArticlesByTag = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchInterest = async () => {
+      try {
+        const response = await axios.get(`${GatewayUrl}api/interests/${interestId}`);
+        console.log('Interest:', response.data);
+        setTagName(response.data.name);
+      } catch (error) {
+        console.error('Error fetching interest:', error);
+      }
+    }
     const fetchArticlesByTag = async () => {
       try {
         const response = await axios.get(`${GatewayUrl}api/articles/by-tag/${interestId}`);
         setArticles(response.data);
-        setTagName(response.data[0]?.tags.find(tag => tag.interest === parseInt(interestId))?.interest_name || '');
         window.scrollTo(0, 0);
       } catch (error) {
         console.error('Error fetching articles by tag:', error);
       }
     };
 
+    fetchInterest();
     fetchArticlesByTag();
   }, [interestId]);
 

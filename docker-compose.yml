@@ -9,8 +9,8 @@ services:
     depends_on:
       - user_service
       - article_service
-    environment:
-      - PYTHONUNBUFFERED=1
+      - community_service
+      - team_service
     volumes:
       - ./backend/api_gateway:/app
 
@@ -20,8 +20,6 @@ services:
     build: ./backend/user_service
     ports:
       - "8001:8001"
-    environment:
-      - PYTHONUNBUFFERED=1
     depends_on:
       - user_db
       - user_redis
@@ -34,14 +32,33 @@ services:
     build: ./backend/article_service
     ports:
       - "8002:8002"
-    environment:
-      - PYTHONUNBUFFERED=1
     depends_on:
       - article_db
-      - article_redis
       - kafka
     volumes:
       - ./backend/article_service:/app
+
+  community_service:
+    container_name: community_service
+    build: ./backend/community_service
+    ports:
+      - "8003:8003"
+    depends_on:
+      - community_db
+      - kafka
+    volumes:
+      - ./backend/community_service:/app
+
+  team_service:
+    container_name: team_service
+    build: ./backend/team_service
+    ports:
+      - "8004:8004"
+    depends_on:
+      - team_db
+      - kafka
+    volumes:
+      - ./backend/team_service:/app
 
   user_db:
     container_name: user_db
@@ -68,6 +85,31 @@ services:
     volumes:
       - article_db_data:/var/lib/postgresql/data
 
+  community_db:
+    container_name: community_db
+    image: postgres
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: community_db
+      POSTGRES_USER: fauzu
+      POSTGRES_PASSWORD: password
+    volumes:
+      - community_db_data:/var/lib/postgresql/data
+
+  team_db:
+    container_name: team_db
+    image: postgres
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: team_db
+      POSTGRES_USER: fauzu
+      POSTGRES_PASSWORD: password
+    volumes:
+      - team_db_data:/var/lib/postgresql/data
+
+  
   
   user_redis:
     container_name: user_redis
@@ -76,14 +118,6 @@ services:
       - "6379:6379"
     volumes:
       - user_redis_data:/data
-
-  article_redis:
-    container_name: article_redis
-    image: "redis:alpine"
-    ports:
-      - "6380:6379"
-    volumes:
-      - article_redis_data:/data
 
   zookeeper:
     image: 'bitnami/zookeeper:latest'
@@ -111,7 +145,8 @@ services:
 volumes:
   user_db_data:
   article_db_data:
+  community_db_data:
+  team_db_data:
   user_redis_data:
-  article_redis_data:
   kafka_data:
   zookeeper_data:

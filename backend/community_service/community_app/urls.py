@@ -1,0 +1,9 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('communities/', views.CommunityListCreateView.as_view()),
+    path('communities/<int:pk>/', views.CommunityRetrieveUpdateDestroyView.as_view()),
+    path('communities/<int:pk>/members/', views.CommunityMemberListCreateView.as_view()),
+    path('communities/<int:pk>/members/<int:user_id>/', views.CommunityMemberDestroyView.as_view()),
+]

@@ -23,7 +23,7 @@ const HomeSidebar = () => {
       </a>
     </li>
     <li className="group">
-      <a href="#" className="flex items-center justify-between p-2 group-hover:bg-teal-100 dark:group-hover:bg-teal-600 dark:text-white rounded-md transition-all duration-200 ease-in-out transform hover:scale-105">
+      <a href="/communities" className="flex items-center justify-between p-2 group-hover:bg-teal-100 dark:group-hover:bg-teal-600 dark:text-white rounded-md transition-all duration-200 ease-in-out transform hover:scale-105">
         <div className="flex items-center">
           <GlobeAltIcon className={`h-7 w-7 mr-2 p-1 ${Colors.tealBlueGradientButton} rounded-full`} />
           <span className="dark:text-white">Communities</span>

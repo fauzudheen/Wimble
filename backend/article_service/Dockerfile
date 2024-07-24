@@ -5,6 +5,7 @@ RUN apt-get update \
 build-essential \
 && pip install --no-cache-dir --upgrade pip
 
+ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app

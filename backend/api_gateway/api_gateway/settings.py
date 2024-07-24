@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'admin_app',
     'auth_app',
     'article',
+    'community',
+    'team',
 ]
 
 MIDDLEWARE = [

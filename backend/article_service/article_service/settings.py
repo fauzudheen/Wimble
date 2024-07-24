@@ -133,16 +133,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://host.docker.internal:6379/0', 
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
-    }
-}
-
 JWT_SIGNING_SECRET_KEY = os.getenv('JWT_SIGNING_SECRET_KEY')
 
 REST_FRAMEWORK = {
