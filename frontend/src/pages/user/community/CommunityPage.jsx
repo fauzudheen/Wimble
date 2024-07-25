@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { UserGroupIcon, ChatBubbleLeftIcon, PencilIcon, PlusIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import { useNavigate, useParams } from 'react-router-dom';
+import { UserGroupIcon, ChatBubbleLeftIcon, PencilIcon, PlusIcon, PhotoIcon, CogIcon  } from '@heroicons/react/24/outline';
 import Buttons from '../../../components/user/misc/Buttons';
 import axios from 'axios';
 import { GatewayUrl } from '../../../components/const/urls';
@@ -10,6 +10,7 @@ const CommunityPage = () => {
   const { id } = useParams();
   const [community, setCommunity] = useState({});
   const userId = useSelector((state) => state.auth.userId);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchCommunity = async () => {
@@ -73,7 +74,7 @@ const CommunityPage = () => {
                   </span>
                 </div>
               </div>
-              <div className="mt-4 sm:mt-0 flex space-x-4">
+              <div className="mt-4 sm:mt-0 flex space-x-2">
                 <button className={`${Buttons.tealBlueGradientOutlineButton} flex items-center`}>
                   <PlusIcon className="w-5 h-5 mr-2" />
                   Join Community
@@ -82,9 +83,9 @@ const CommunityPage = () => {
                   <ChatBubbleLeftIcon className="w-5 h-5 mr-2" />
                   Chat
                 </button>
-                <button className={`${Buttons.tealBlueGradientButton} flex items-center`}>
-                  <PencilIcon className="w-5 h-5 mr-2" />
-                  Edit
+                <button className={`${Buttons.tealBlueGradientButton} flex items-center`} onClick={() => navigate(`/communities/${id}/settings`)}>
+                  <CogIcon className="w-5 h-5 mr-2" />
+                  Settings
                 </button>
               </div>
             </div>

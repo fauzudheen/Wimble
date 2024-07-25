@@ -110,7 +110,7 @@ const CreateCommunity = () => {
 
   return (
     <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-      <h2 className={`text-3xl font-bold mb-8 ${Colors.tealBlueGradientText}`}>
+      <h2 className={`text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100`}>
         Create a New Community
       </h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">

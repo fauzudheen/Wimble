@@ -1,6 +1,8 @@
 // ConfirmModal.jsx
 import React from 'react';
 import Colors from './misc/Colors';
+import { Button } from '@headlessui/react';
+import Buttons from './misc/Buttons';
 
 const ConfirmModal = ({ isOpen, onClose, title, message, onConfirm, confirmButtonText, cancelButtonText }) => {
   if (!isOpen) return null;
@@ -31,7 +33,7 @@ const ConfirmModal = ({ isOpen, onClose, title, message, onConfirm, confirmButto
           </button>
           <button
             onClick={onConfirm}
-            className={`${Colors.tealBlueGradientText} px-4 py-2 rounded-md font-medium transition-all duration-200 ease-in-out hover:opacity-80`}
+            className={`${Buttons.tealBlueGradientOutlineButton} px-4 py-2 rounded-md font-medium transition-all duration-200 ease-in-out hover:opacity-80`}
           >
             {confirmButtonText}
           </button>

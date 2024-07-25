@@ -46,7 +46,7 @@ const CommunityCard = ({ community }) => {
         </div>
         <div className="flex justify-between items-center">
           <Link
-            to={`/community/${community.id}`}
+            to={`/communities/${community.id}`}
             className={`${Buttons.cancelButton} rounded-md text-sm`}
           >
             View Community

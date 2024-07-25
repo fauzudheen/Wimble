@@ -18,6 +18,7 @@ import EditArticle from '../pages/user/article/EditArticle';
 import ArticlesByTag from '../pages/user/article/ArticlesByTag';
 import CommunitiesLayout from '../pages/user/community/CommunitiesLayout';
 import CommunityPage from '../pages/user/community/CommunityPage';
+import CommunitySettings from '../pages/user/community/CommunitySettings';
 
 const UserRoutes = () => {
   return (
@@ -34,7 +35,8 @@ const UserRoutes = () => {
             <Route path="/articles-by-tag/:interestId" element={<ArticlesByTag />} />
             <Route path="/communities" element={<CommunitiesLayout />} />
           </Route>
-            <Route path="/community/:id" element={<CommunityPage />} />
+            <Route path="/communities/:id" element={<CommunityPage />} />
+            <Route path="/communities/:id/settings" element={<CommunitySettings />} />
             <Route path='/user-profile/:id' element={<ProfilePage />} />
           <Route element={<UserProtectedRoutes />}>
               <Route path='/my-profile' element={<ProfilePage />} />
