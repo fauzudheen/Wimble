@@ -12,7 +12,11 @@ class Community(models.Model):
     profile_image = models.ImageField(upload_to="community_profiles/", blank=True, null=True)
     cover_image = models.ImageField(upload_to="community_covers/", blank=True, null=True) 
     description = models.TextField()
+    rules = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['name']
 
 class CommunityMember(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name="members")

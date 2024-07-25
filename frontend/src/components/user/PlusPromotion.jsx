@@ -22,7 +22,7 @@ const PlusPromotion = () => {
         </div>
       </div>
       <div className='flex justify-center'>
-      <button className={` text-white rounded-md shadow ${Buttons.tealBlueGradientButton} text-sm`}>
+      <button className={` text-white rounded-md shadow ${Buttons.tealBlueGradientHoverButton} text-sm`}>
         Upgrade Now
       </button>
 

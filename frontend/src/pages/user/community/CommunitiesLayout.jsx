@@ -1,73 +1,46 @@
 import React, { useState } from 'react';
 import { Tab } from '@headlessui/react';
-import { UsersIcon, UserGroupIcon, MagnifyingGlassIcon, PlusIcon } from '@heroicons/react/24/outline';
-import AllCommunities from './AllCommunities';
+import { UserGroupIcon, MagnifyingGlassIcon, PlusIcon } from '@heroicons/react/24/outline';
 import MyCommunities from './MyCommunities';
 import FindCommunity from './FindCommunity';
 import CreateCommunity from './CreateCommunity';
-import Colors from '../../../components/user/misc/Colors';
 
 const CommunitiesLayout = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const tabs = [
+    { name: 'My Communities', icon: UserGroupIcon, component: MyCommunities },
+    { name: 'Find Community', icon: MagnifyingGlassIcon, component: FindCommunity },
+    { name: 'Create Community', icon: PlusIcon, component: CreateCommunity },
+  ];
+
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="bg-gray-100 dark:bg-gray-900">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-          <Tab.List className="flex space-x-1 rounded-xl bg-teal-900/20 p-1">
-            <Tab
-              className={({ selected }) =>
-                `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-teal-700 ring-white ring-opacity-60 ring-offset-2 ring-offset-teal-400 focus:outline-none focus:ring-2 ${
-                  selected
-                    ? 'bg-white shadow'
-                    : 'text-teal-100 hover:bg-white/[0.12] hover:text-white'
-                }`
-              }
-            >
-              <div className="flex items-center justify-center">
-                <UserGroupIcon className="w-5 h-5 mr-2" />
-                My Communities
-              </div>
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-teal-700 ring-white ring-opacity-60 ring-offset-2 ring-offset-teal-400 focus:outline-none focus:ring-2 ${
-                  selected
-                    ? 'bg-white shadow'
-                    : 'text-teal-100 hover:bg-white/[0.12] hover:text-white'
-                }`
-              }
-            >
-              <div className="flex items-center justify-center">
-                <MagnifyingGlassIcon className="w-5 h-5 mr-2" />
-                Find Community
-              </div>
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                `w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-teal-700 ring-white ring-opacity-60 ring-offset-2 ring-offset-teal-400 focus:outline-none focus:ring-2 ${
-                  selected
-                    ? 'bg-white shadow'
-                    : 'text-teal-100 hover:bg-white/[0.12] hover:text-white'
-                }`
-              }
-            >
-              <div className="flex items-center justify-center">
-                <PlusIcon className="w-5 h-5 mr-2" />
-                Create Community
-              </div>
-            </Tab>
+        <Tab.List className="flex justify-between space-y-2 sm:space-y-0 rounded-xl bg-white dark:bg-gray-800 p-2 shadow-md">
+            {tabs.map((tab, index) => (
+              <Tab
+                key={tab.name}
+                className={({ selected }) =>
+                  `w-full sm:w-auto flex items-center justify-center px-4 py-2.5 text-sm font-medium leading-5 rounded-lg transition-all duration-200 ease-in-out focus:outline-none ${
+                    selected
+                      ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white shadow-lg'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`
+                }
+              >
+                <tab.icon className="w-5 h-5 mr-2" />
+                {tab.name}
+              </Tab>
+            ))}
           </Tab.List>
-          <Tab.Panels className="mt-2">
-            <Tab.Panel>
-              <MyCommunities />
-            </Tab.Panel>
-            <Tab.Panel>
-              <FindCommunity />
-            </Tab.Panel>
-            <Tab.Panel>
-              <CreateCommunity />
-            </Tab.Panel>
+          <Tab.Panels className="mt-6">
+            {tabs.map((tab, index) => (
+              <Tab.Panel key={tab.name}>
+                <tab.component />
+              </Tab.Panel>
+            ))}
           </Tab.Panels>
         </Tab.Group>
       </div>

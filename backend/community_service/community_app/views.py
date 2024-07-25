@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 class CommunityListCreateView(generics.ListCreateAPIView):
     queryset = models.Community.objects.all()
     serializer_class = serializers.CommunitySerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, permissions.IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, permissions.IsOwnerOrReadOnly] 
     parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
@@ -30,8 +30,7 @@ class CommunityMemberListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         pk = self.kwargs['pk']
-        role = self.request.data['role']
-        serializer.save(community_id=pk, user_id=self.request.user.id, role=role)
+        serializer.save(community_id=pk, user_id=self.request.user.id, role='user')
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -46,3 +45,10 @@ class CommunityMemberDestroyView(generics.DestroyAPIView):
         pk = self.kwargs['pk']
         user_id = self.kwargs['user_id']
         models.CommunityMember.objects.filter(community_id=pk, user_id=user_id).delete()
+
+class MemberCommunityListView(generics.ListAPIView):
+    serializer_class = serializers.CommunitySerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['pk']
+        return models.Community.objects.filter(members__user_id=user_id)

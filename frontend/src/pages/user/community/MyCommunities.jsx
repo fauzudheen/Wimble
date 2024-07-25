@@ -1,31 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CommunityCard from './CommunityCard';
+import { GatewayUrl } from '../../../components/const/urls';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const MyCommunities = () => {
   // Dummy data for user's joined communities
-  const myCommunities = [
-    {
-      id: 1,
-      name: 'Tech Enthusiasts',
-      description: 'A community for tech lovers and innovators',
-      memberCount: 1500,
-      imageUrl: 'https://example.com/tech.jpg',
-    },
-    {
-      id: 4,
-      name: 'Book Lovers',
-      description: 'Discuss your favorite books and authors',
-      memberCount: 3000,
-      imageUrl: 'https://example.com/books.jpg',
-    },
-    // Add more dummy communities here
-  ];
+  const [myCommunities, setMyCommunities] = useState([]);
+  const userId = useSelector((state) => state.auth.userId);
+
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      try {
+        const response = await axios.get(`${GatewayUrl}api/members/${userId}/communities/`);
+        setMyCommunities(response.data);
+      } catch (error) {
+        console.error('Error fetching communities:', error);
+      }
+    }
+    fetchCommunities(); 
+  }, []);
+
+    
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">
-        My Communities
-      </h2>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {myCommunities.map((community) => (
           <CommunityCard key={community.id} community={community} />

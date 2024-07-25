@@ -1,45 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import CommunityCard from './CommunityCard';
 import Buttons from '../../../components/user/misc/Buttons';
 import Colors from '../../../components/user/misc/Colors';
+import axios from 'axios';
+import { GatewayUrl } from '../../../components/const/urls';
 
 const FindCommunity = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [allCommunities, setAllCommunities] = useState([]);
 
-  // Dummy data for all communities
-  const allCommunities = [
-    {
-      id: 1,
-      name: 'Tech Enthusiasts',
-      description: 'A community for tech lovers and innovators',
-      memberCount: 1500,
-      imageUrl: 'https://example.com/tech.jpg',
-    },
-    {
-      id: 2,
-      name: 'Foodies United',
-      description: 'Explore cuisines from around the world',
-      memberCount: 2200,
-      imageUrl: 'https://example.com/food.jpg',
-    },
-    {
-      id: 3,
-      name: 'Fitness Fanatics',
-      description: 'Share tips and motivate each other to stay fit',
-      memberCount: 1800,
-      imageUrl: 'https://example.com/fitness.jpg',
-    },
-    {
-      id: 4,
-      name: 'Book Lovers',
-      description: 'Discuss your favorite books and authors',
-      memberCount: 3000,
-      imageUrl: 'https://example.com/books.jpg',
-    },
-    // Add more dummy communities here
-  ];
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      try {
+        const response = await axios.get(`${GatewayUrl}api/communities/`);
+        console.log("Response", response.data)
+        setAllCommunities(response.data);
+      } catch (error) {
+        console.error('Error fetching communities:', error);
+      }
+    }
+    fetchCommunities(); 
+  }, []);
 
+
+  
   const filteredCommunities = allCommunities.filter((community) =>
     community.name.toLowerCase().includes(searchTerm.toLowerCase())
   );

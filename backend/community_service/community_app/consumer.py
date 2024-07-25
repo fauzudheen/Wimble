@@ -4,7 +4,6 @@ import django
 import os
 import sys
 
-from community_app.models import User
 
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
@@ -13,6 +12,7 @@ sys.path.append(parent_dir)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'community_service.settings')
 django.setup()
 
+from community_app.models import User #This line should be below django.setup(), otherwise it will not work
 from django.db import transaction
 
 # Kafka configuration
@@ -25,6 +25,7 @@ consumer = Consumer({
 consumer.subscribe(['users'])
 
 def store_user_in_db(user_data):
+    print("------------------store_user view called-----------------")
     with transaction.atomic():
         User.objects.update_or_create(
             id=user_data['id'],
@@ -53,7 +54,8 @@ def consume_messages():
                 topic = msg.topic()
                 message_data = json.loads(msg.value().decode('utf-8'))
                 print(f"Received message: {message_data}")
-
+                print(f"Topic: {topic}")
+                print(f"Message: {msg}")
                 if topic == 'users':
                     store_user_in_db(message_data)
                     print(f"User {message_data['id']} data stored in database")
