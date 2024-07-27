@@ -19,7 +19,8 @@ class CommunitySerializer(serializers.ModelSerializer):
     
     def get_admin_id(self, obj):
         try:
-            user = models.CommunityMember.objects.get(community=obj, role='admin').user 
+            community = models.CommunityMember.objects.get(community_id=obj.id, role='admin')
+            user = community.user
             return user.id  
         except models.CommunityMember.DoesNotExist:
             return None
@@ -27,4 +28,5 @@ class CommunitySerializer(serializers.ModelSerializer):
 class CommunityMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CommunityMember
-        fields = '__all__'
+        fields = ['id', 'role', 'created_at', 'community_id', 'user_id']
+        read_only_fields = ['id', 'role', 'created_at', 'community_id', 'user_id']   

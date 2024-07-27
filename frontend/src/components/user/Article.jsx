@@ -34,30 +34,35 @@ const Article = ({ article }) => {
   };
 
   return (
-    <article className="bg-white dark:bg-gray-800 p-4 shadow-lg rounded-lg mb-4 transition-all hover:shadow-md">
-      <header className="flex items-center mb-4">
+    
+    <article className="bg-white dark:bg-gray-800 p-4 shadow-md rounded-lg mb-4 transition-all hover:shadow-md">
+      <header className="flex items-center mb-2">
         {profile && (
           <img
-            src={`${GatewayUrl}api/user_service/media/${profile.split('/media/')[1]}`}
+            src={`${GatewayUrl}api/user_service/media/${profile.split('/media/media/')[1]}`}
             alt={author}
             className="h-12 w-12 rounded-full mr-2 cursor-pointer"
             onClick={handleProfileClick}
           />
         )}
+        
         <div>
           <h3
-            className="text-lg font-semibold text-gray-800 dark:text-white cursor-pointer"
+            className="font-semibold text-gray-800 dark:text-white cursor-pointer"
             onClick={handleProfileClick}
           >
             {author}
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">{tagline}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-xs  text-gray-600 dark:text-gray-400">{tagline}</p>
+          <p className="text-xs  text-gray-600 dark:text-gray-400">
             {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
           </p>
         </div>
       </header>
-      
+      <Link
+          to={`/article/${id}`}
+          className="hover:text-blue-500"
+        >
       {thumbnail && (
         <img
           src={thumbnail.replace('8000', '8002')}
@@ -95,15 +100,7 @@ const Article = ({ article }) => {
         </div>
         <span>{Math.ceil(content.replace(/<[^>]+>/g, '').split(' ').length / 200)} min read</span>
       </footer>
-      
-      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-        <Link
-          to={`/article/${id}`}
-          className="text-blue-500 hover:underline"
-        >
-          Read full article
         </Link>
-      </div>
     </article>
   );
 }

@@ -35,6 +35,7 @@ def store_user_in_db(user_data):
                 'is_staff': user_data.get('is_staff', False),
             }
         )
+    print(f"Stored user with profile URL: {user_data.get('profile', '')}")
 
 def store_interest_in_db(interest_data):
     with transaction.atomic():
@@ -44,6 +45,7 @@ def store_interest_in_db(interest_data):
                 'name': interest_data['name'],
             }
         )
+    
 
 def consume_messages():
     try:

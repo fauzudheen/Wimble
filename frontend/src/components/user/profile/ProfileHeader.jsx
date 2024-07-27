@@ -44,6 +44,7 @@ const ProfileHeader = () => {
   const fetchUserDetails = async () => {
     try {
       const response = await axios.get(`${GatewayUrl}api/users/${userId}/`);
+      console.log(response.data);
       setUser({
         first_name: response.data.first_name,
         last_name: response.data.last_name,
@@ -69,7 +70,7 @@ const ProfileHeader = () => {
         setIsFollowing(false);
       }
     } catch (err) {
-      console.error("Error getting User", err);
+      console.error("Error fetching relation", err);
       setIsFollowing(false);
     }
   };
@@ -96,14 +97,14 @@ const ProfileHeader = () => {
 
   return (
     <div className="relative">
-      <div className="h-40 bg-gray-900 dark:bg-gray-600"></div>
+      <div className="h-40 bg-gray-900 dark:bg-gray-900"></div>
       <div className="w-11/12 sm:w-5/6 md:w-4/5 lg:w-4/5 xl:w-5/6 mx-auto -mt-20">
         <div className="relative pt-16 pb-8 text-center bg-white dark:bg-gray-800 rounded-md shadow-sm">
           <div className="absolute left-1/2 transform -translate-x-1/2 -top-12">
             <div className="relative">
               {user.profile ? (
                 <img
-                  src={`${GatewayUrl}api/user_service/media/${user.profile.split('/media/')[1]}`} 
+                  src={user.profile.replace('8000', '8001')} 
                   alt={user.first_name}
                   className="w-24 h-24 rounded-full border-4 border-teal-500 dark:border-gray-700"
                 />

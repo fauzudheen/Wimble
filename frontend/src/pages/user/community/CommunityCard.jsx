@@ -13,7 +13,7 @@ const CommunityCard = ({ community }) => {
           className="w-full h-36 object-cover"
         />
       ) : (
-        <div className="w-full h-36 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+        <div className="w-full h-36 flex items-center justify-center bg-gray-200 dark:bg-gray-800">
           <PhotoIcon className="w-12 h-12 text-gray-500 dark:text-gray-400" />
         </div>
       )}

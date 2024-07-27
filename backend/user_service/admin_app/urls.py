@@ -9,4 +9,4 @@ urlpatterns = [
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view()),
     path('ad/login/', AdminLoginView.as_view()),
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

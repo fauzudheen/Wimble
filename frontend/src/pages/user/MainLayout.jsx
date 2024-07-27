@@ -8,7 +8,7 @@ const MainLayout = () => {
     const isAuthenticated = useSelector(state => state.auth.isUserAuthenticated);
     
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-700 flex">
+      <div className="min-h-screen bg-gray-100 dark:bg-black flex">
         <div className="max-h-svh w-1/5 h-screen overflow-y-auto fixed m-4">
           {!isAuthenticated && <CommunityPromotion />}
           <HomeSidebar />

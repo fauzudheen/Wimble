@@ -27,15 +27,18 @@ consumer.subscribe(['users'])
 def store_user_in_db(user_data):
     print("------------------store_user view called-----------------")
     with transaction.atomic():
-        User.objects.update_or_create(
-            id=user_data['id'],
-            defaults={
-                'first_name': user_data.get('first_name', ''),
-                'last_name': user_data.get('last_name', ''),
-                'tagline': user_data.get('tagline', ''),
-                'profile': user_data.get('profile', ''),
-            }
-        )
+        try:
+            User.objects.update_or_create(
+                id=user_data['id'],
+                defaults={
+                    'first_name': user_data.get('first_name', '')[:150],  # Truncate if necessary
+                    'last_name': user_data.get('last_name', '')[:150],    # Truncate if necessary
+                    'tagline': user_data.get('tagline', '')[:225],        # Truncate if necessary
+                    'profile': user_data.get('profile', '')[:100],        # Truncate if necessary
+                }
+            )
+        except Exception as e:
+            print(f"Error storing user data: {e}")
 
 def consume_messages():
     try:
@@ -48,23 +51,27 @@ def consume_messages():
             if msg.error():
                 if msg.error().code() == KafkaError._PARTITION_EOF:
                     print('End of partition reached {0}/{1}'.format(msg.topic(), msg.partition()))
-                elif msg.error():
+                else:
                     print('Error occurred: {0}'.format(msg.error().str()))
             else:
-                topic = msg.topic()
-                message_data = json.loads(msg.value().decode('utf-8'))
-                print(f"Received message: {message_data}")
-                print(f"Topic: {topic}")
-                print(f"Message: {msg}")
-                if topic == 'users':
-                    store_user_in_db(message_data)
-                    print(f"User {message_data['id']} data stored in database")
-
-
+                try:
+                    topic = msg.topic()
+                    message_data = json.loads(msg.value().decode('utf-8'))
+                    print(f"Received message: {message_data}")
+                    print(f"Topic: {topic}")
+                    print(f"Message: {msg}")
+                    if topic == 'users':
+                        store_user_in_db(message_data)
+                        print(f"User {message_data['id']} data stored in database")
+                except json.JSONDecodeError as e:
+                    print(f"JSON decode error: {e}")
+                except Exception as e:
+                    print(f"Error processing message: {e}")
     except Exception as e:
         print(f"Unexpected error: {e}")
     finally:
         consumer.close()
+
 
 if __name__ == '__main__':
     consume_messages()

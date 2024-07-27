@@ -58,8 +58,11 @@ class CommunityView(APIView):
         return Response(status=response.status_code)
     
 class CommunityMemberView(APIView):
-    def get(self, request, pk=None):
-        service_url = f"{COMMUNITY_SERVICE_URL}/communities/{pk}/members/"
+    def get(self, request, pk, user_id=None):
+        if user_id:
+            service_url = f"{COMMUNITY_SERVICE_URL}/communities/{pk}/members/{user_id}/"
+        else:
+            service_url = f"{COMMUNITY_SERVICE_URL}/communities/{pk}/members/"
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
     
@@ -68,7 +71,7 @@ class CommunityMemberView(APIView):
         response = requests.post(service_url, json=request.data, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
     
-    def delete(self, request, pk, user_id):
+    def delete(self, request, pk, user_id): 
         service_url = f"{COMMUNITY_SERVICE_URL}/communities/{pk}/members/{user_id}/"
         response = requests.delete(service_url, json=request.data, headers=dict(request.headers))
         return Response(status=response.status_code)
@@ -77,4 +80,4 @@ class MemberCommunityView(APIView):
     def get(self, request, pk=None):
         service_url = f"{COMMUNITY_SERVICE_URL}/members/{pk}/communities/"
         response = requests.get(service_url, headers=dict(request.headers))
-        return Response(response.json(), status=response.status_code)
+        return Response(response.json(), status=response.status_code) 

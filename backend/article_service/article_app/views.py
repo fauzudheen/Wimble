@@ -52,12 +52,12 @@ class LikeView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated] 
 
     def post(self, request):
-        article_id = request.data.get('article_id')
+        article_id = request.data.get('article_id') 
         if not article_id:
-            return Response({'error': 'article_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'article_id is required'}, status=status.HTTP_400_BAD_REQUEST) 
 
         article = generics.get_object_or_404(Article, id=article_id)
-        like, created = Like.objects.get_or_create(article=article, user_id=request.user.id)
+        like, created = Like.objects.get_or_create(article=article, user_id=request.user.id) 
         
         if created: 
             return Response({'message': 'Article liked successfully'}, status=status.HTTP_201_CREATED)
@@ -65,9 +65,9 @@ class LikeView(generics.GenericAPIView):
             return Response({'message': 'You have already liked this article'}, status=status.HTTP_200_OK)
 
     def delete(self, request):
-        article_id = request.query_params.get('article_id')
+        article_id = request.query_params.get('article_id')  
         if not article_id:
-            return Response({'error': 'article_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'article_id is required'}, status=status.HTTP_400_BAD_REQUEST) 
 
         like = Like.objects.filter(article_id=article_id, user_id=request.user.id).first()
         if like:
@@ -121,7 +121,7 @@ class ArticleByTagView(generics.ListAPIView):
     def get_queryset(self):
         print("-----------------get_queryset---------------", self.kwargs)
         interest_id = self.kwargs['pk']
-        return Article.objects.filter(tags__interest_id=interest_id)
+        return Article.objects.filter(tags__interest_id=interest_id) 
     
 class UserInteractionsView(APIView):
 
@@ -138,6 +138,6 @@ class UserInteractionsView(APIView):
 
         return Response({
             'articles': articles_serializer.data,
-            'likes': likes_serializer.data,
-            'comments': comments_serializer.data
-        }, status=status.HTTP_200_OK)
+            'likes': likes_serializer.data, 
+            'comments': comments_serializer.data 
+        }, status=status.HTTP_200_OK)  

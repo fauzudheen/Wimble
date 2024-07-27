@@ -12,7 +12,7 @@ const CompactArticle = ({ article }) => {
 
   return (
       <Link to={`/article/${id}`}>
-    <article className="bg-gray-50 dark:bg-gray-700 p-4 shadow-md rounded-lg mb-4 hover:scale-101 transition-transform duration-200">
+    <article className="bg-gray-50 dark:bg-gray-900 p-4 shadow-md rounded-lg mb-4 hover:scale-101 transition-transform duration-200">
         <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white hover:text-blue-500 transition-colors duration-200">
           {title}
         </h2>

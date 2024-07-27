@@ -39,7 +39,7 @@ class UserView(APIView):
         service_url = f"{USER_SERVICE_URL}/users/{pk}/"
         response = requests.delete(service_url, headers=dict(request.headers))
         try:
-            return Response(response.json(), status=response.status_code)
+            return Response(response.json(), status=response.status_code) 
         except requests.exceptions.JSONDecodeError:
             return Response(status=response.status_code)
  

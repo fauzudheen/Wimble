@@ -5,28 +5,89 @@ import Buttons from '../../../components/user/misc/Buttons';
 import axios from 'axios';
 import { GatewayUrl } from '../../../components/const/urls';
 import { useSelector } from 'react-redux';
+import createAxiosInstance from '../../../api/axiosInstance';
+import ConfirmModal from '../../../components/user/ComfirmModal';
+import { ArrowLeftStartOnRectangleIcon } from '@heroicons/react/24/solid';
 
 const CommunityPage = () => {
   const { id } = useParams();
   const [community, setCommunity] = useState({});
   const userId = useSelector((state) => state.auth.userId);
+  const token = useSelector((state) => state.auth.userAccess);
   const navigate = useNavigate()
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+  const [isMember, setIsMember] = useState(false);
+  const [memberCount, setMemberCount] = useState(0);
 
   useEffect(() => {
-    const fetchCommunity = async () => {
-      try {
-        const response = await axios.get(`${GatewayUrl}api/communities/${id}/`);
-        console.log("Response", response.data)
-        setCommunity(response.data);
-      } catch (error) {
-        console.error('Error fetching community:', error);
-      }
-    }
+    
     fetchCommunity(); 
+    checkIfMember();
   }, []);
 
+  const fetchCommunity = async () => {
+    try {
+      const response = await axios.get(`${GatewayUrl}api/communities/${id}/`);
+      console.log("Response", response.data)
+      setCommunity(response.data);
+      setMemberCount(response.data.member_count);
+    } catch (error) {
+      console.error('Error fetching community:', error);
+    }
+  }
+
+  const checkIfMember = async () => {
+    try {
+      const response = await axios.get(`${GatewayUrl}api/communities/${id}/members/${userId}/`);
+      console.log("Response", response.data);
+      setIsMember(response.data.isMember);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.log('User is not a member');
+        setIsMember(false);
+      } else {
+        console.error('Error checking if user is member:', error);
+      }
+    }
+  }
+
+  const handleLeave = () => {
+    if (community.admin_id === userId) {
+      setIsLeaveModalOpen(true)
+    } else {
+      leave()
+    }
+  }
+
+  const leave = async() => {
+    try {
+      const axiosInstance = createAxiosInstance(token)
+      const response = await axiosInstance.delete(`${GatewayUrl}api/communities/${id}/members/${userId}/`)
+      setIsLeaveModalOpen(false)
+      setIsMember(false)
+      setMemberCount(memberCount - 1)
+      console.log("Response", response.data)
+    } catch (error) {
+      console.error('Error leaving community:', error);
+    }
+  }
+
+  const handleJoin = async() => {
+    try {
+      const axiosInstance = createAxiosInstance(token)
+      const response = await axiosInstance.post(`${GatewayUrl}api/communities/${id}/members/`, {})
+      setIsMember(true)
+      setMemberCount(memberCount + 1)
+      console.log("Response", response.data)
+      setIsJoinModalOpen(false)
+    } catch (error) {
+      console.error('Error joining community:', error);
+    }
+  }
+
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="bg-gray-100 dark:bg-black min-h-screen">
       {/* Header Sections */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
@@ -66,32 +127,71 @@ const CommunityPage = () => {
                 <div className="flex space-x-4 text-sm text-gray-300 sm:text-gray-600 dark:text-gray-300 mt-2">
                   <span className="flex items-center">
                     <UserGroupIcon className="w-6 h-6 mr-1" />
-                    {community.member_count} members
+                    {memberCount} members
                   </span>
                   <span className="flex items-center">
                     <ChatBubbleLeftIcon className="w-6 h-6 mr-1" />
                     {community.article_count} posts
                   </span>
+                  {community.admin_id === userId && (
+                  <span className="flex items-center border rounded-md px-2 bg-teal-100 dark:bg-teal-800 dark:text-white">
+                    Admin
+                  </span>
+                  )}
                 </div>
               </div>
               <div className="mt-4 sm:mt-0 flex space-x-2">
-                <button className={`${Buttons.tealBlueGradientOutlineButton} flex items-center`}>
+                {isMember ? (
+                  <button className={`${Buttons.cancelButton} flex items-center`} onClick={handleLeave}>
+                    <ArrowLeftStartOnRectangleIcon className="w-5 h-5 mr-2" />
+                    Leave Community
+                  </button>
+                ): (
+                  <button className={`${Buttons.tealBlueGradientOutlineButton} flex items-center` } onClick={() => setIsJoinModalOpen(true)}>
                   <PlusIcon className="w-5 h-5 mr-2" />
                   Join Community
                 </button>
-                <button className={`${Buttons.tealBlueGradientOutlineButton} flex items-center`}>
-                  <ChatBubbleLeftIcon className="w-5 h-5 mr-2" />
-                  Chat
-                </button>
+                )}
+                <ConfirmModal
+                  isOpen={isLeaveModalOpen}
+                  onClose={() => setIsLeaveModalOpen(false)}
+                  title="Confirm Deletion"
+                  message={
+                    <>
+                      <p>Are you sure you want to leave <strong>{community.name}</strong>?</p>
+                      <br />
+                      <ul>
+                        <li>- You are the admin of this community.</li>
+                        <li>- If you leave, you will not be able to join again with the current privileges.</li>
+                        <li>- If you are the last member, the community will be deleted.</li>
+                      </ul>
+                    </>
+                  }
+                  onConfirm={leave}
+                  confirmButtonText="Leave"
+                  cancelButtonText="Cancel"
+                  />
+
+                <ConfirmModal
+                  isOpen={isJoinModalOpen}
+                  onClose={() => setIsJoinModalOpen(false)}
+                  title="Confirm Action"
+                  message={`Please make sure that you have read the rules of the community.`}
+                  onConfirm={handleJoin}
+                  confirmButtonText="Join"
+                  cancelButtonText="Cancel"
+                  />
+                {community.admin_id === userId && (
                 <button className={`${Buttons.tealBlueGradientButton} flex items-center`} onClick={() => navigate(`/communities/${id}/settings`)}>
                   <CogIcon className="w-5 h-5 mr-2" />
                   Settings
                 </button>
+                )}
               </div>
             </div>
           </div>
         </div>
-      </div>
+        </div>
 
 
 

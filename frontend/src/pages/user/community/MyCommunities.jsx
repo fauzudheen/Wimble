@@ -3,6 +3,7 @@ import CommunityCard from './CommunityCard';
 import { GatewayUrl } from '../../../components/const/urls';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import Colors from '../../../components/user/misc/Colors';
 
 const MyCommunities = () => {
   // Dummy data for user's joined communities
@@ -25,7 +26,11 @@ const MyCommunities = () => {
 
   return (
     <div>
-
+      {!myCommunities.length && (
+        <p className={`text-center ${Colors.tealBlueGradientText}`}>
+          No communities found. Create a new community.
+        </p>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {myCommunities.map((community) => (
           <CommunityCard key={community.id} community={community} />

@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import { Tab } from '@headlessui/react';
-import { UserGroupIcon, MagnifyingGlassIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, MagnifyingGlassIcon, PlusIcon,UserIcon, UsersIcon } from '@heroicons/react/24/outline';
 import MyCommunities from './MyCommunities';
 import FindCommunity from './FindCommunity';
 import CreateCommunity from './CreateCommunity';
+import JoinedCommunities from './JoinedCommunities';
 
 const CommunitiesLayout = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const tabs = [
     { name: 'My Communities', icon: UserGroupIcon, component: MyCommunities },
+    { name: 'Joined Communities', icon: UsersIcon, component: JoinedCommunities },
     { name: 'Find Community', icon: MagnifyingGlassIcon, component: FindCommunity },
     { name: 'Create Community', icon: PlusIcon, component: CreateCommunity },
   ];
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900">
+    <div className="bg-gray-100 dark:bg-black">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
         <Tab.List className="flex justify-between space-y-2 sm:space-y-0 rounded-xl bg-white dark:bg-gray-800 p-2 shadow-md">
