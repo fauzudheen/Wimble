@@ -8,7 +8,7 @@ const NavbarLayout = () => {
       <header className="fixed top-0 left-0 right-0 z-50">
         <Navbar />
       </header>
-      <main className="flex-grow pt-16"> {/* Adjust pt-16 based on your Navbar height */}
+      <main className="flex-grow pt-16">
         <Outlet />
       </main>
     </div>

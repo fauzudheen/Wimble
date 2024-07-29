@@ -1,16 +1,16 @@
-import React from 'react'
-import UserSkills from './UserSkills'
-import UserActivites from './UserActivites'
-import UserBio from './UserBio'
+import React from 'react';
+import UserSkills from './UserSkills';
+import UserActivites from './UserActivites';
+import UserBio from './UserBio';
 
 const ProfileSidebar = () => {
   return (
-    <div className="">
+    <div className=""> 
       <UserBio />
       <UserActivites />
       <UserSkills />
     </div>
-  )
-}
+  );
+};
 
-export default ProfileSidebar
+export default ProfileSidebar;

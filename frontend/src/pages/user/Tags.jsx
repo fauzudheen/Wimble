@@ -45,7 +45,7 @@ const Tags = ({ token }) => {
   const filteredTags = tags.filter(tag => tag.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
-    <div className="ml-4 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md transition-all duration-300 ease-in-out transform">
+    <div className="lg:ml-4 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md transition-all duration-300 ease-in-out transform">
       <div className="mb-6">
         <h2 className={`text-2xl font-bold ${Colors.tealBlueGradientText} mb-4`}>
           Tags

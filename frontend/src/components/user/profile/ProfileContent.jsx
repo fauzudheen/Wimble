@@ -62,7 +62,7 @@ const ProfileContent = () => {
     <div className="col-span-2">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
         <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex space-x-4 text-sm font-medium">
+          <div className="flex text-sm font-medium">
             <button 
               onClick={() => setActiveTab('articles')}
               className={`w-full sm:w-auto flex items-center justify-center px-4 py-2.5 text-sm font-medium leading-5 rounded-lg transition-all duration-200 ease-in-out focus:outline-none ${activeTab === 'articles' ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white shadow-lg' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}

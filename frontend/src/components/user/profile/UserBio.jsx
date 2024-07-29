@@ -48,18 +48,20 @@ const UserBio = () => {
   }
 
   return (
-    <div className="mb-4 bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
+    <div className="mb-2 sm:mb-2 md:mb-4 lg:mb-4 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-md shadow-md"> {/* Adjusted padding for smaller screens */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Bio</h2>
-        {isMyProfile && (<button 
-          onClick={toggleEdit} 
-          className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200"
-          aria-label="Edit Bio"
-        >
-          <PencilIcon className="h-5 w-5" />
-        </button>)}
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Bio</h2>
+        {isMyProfile && (
+          <button 
+            onClick={toggleEdit} 
+            className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200"
+            aria-label="Edit Bio"
+          >
+            <PencilIcon className="h-5 w-5" />
+          </button>
+        )}
       </div>
-      <p className="text-gray-700 dark:text-gray-300">{bio}</p>
+      <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">{bio}</p>
       {isEditing && (
         <EditModal
           onClose={handleCloseModal}

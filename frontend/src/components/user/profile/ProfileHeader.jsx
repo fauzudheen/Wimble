@@ -97,19 +97,19 @@ const ProfileHeader = () => {
 
   return (
     <div className="relative">
-      <div className="h-40 bg-gray-900 dark:bg-gray-900"></div>
-      <div className="w-11/12 sm:w-5/6 md:w-4/5 lg:w-4/5 xl:w-5/6 mx-auto -mt-20">
-        <div className="relative pt-16 pb-8 text-center bg-white dark:bg-gray-800 rounded-md shadow-sm">
+      <div className="h-32 bg-gray-900 dark:bg-gray-900"></div> {/* Reduced height from h-40 to h-32 */}
+      <div className="w-11/12 sm:w-5/6 md:w-4/5 lg:w-4/5 xl:w-5/6 mx-auto -mt-16"> {/* Adjusted negative margin */}
+        <div className="relative pt-10 pb-6 text-center bg-white dark:bg-gray-800 rounded-md shadow-sm"> {/* Adjusted padding */}
           <div className="absolute left-1/2 transform -translate-x-1/2 -top-12">
             <div className="relative">
               {user.profile ? (
                 <img
                   src={user.profile.replace('8000', '8001')} 
                   alt={user.first_name}
-                  className="w-24 h-24 rounded-full border-4 border-teal-500 dark:border-gray-700"
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-teal-500 dark:border-gray-700" // Responsive image size
                 />
               ) : (
-                <UserIcon className="w-24 h-24 bg-teal-100 text-gray-500 border-4 border-teal-100 dark:border-gray-700 rounded-full" />
+                <UserIcon className="w-20 h-20 md:w-24 md:h-24 bg-teal-100 text-gray-500 border-4 border-teal-100 dark:border-gray-700 rounded-full" />
               )}
               {isMyProfile && (
                 <button 
@@ -121,17 +121,17 @@ const ProfileHeader = () => {
               )}
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{user.first_name} {user.last_name}</h1>
-          <p className="text-gray-600 dark:text-gray-400">{user.tagline}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{user.first_name} {user.last_name}</h1>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{user.tagline}</p>
           <div className="flex items-center justify-center space-x-2 mt-2">
             <EnvelopeIcon className="h-5 w-5 text-red-500" />
-            <p className="text-gray-600 dark:text-gray-400">{user.email}</p>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{user.email}</p>
           </div>
           <div className="mt-4 flex justify-center space-x-4">
-            <div className="text-gray-700 dark:text-gray-300">
+            <div className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
               <span className="font-bold">{user.followers_count}</span> followers
             </div>
-            <div className="text-gray-700 dark:text-gray-300">
+            <div className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
               <span className="font-bold">{user.followings_count}</span> following
             </div>
           </div>
@@ -159,7 +159,6 @@ const ProfileHeader = () => {
               </button>
             )
           )}
-
         </div>
       </div>
       {showEditModal && <EditProfileModal onClose={handleCloseModal}/>}

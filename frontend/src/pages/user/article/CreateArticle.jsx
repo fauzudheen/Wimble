@@ -109,7 +109,11 @@ const CreateArticle = () => {
       setContent('');
       setThumbnail(null);
       setTags([]);
-      navigate('/home');
+      if (communityId) {
+        navigate(`/communities/${communityId}`);
+      } else {
+        navigate('/home');
+      }
     } catch (error) {
       console.error('Error creating article or tags:', error.response?.data || error.message);
     }

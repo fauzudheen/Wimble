@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { HandThumbUpIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
-import { formatDistanceToNow } from 'date-fns';
 import { GatewayUrl } from '../../../components/const/urls';
 import Colors from '../../../components/user/misc/Colors';
 import CompactArticle from '../../../components/user/article/CompactArticle';
@@ -11,22 +9,21 @@ const ArticlesByTag = () => {
   const [articles, setArticles] = useState([]);
   const [tagName, setTagName] = useState('');
   const { interestId } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchInterest = async () => {
       try {
         const response = await axios.get(`${GatewayUrl}api/interests/${interestId}`);
-        console.log('Interest:', response.data);
         setTagName(response.data.name);
       } catch (error) {
         console.error('Error fetching interest:', error);
       }
-    }
+    };
+
     const fetchArticlesByTag = async () => {
       try {
         const response = await axios.get(`${GatewayUrl}api/articles/by-tag/${interestId}`);
-        setArticles(response.data);
+        setArticles(response.data.filter(article => article.user_data));
         window.scrollTo(0, 0);
       } catch (error) {
         console.error('Error fetching articles by tag:', error);
@@ -37,22 +34,21 @@ const ArticlesByTag = () => {
     fetchArticlesByTag();
   }, [interestId]);
 
-
   return (
-    <div className="ml-4 bg-white dark:bg-gray-800  rounded-lg p-6">
-      <h2 className={`text-2xl font-bold ${Colors.tealBlueGradientText} mb-6`}>
+    <div className="lg:ml-4 bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-4 md:p-6">
+      <h2 className={`text-lg sm:text-2xl font-bold ${Colors.tealBlueGradientText} mb-4`}>
         Articles tagged with "#{tagName}"
       </h2>
       {articles.length > 0 ? (
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-auto">
           {articles.map((article) => (
-        article.user_data ? (
-            <CompactArticle key={article.id} article={article} />
-        ) : null
-        ))}
+            <div key={article.id} className="break-inside-avoid">
+              <CompactArticle article={article} />
+            </div>
+          ))}
         </div>
       ) : (
-        <p className="text-center text-gray-600 dark:text-gray-300">No articles found for this tag.</p>
+        <p className="text-center text-gray-600 dark:text-gray-300 text-sm">No articles found for this tag.</p>
       )}
     </div>
   );

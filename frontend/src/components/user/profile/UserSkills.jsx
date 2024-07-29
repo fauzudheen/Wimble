@@ -1,5 +1,5 @@
 import { PencilIcon } from '@heroicons/react/24/solid';
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import EditSkillsModal from './EditSkillsModal';
 import axios from 'axios';
 import { GatewayUrl } from '../../const/urls';
@@ -37,20 +37,24 @@ const UserSkills = () => {
   };
 
   return (
-    <div className='mb-4 bg-white dark:bg-gray-800 p-6 rounded-md shadow-md'>
+    <div className='mb-4 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-md shadow-md'> {/* Adjusted padding for responsiveness */}
       <div className='flex justify-between mb-2'> 
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Skills</h2>
-        {isMyProfile && (<button 
-          onClick={() => setIsEditing(true)} 
-          className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200"
-          aria-label="Edit Skills"
-        >
-          <PencilIcon className="h-5 w-5" />
-        </button>)}
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">Skills</h2> {/* Responsive font size */}
+        {isMyProfile && (
+          <button 
+            onClick={() => setIsEditing(true)} 
+            className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200"
+            aria-label="Edit Skills"
+          >
+            <PencilIcon className="h-5 w-5" />
+          </button>
+        )}
       </div>
       <ul className="space-y-2 text-gray-600 dark:text-gray-300">
         {userSkills.slice(0, showAll ? userSkills.length : 4).map((userSkill) => (
-          <li key={userSkill.id}>{userSkill.skill_name}</li>
+          <li key={userSkill.id} className="text-sm sm:text-base"> {/* Responsive font size for skills */}
+            {userSkill.skill_name}
+          </li>
         ))}
       </ul>
       {userSkills.length > 4 && (
@@ -67,7 +71,7 @@ const UserSkills = () => {
         initialUserSkills={userSkills}
       />
     </div>
-  )
+  );
 }
 
-export default UserSkills
+export default UserSkills;

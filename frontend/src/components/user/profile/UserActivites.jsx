@@ -39,15 +39,15 @@ const UserActivites = () => {
   }, [userId]);
   
   return (
-    <div className="mb-4 bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Activity</h2>
+    <div className="mb-2 sm:mb-2 md:mb-4 lg:mb-4 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-md shadow-md">
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">Activity</h2>
       <ul className="space-y-2 text-gray-600 dark:text-gray-300">
-        <li>{articleCount} posts</li>
-        <li>{commentCount} comments</li>
-        <li>{skillCount} skills</li>
+        <li className="text-sm sm:text-base">{articleCount} posts</li> {/* Responsive font size */}
+        <li className="text-sm sm:text-base">{commentCount} comments</li>
+        <li className="text-sm sm:text-base">{skillCount} skills</li>
       </ul>
     </div>
-  )
-}
+  );
+};
 
 export default UserActivites

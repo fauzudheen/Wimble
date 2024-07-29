@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { UserGroupIcon, ChatBubbleLeftIcon, PhotoIcon, UserIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, ChatBubbleLeftIcon, PhotoIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import Buttons from '../../../components/user/misc/Buttons';
 import axios from 'axios';
@@ -13,17 +13,15 @@ const CommunityCard = ({ community }) => {
   const checkIfMember = async () => {
     try {
       const response = await axios.get(`${GatewayUrl}api/communities/${community.id}/members/${userId}/`);
-      console.log("Response", response.data);
       setIsMember(response.data.isMember);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        console.log('User is not a member');
         setIsMember(false);
       } else {
         console.error('Error checking if user is member:', error);
       }
     }
-  }
+  };
 
   useEffect(() => {
     checkIfMember();
@@ -35,10 +33,10 @@ const CommunityCard = ({ community }) => {
         <img
           src={community.cover_image.replace('8000', '8003')}
           alt={community.name}
-          className="w-full h-36 object-cover"
+          className="w-full h-36 md:h-48 object-cover"
         />
       ) : (
-        <div className="w-full h-36 flex items-center justify-center bg-gray-200 dark:bg-gray-800">
+        <div className="w-full h-36 md:h-48 flex items-center justify-center bg-gray-200 dark:bg-gray-800">
           <PhotoIcon className="w-12 h-12 text-gray-500 dark:text-gray-400" />
         </div>
       )}
@@ -47,10 +45,10 @@ const CommunityCard = ({ community }) => {
           <img
             src={community.profile_image.replace('8000', '8003')}
             alt={community.name}
-            className="w-20 h-20 rounded-full border-4 border-white dark:border-gray-900 absolute left-1/2 transform -translate-x-1/2 -top-10"
+            className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-white dark:border-gray-900 absolute left-1/2 transform -translate-x-1/2 -top-10"
           />
         ) : (
-          <div className="w-20 h-20 rounded-full border-4 border-white dark:border-gray-900 absolute left-1/2 transform -translate-x-1/2 -top-10 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-white dark:border-gray-900 absolute left-1/2 transform -translate-x-1/2 -top-10 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
             <UserGroupIcon className="w-12 h-12 text-gray-500 dark:text-gray-400" />
           </div>
         )}
@@ -79,7 +77,7 @@ const CommunityCard = ({ community }) => {
           {isMember && (
             <div className="flex items-center space-x-1">
               <CheckIcon className="w-5 h-5 text-green-500" strokeWidth={3} />
-              <p className="dark:text-white text-sm ">Member</p>
+              <p className="dark:text-white text-sm">Member</p>
             </div>
           )}
         </div>
