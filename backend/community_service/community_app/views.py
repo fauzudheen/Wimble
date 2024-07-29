@@ -79,3 +79,10 @@ class MemberCommunityListView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['pk']
         return models.Community.objects.filter(members__user_id=user_id) 
+    
+class MemberAdminedCommunityListView(generics.ListAPIView):
+    serializer_class = serializers.CommunitySerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['pk']
+        return models.Community.objects.filter(members__user_id=user_id, members__role='admin')

@@ -1,9 +1,34 @@
-import React from 'react';
-import { UserGroupIcon, ChatBubbleLeftIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import React, { useEffect, useState } from 'react';
+import { UserGroupIcon, ChatBubbleLeftIcon, PhotoIcon, UserIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import Buttons from '../../../components/user/misc/Buttons';
+import axios from 'axios';
+import { GatewayUrl } from '../../../components/const/urls';
+import { useSelector } from 'react-redux';
 
 const CommunityCard = ({ community }) => {
+  const [isMember, setIsMember] = useState(false);
+  const userId = useSelector((state) => state.auth.userId);
+
+  const checkIfMember = async () => {
+    try {
+      const response = await axios.get(`${GatewayUrl}api/communities/${community.id}/members/${userId}/`);
+      console.log("Response", response.data);
+      setIsMember(response.data.isMember);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.log('User is not a member');
+        setIsMember(false);
+      } else {
+        console.error('Error checking if user is member:', error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    checkIfMember();
+  }, []);
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden transition-transform transform">
       {community.cover_image ? (
@@ -51,11 +76,12 @@ const CommunityCard = ({ community }) => {
           >
             View Community
           </Link>
-          <button
-            className={`${Buttons.tealBlueGradientHoverButton} rounded-md text-sm`}
-          >
-            Join
-          </button>
+          {isMember && (
+            <div className="flex items-center space-x-1">
+              <CheckIcon className="w-5 h-5 text-green-500" strokeWidth={3} />
+              <p className="dark:text-white text-sm ">Member</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

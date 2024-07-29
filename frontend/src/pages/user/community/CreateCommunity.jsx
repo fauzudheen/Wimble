@@ -36,7 +36,7 @@ const CreateCommunity = () => {
         },
       });
       console.log('Response:', response.data);
-      navigate('/communities')
+      navigate(`/communities/${response.data.id}`);
         setName('');
         setDescription('');
         setRules('');

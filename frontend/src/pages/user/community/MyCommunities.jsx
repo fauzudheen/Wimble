@@ -13,7 +13,7 @@ const MyCommunities = () => {
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
-        const response = await axios.get(`${GatewayUrl}api/members/${userId}/communities/`);
+        const response = await axios.get(`${GatewayUrl}api/members/${userId}/admined-communities/`);
         setMyCommunities(response.data);
       } catch (error) {
         console.error('Error fetching communities:', error);

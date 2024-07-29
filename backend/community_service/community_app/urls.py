@@ -7,4 +7,5 @@ urlpatterns = [
     path('communities/<int:pk>/members/', views.CommunityMemberListCreateView.as_view()),
     path('communities/<int:pk>/members/<int:user_id>/', views.CommunityMemberRetrieveDestroyView.as_view()),
     path('members/<int:pk>/communities/', views.MemberCommunityListView.as_view()),
+    path('members/<int:pk>/admined-communities/', views.MemberAdminedCommunityListView.as_view()),
 ]

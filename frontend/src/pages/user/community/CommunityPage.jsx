@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { UserGroupIcon, ChatBubbleLeftIcon, PencilIcon, PlusIcon, PhotoIcon, CogIcon  } from '@heroicons/react/24/outline';
 import Buttons from '../../../components/user/misc/Buttons';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import createAxiosInstance from '../../../api/axiosInstance';
 import ConfirmModal from '../../../components/user/ComfirmModal';
 import { ArrowLeftStartOnRectangleIcon } from '@heroicons/react/24/solid';
+import CompactArticle from '../../../components/user/article/CompactArticle';
 
 const CommunityPage = () => {
   const { id } = useParams();
@@ -19,9 +20,10 @@ const CommunityPage = () => {
   const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
   const [isMember, setIsMember] = useState(false);
   const [memberCount, setMemberCount] = useState(0);
+  const [articles, setArticles] = useState([]);
 
   useEffect(() => {
-    
+    fetchArticlesByCommunity();
     fetchCommunity(); 
     checkIfMember();
   }, []);
@@ -86,6 +88,16 @@ const CommunityPage = () => {
     }
   }
 
+  const fetchArticlesByCommunity = async () => {
+    try {
+      const response = await axios.get(`${GatewayUrl}api/articles/by-community/${id}/`);
+      console.log("Articles by community", response.data)
+      setArticles(response.data);
+    } catch (error) {
+      console.error('Error fetching articles:', error);
+    }
+  }
+
   return (
     <div className="bg-gray-100 dark:bg-black min-h-screen">
       {/* Header Sections */}
@@ -127,11 +139,11 @@ const CommunityPage = () => {
                 <div className="flex space-x-4 text-sm text-gray-300 sm:text-gray-600 dark:text-gray-300 mt-2">
                   <span className="flex items-center">
                     <UserGroupIcon className="w-6 h-6 mr-1" />
-                    {memberCount} members
+                    {memberCount} Members
                   </span>
                   <span className="flex items-center">
                     <ChatBubbleLeftIcon className="w-6 h-6 mr-1" />
-                    {community.article_count} posts
+                    {articles.length} Articles
                   </span>
                   {community.admin_id === userId && (
                   <span className="flex items-center border rounded-md px-2 bg-teal-100 dark:bg-teal-800 dark:text-white">
@@ -223,19 +235,14 @@ const CommunityPage = () => {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Articles</h2>
+                <Link to="/create-article" state={{ communityId: id, communityName: community.name }}>
                 <button className={Buttons.tealBlueGradientButton}>Post Article</button>
+                </Link>
               </div>
               
-              {/* Sample Articles */}
-              {[1, 2, 3].map((article) => (
-                <div key={article} className="border-b border-gray-200 dark:border-gray-700 py-4 last:border-b-0">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Sample Article Title {article}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-2">This is a sample article content. It can include text, images, and other media.</p>
-                  <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
-                    <span>Posted by: User{article}</span>
-                    <span>2 hours ago</span>
-                  </div>
-                </div>
+              {/* Articles */}
+              {articles.map((article) => (
+                <CompactArticle key={article.id} article={article} />
               ))}
             </div>
           </div>

@@ -19,7 +19,7 @@ class Community(models.Model):
         ordering = ['name']
 
 class CommunityMember(models.Model):
-    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name="members")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="community_members")
-    role = models.CharField(max_length=255)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name="members") # Once we call members, 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="community_members") # we can access rest of the fields in the communityMember model.
+    role = models.CharField(max_length=255) # like members__user, members__user_id, members__role, members__created_at, etc
     created_at = models.DateTimeField(auto_now_add=True)

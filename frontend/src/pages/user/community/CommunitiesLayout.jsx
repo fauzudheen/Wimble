@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Tab } from '@headlessui/react';
-import { UserGroupIcon, MagnifyingGlassIcon, PlusIcon,UserIcon, UsersIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, MagnifyingGlassIcon, PlusIcon,UserIcon, UsersIcon  } from '@heroicons/react/24/outline';
 import MyCommunities from './MyCommunities';
 import FindCommunity from './FindCommunity';
 import CreateCommunity from './CreateCommunity';
@@ -10,8 +10,8 @@ const CommunitiesLayout = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const tabs = [
-    { name: 'My Communities', icon: UserGroupIcon, component: MyCommunities },
-    { name: 'Joined Communities', icon: UsersIcon, component: JoinedCommunities },
+    { name: 'My Communities', icon: UsersIcon , component: MyCommunities },
+    { name: 'Joined Communities', icon: UserGroupIcon, component: JoinedCommunities },
     { name: 'Find Community', icon: MagnifyingGlassIcon, component: FindCommunity },
     { name: 'Create Community', icon: PlusIcon, component: CreateCommunity },
   ];

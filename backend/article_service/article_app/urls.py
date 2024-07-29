@@ -12,4 +12,5 @@ urlpatterns = [
     path('articles/<int:pk>/reports/', views.ReportListCreateView.as_view()),
     path('articles/by-tag/<int:pk>/', views.ArticleByTagView.as_view()),
     path('user-interactions/<int:pk>/', views.UserInteractionsView.as_view()),
+    path('articles/by-community/<int:pk>/', views.ArticleByCommunityView.as_view()),
 ]

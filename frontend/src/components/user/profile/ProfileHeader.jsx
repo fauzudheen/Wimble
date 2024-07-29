@@ -137,7 +137,7 @@ const ProfileHeader = () => {
           </div>
           {isMyProfile ? (
             <button
-              className={`mt-4 ${Colors.tealBlueGradientButton} px-4 py-2 rounded-md text-sm font-medium`}
+              className={`mt-4 ${Buttons.cancelButton} rounded-md text-sm font-medium`}
               onClick={handleEditProfile}
             >
               Edit Profile

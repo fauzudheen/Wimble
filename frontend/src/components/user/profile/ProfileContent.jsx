@@ -65,19 +65,19 @@ const ProfileContent = () => {
           <div className="flex space-x-4 text-sm font-medium">
             <button 
               onClick={() => setActiveTab('articles')}
-              className={`pb-3 ${activeTab === 'articles' ? 'text-teal-600 dark:text-teal-400 border-b-2 border-teal-600 dark:border-teal-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+              className={`w-full sm:w-auto flex items-center justify-center px-4 py-2.5 text-sm font-medium leading-5 rounded-lg transition-all duration-200 ease-in-out focus:outline-none ${activeTab === 'articles' ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white shadow-lg' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
             >
               Articles
             </button>
             <button 
               onClick={() => setActiveTab('comments')}
-              className={`pb-3 ${activeTab === 'comments' ? 'text-teal-600 dark:text-teal-400 border-b-2 border-teal-600 dark:border-teal-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+              className={`w-full sm:w-auto flex items-center justify-center px-4 py-2.5 text-sm font-medium leading-5 rounded-lg transition-all duration-200 ease-in-out focus:outline-none ${activeTab === 'comments' ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white shadow-lg' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
             >
               Comments
             </button>
             <button 
               onClick={() => setActiveTab('likes')}
-              className={`pb-3 ${activeTab === 'likes' ? 'text-teal-600 dark:text-teal-400 border-b-2 border-teal-600 dark:border-teal-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+              className={`w-full sm:w-auto flex items-center justify-center px-4 py-2.5 text-sm font-medium leading-5 rounded-lg transition-all duration-200 ease-in-out focus:outline-none ${activeTab === 'likes' ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white shadow-lg' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
             >
               Liked articles
             </button>

@@ -141,3 +141,10 @@ class UserInteractionsView(APIView):
             'likes': likes_serializer.data, 
             'comments': comments_serializer.data 
         }, status=status.HTTP_200_OK)  
+    
+class ArticleByCommunityView(generics.ListAPIView):
+    serializer_class = serializers.ArticleSerializer
+
+    def get_queryset(self):
+        community_id = self.kwargs['pk']
+        return Article.objects.filter(community_id=community_id) 

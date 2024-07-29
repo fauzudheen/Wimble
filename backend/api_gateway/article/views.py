@@ -135,6 +135,12 @@ class ArticleByTagView(APIView):
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
     
+class ArticleByCommunityView(APIView):
+    def get(self, request, pk):
+        service_url = f"{ARTICLE_SERVICE_URL}/articles/by-community/{pk}/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
 class UserInteractionView(APIView):
     def get(self, request, pk):
         service_url = f"{ARTICLE_SERVICE_URL}/user-interactions/{pk}/"

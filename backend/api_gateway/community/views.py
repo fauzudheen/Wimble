@@ -81,3 +81,9 @@ class MemberCommunityView(APIView):
         service_url = f"{COMMUNITY_SERVICE_URL}/members/{pk}/communities/"
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code) 
+    
+class MemberAdminedCommunityView(APIView):
+    def get(self, request, pk=None):
+        service_url = f"{COMMUNITY_SERVICE_URL}/members/{pk}/admined-communities/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)

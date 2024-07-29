@@ -4,10 +4,11 @@ import axios from 'axios';
 import { GatewayUrl } from '../../../components/const/urls';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Colors from '../../../components/user/misc/Colors';
 import Buttons from '../../../components/user/misc/Buttons';
 import Select from 'react-select';
+import { UserGroupIcon } from '@heroicons/react/24/solid';
 
 const CreateArticle = () => {
   const [title, setTitle] = useState('');
@@ -19,8 +20,12 @@ const CreateArticle = () => {
   const token = useSelector(state => state.auth.userAccess);
   const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const location = useLocation();
+  const communityId = location.state?.communityId;
+  const communityName = location.state?.communityName;
 
   useEffect(() => {
+    console.log('communityId', communityId);
     const fetchUserId = async () => {
       const decodedToken = jwtDecode(token);
       setUserId(decodedToken.user_id);
@@ -74,7 +79,9 @@ const CreateArticle = () => {
     if (thumbnail) {
       formData.append('thumbnail', thumbnail);
     }
-  
+    if (communityId) {
+      formData.append('community_id', communityId);
+    }
     console.log('Submitting article:', formData);
   
     try {
@@ -113,7 +120,12 @@ const CreateArticle = () => {
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden">
         <div className="p-6">
           <h2 className={`text-3xl font-bold mb-6 ${Colors.tealBlueGradientText}`}>Create New Article</h2>
-          
+          {communityId && (
+          <div className="flex items-center space-x-2 mb-6">
+            <UserGroupIcon className={`w-6 h-6 ${Colors.tealBlueGradientButton} p-1 rounded-full`} />
+            <h3 className="font-semibold text-gray-800 dark:text-gray-100">{communityName}</h3>
+          </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">

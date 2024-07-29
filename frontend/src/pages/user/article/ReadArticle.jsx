@@ -144,6 +144,14 @@ const ReadArticle = () => {
     }
   ];
 
+  const handleProfileClick = () => {
+    if (article.author_id === userId) {
+      navigate(`/my-profile`);
+    } else {
+      navigate(`/user-profile/${userId}`);
+    }
+  };
+
   if (isArticleDeleted) {
     return (
       <NoContentPage 
@@ -158,6 +166,7 @@ const ReadArticle = () => {
     return <LoadSpinner size="medium" text="Fetching data..." />
   }
 
+
   return (
     <div className='min-h-screen bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 md:p-10'>
       <article className="max-w-4xl mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden">
@@ -165,9 +174,14 @@ const ReadArticle = () => {
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">{article.title}</h1>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center mb-4 sm:mb-0">
-              <img src={`${GatewayUrl}api/user_service/media/${article.profile.split('/media/')[1]}`} alt={article.author} className="h-12 w-12 rounded-full mr-4" />
+              <img src={`${GatewayUrl}api/user_service/media/${article.profile.split('/media/media/')[1]}`} alt={article.author} 
+              className="h-12 w-12 rounded-full mr-4 cursor-pointer" 
+              onClick={handleProfileClick}/>
               <div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">{article.author}</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white cursor-pointer"
+                onClick={handleProfileClick}>
+                {article.author}
+                </h3>
                 <div className="text-sm text-gray-600 dark:text-gray-400 flex flex-wrap items-center">
                   <span>Published on {new Date(article.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                   <span className="mx-2 hidden sm:inline">•</span>

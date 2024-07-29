@@ -53,7 +53,7 @@ const Article = ({ article }) => {
           >
             {author}
           </h3>
-          <p className="text-xs  text-gray-600 dark:text-gray-400">{tagline}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{tagline}</p>
           <p className="text-xs  text-gray-600 dark:text-gray-400">
             {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
           </p>
