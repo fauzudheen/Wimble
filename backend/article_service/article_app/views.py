@@ -96,7 +96,8 @@ class CommentListCreateView(generics.ListCreateAPIView):
     
     def perform_create(self, serializer):
         article_id = self.kwargs.get('pk')
-        serializer.save(user_id=self.request.user.id, article_id=article_id)
+        parent_id = self.request.data.get('parent_id', None) 
+        serializer.save(user_id=self.request.user.id, article_id=article_id, parent_id=parent_id)
 
 class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { ArrowUturnLeftIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowUturnLeftIcon, XCircleIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { GatewayUrl } from '../../const/urls';
 import { useSelector } from 'react-redux';
@@ -10,18 +10,19 @@ import Colors from '../misc/Colors';
 
 const CommentSection = ({ articleId, token }) => {
   const [comments, setComments] = useState([]);
-  const [visibleComments, setVisibleComments] = useState(3);
   const [replyingTo, setReplyingTo] = useState(null);
-  const commentInputRef = useRef(null);
   const userId = useSelector((state) => state.auth.userId);
   const isAuthenticated = useSelector((state) => state.auth.isUserAuthenticated);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const mainCommentInputRef = useRef(null);
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
         const response = await axios.get(`${GatewayUrl}api/articles/${articleId}/comments/`);
-        setComments(response.data);
+        console.log('Comments:', response.data);
+        const nestedComments = nestComments(response.data);
+        setComments(nestedComments);
       } catch (error) {
         console.error('Error fetching comments:', error);
       }
@@ -30,13 +31,23 @@ const CommentSection = ({ articleId, token }) => {
     fetchComments();
   }, [articleId, token]);
 
-  const handleLoadMoreComments = () => {
-    setVisibleComments((prevVisible) => prevVisible + 3);
-  };
+  const nestComments = (commentsArray) => {
+    const commentMap = {};
+    const rootComments = [];
 
-  const handleReply = (commentId) => {
-    setReplyingTo(commentId === replyingTo ? null : commentId);
-    setTimeout(() => commentInputRef.current?.focus(), 0);
+    commentsArray.forEach(comment => {
+      commentMap[comment.id] = { ...comment, replies: [] };
+    });
+
+    commentsArray.forEach(comment => {
+      if (comment.parent && commentMap[comment.parent]) {
+        commentMap[comment.parent].replies.push(commentMap[comment.id]);
+      } else {
+        rootComments.push(commentMap[comment.id]);
+      }
+    });
+
+    return rootComments;
   };
 
   const handleSubmitComment = async (event, parentId = null) => {
@@ -54,7 +65,12 @@ const CommentSection = ({ articleId, token }) => {
         text: content,
         parent_id: parentId,
       });
-      setComments((prevComments) => [response.data, ...prevComments]);
+      
+      setComments(prevComments => {
+        const updatedComments = addNewComment(prevComments, response.data, parentId);
+        return updatedComments;
+      });
+      
       event.target.comment.value = '';
       setReplyingTo(null);
     } catch (error) {
@@ -62,15 +78,34 @@ const CommentSection = ({ articleId, token }) => {
     }
   };
 
+  const addNewComment = (comments, newComment, parentId) => {
+    if (!parentId) {
+      return [{ ...newComment, replies: [] }, ...comments];
+    }
+
+    return comments.map(comment => {
+      if (comment.id === parentId) {
+        return {
+          ...comment,
+          replies: [{ ...newComment, replies: [] }, ...comment.replies]
+        };
+      } else if (comment.replies.length > 0) {
+        return {
+          ...comment,
+          replies: addNewComment(comment.replies, newComment, parentId)
+        };
+      }
+      return comment;
+    });
+  };
+
   const handleEditComment = async (commentId, newText) => {
     try {
       const axiosInstance = createAxiosInstance(token);
-      const response = await axiosInstance.patch(`${GatewayUrl}api/article-comments/${commentId}/`, {
+      await axiosInstance.patch(`${GatewayUrl}api/article-comments/${commentId}/`, {
         text: newText,
       });
-      setComments(comments.map(comment =>
-        comment.id === commentId ? { ...comment, text: newText } : comment
-      ));
+      setComments(updateCommentInTree(comments, commentId, { text: newText }));
     } catch (error) {
       console.error('Error editing comment:', error);
     }
@@ -80,20 +115,44 @@ const CommentSection = ({ articleId, token }) => {
     try {
       const axiosInstance = createAxiosInstance(token);
       await axiosInstance.delete(`${GatewayUrl}api/article-comments/${commentId}/`);
-      setComments(comments.filter(comment => comment.id !== commentId));
+      setComments(removeCommentFromTree(comments, commentId));
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
   };
 
-  const CommentForm = ({ onSubmit, placeholder }) => (
+  const updateCommentInTree = (commentTree, commentId, updatedFields) => {
+    return commentTree.map(comment => {
+      if (comment.id === commentId) {
+        return { ...comment, ...updatedFields };
+      }
+      if (comment.replies) {
+        return { ...comment, replies: updateCommentInTree(comment.replies, commentId, updatedFields) };
+      }
+      return comment;
+    });
+  };
+
+  const removeCommentFromTree = (commentTree, commentId) => {
+    return commentTree.filter(comment => {
+      if (comment.id === commentId) {
+        return false;
+      }
+      if (comment.replies) {
+        comment.replies = removeCommentFromTree(comment.replies, commentId);
+      }
+      return true;
+    });
+  };
+
+  const CommentForm = ({ onSubmit, placeholder, inputRef }) => (
     <form onSubmit={onSubmit} className="mt-4">
       <textarea
         name="comment"
         placeholder={placeholder}
         className="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ease-in-out dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm sm:text-base"
         rows="3"
-        ref={commentInputRef}
+        ref={inputRef}
       ></textarea>
       <button type="submit" className={`${Colors.tealBlueGradientText} mt-2 px-4 py-2 rounded-md font-medium transition-all duration-200 ease-in-out hover:opacity-80`}>
         Post Comment
@@ -110,27 +169,39 @@ const CommentSection = ({ articleId, token }) => {
     </form>
   );
 
-  const Comment = ({ comment }) => {
+  const Comment = ({ comment, depth = 0 }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedText, setEditedText] = useState(comment.text);
     const isOwnComment = userId === comment.user_data.id;
-
+    const [showReplies, setShowReplies] = useState(false);
+    const replyInputRef = useRef(null);
+  
+    const handleReply = () => {
+      setReplyingTo(replyingTo === comment.id ? null : comment.id);
+      setShowReplies(true); // Always show replies when replying
+      setTimeout(() => replyInputRef.current?.focus(), 0);
+    };
+  
     const handleEdit = () => {
       setIsEditing(true);
     };
-
+  
     const handleSaveEdit = () => {
       handleEditComment(comment.id, editedText);
       setIsEditing(false);
     };
-
+  
     const handleCancelEdit = () => {
       setEditedText(comment.text);
       setIsEditing(false);
     };
-
+  
+    const toggleReplies = () => {
+      setShowReplies(!showReplies);
+    };
+  
     return (
-      <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow-md transition-all duration-200 ease-in-out hover:shadow-lg">
+      <div className={`bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow-md transition-all duration-200 ease-in-out hover:shadow-lg ${depth > 0 ? 'ml-4 sm:ml-8' : ''}`}>
         <div className="flex items-start space-x-2 sm:space-x-3">
           <img src={`${GatewayUrl}api/user_service/media/${comment.user_data.profile.split('/media/media/')[1]}`} alt={`${comment.user_data.first_name} ${comment.user_data.last_name}`} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full" />
           <div className="flex-1 min-w-0">
@@ -158,7 +229,7 @@ const CommentSection = ({ articleId, token }) => {
             )}
             <div className="mt-2 flex flex-wrap items-center gap-2 sm:gap-4">
               <button
-                onClick={() => handleReply(comment.id)}
+                onClick={handleReply}
                 className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 flex items-center transition-all duration-200 ease-in-out hover:text-blue-800 dark:hover:text-blue-300"
               >
                 {replyingTo === comment.id ? (
@@ -189,10 +260,42 @@ const CommentSection = ({ articleId, token }) => {
                   </button>
                 </>
               )}
+              {comment.replies && comment.replies.length > 0 && (
+                <button
+                  onClick={toggleReplies}
+                  className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 flex items-center transition-all duration-200 ease-in-out hover:text-blue-800 dark:hover:text-blue-300"
+                >
+                  {showReplies ? (
+                    <>
+                      <ChevronUpIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                      Hide Replies
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDownIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                      Show Replies ({comment.replies.length})
+                    </>
+                  )}
+                </button>
+              )}
             </div>
             {replyingTo === comment.id && (
               <div className="mt-3">
-                <CommentForm onSubmit={(e) => handleSubmitComment(e, comment.id)} placeholder="Write a reply..." />
+                <CommentForm 
+                  onSubmit={(e) => {
+                    handleSubmitComment(e, comment.id);
+                    setReplyingTo(null);
+                  }} 
+                  placeholder="Write a reply..." 
+                  inputRef={replyInputRef}
+                />
+              </div>
+            )}
+            {(showReplies || replyingTo === comment.id) && comment.replies && comment.replies.length > 0 && (
+              <div className="mt-3 space-y-3">
+                {comment.replies.map((reply) => (
+                  <Comment key={reply.id} comment={reply} depth={depth + 1} />
+                ))}
               </div>
             )}
           </div>
@@ -204,19 +307,17 @@ const CommentSection = ({ articleId, token }) => {
   return (
     <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-6">
       <h3 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-white">Comments</h3>
-      <CommentForm onSubmit={(e) => handleSubmitComment(e)} placeholder="Add a comment..." />
+      <CommentForm 
+        onSubmit={(e) => handleSubmitComment(e)} 
+        placeholder="Add a comment..." 
+        inputRef={mainCommentInputRef}
+      />
 
       <div className="space-y-3 sm:space-y-4">
-        {comments.slice(0, visibleComments).map((comment) => (
+        {comments.map((comment) => (
           <Comment key={comment.id} comment={comment} />
         ))}
       </div>
-
-      {visibleComments < comments.length && (
-        <button onClick={handleLoadMoreComments} className="mt-3 sm:mt-4 w-full py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
-          Load More Comments
-        </button>
-      )}
     </div>
   );
 };
