@@ -7,13 +7,19 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, I
 from . import permissions, serializers, models
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
+from rest_framework.pagination import PageNumberPagination
 
+class CustomPagination(PageNumberPagination):
+    page_size = 6
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 class CommunityListCreateView(generics.ListCreateAPIView):
     queryset = models.Community.objects.all()
     serializer_class = serializers.CommunitySerializer
     permission_classes = [IsAuthenticatedOrReadOnly, permissions.IsOwnerOrReadOnly] 
     parser_classes = [MultiPartParser, FormParser]
+    pagination_class = CustomPagination 
 
     def perform_create(self, serializer):
         community = serializer.save()

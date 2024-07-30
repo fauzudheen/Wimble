@@ -1,14 +1,16 @@
-
+import React from 'react';
 import CompactArticle from '../article/CompactArticle';
 
-const UserArticles = ({ articles }) => {
+const UserArticles = ({ articles, lastArticleRef }) => {
   return (
     <div className="space-y-6">
-      {articles.map((article) => (
+      {articles.map((article, index) => (
         article.user_data ? (
-            <CompactArticle key={article.id} article={article} />
+          <div key={article.id} ref={index === articles.length - 1 ? lastArticleRef : null}>
+            <CompactArticle article={article} />
+          </div>
         ) : null
-        ))}
+      ))}
     </div>
   );
 };

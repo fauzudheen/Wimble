@@ -25,6 +25,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
     tags = TagSerializer(many=True, required=False) 
+    
     class Meta:
         model = Article
         fields = "__all__"  
@@ -41,10 +42,11 @@ class ArticleSerializer(serializers.ModelSerializer):
     
 
 class LikeSerializer(serializers.ModelSerializer):
+    article = serializers.SerializerMethodField()
     class Meta:
         model = Like
         fields = "__all__"
-        read_only_fields = ['id', 'user', 'created_at']
+        read_only_fields = ['id', 'user', 'created_at', 'article'] 
     
     def create(self, validated_data):
         user = self.context['request'].user
@@ -52,13 +54,17 @@ class LikeSerializer(serializers.ModelSerializer):
         article = Article.objects.get(id=article_id)
         return Like.objects.create(user=user, article=article)
 
+    def get_article(self, obj):
+        return ArticleSerializer(obj.article).data
+
 class CommentSerializer(serializers.ModelSerializer):
     user_data = serializers.SerializerMethodField()
     replies = serializers.SerializerMethodField()
+    article = serializers.SerializerMethodField()
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'created_at', 'user_data', 'parent', 'replies']
-        read_only_fields = ['id', 'user', 'created_at', 'parent']  
+        fields = ['id', 'text', 'created_at', 'user_data', 'parent', 'replies', 'article']
+        read_only_fields = ['id', 'user', 'created_at', 'parent', 'article']   
 
     def get_user_data(self, obj):
         return UserSerializer(obj.user).data 
@@ -66,6 +72,9 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_replies(self, obj):
         replies = Comment.objects.filter(parent=obj)
         return CommentSerializer(replies, many=True).data
+    
+    def get_article(self, obj):
+        return ArticleSerializer(obj.article).data
     
 class ReportSerializer(serializers.ModelSerializer):
     class Meta:

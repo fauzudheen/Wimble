@@ -4,9 +4,9 @@ import CompactArticle from '../article/CompactArticle';
 
 const UserComments = ({ comments }) => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       {comments.map((comment) => (
-        <div key={comment.id} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow hover:scale-101 transition-transform duration-300">
+        <div key={comment.id} className="bg dark:bg-gray-700 p-4 rounded-sm shadow transition-transform duration-300">
           {comment.article && <CompactArticle article={comment.article} />}
           <p className="mt-2 text-gray-800 dark:text-gray-200">{comment.text}</p>
           <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">

@@ -6,6 +6,10 @@ import Users from '../components/admin/Users';
 import AdminProtectedRoutes from './AdminProtectedRoutes';
 import AdminPublicRoutes from './AdminPublicRoutes';
 import SkillsAndInterests from '../components/admin/SkillsAndInterests';
+import Teams from '../components/admin/Teams';
+import Communities from '../components/admin/Communities';
+import Articles from '../components/admin/Articles';
+import Pricing from '../components/admin/Pricing';
 
 const AdminRoutes = () => {
   return (
@@ -18,7 +22,11 @@ const AdminRoutes = () => {
       <Route element={<AdminProtectedRoutes />}>
         <Route path="admin/dashboard" element={<AdminLayout><Dashboard/></AdminLayout>} />
         <Route path="admin/users" element={<AdminLayout><Users/></AdminLayout>} />
+        <Route path="admin/teams" element={<AdminLayout><Teams/></AdminLayout>} />
+        <Route path="admin/communities" element={<AdminLayout><Communities/></AdminLayout>} />
+        <Route path="admin/articles" element={<AdminLayout><Articles/></AdminLayout>} />
         <Route path="admin/skills-and-interests" element={<AdminLayout><SkillsAndInterests/></AdminLayout>} />
+        <Route path="admin/pricing" element={<AdminLayout><Pricing/></AdminLayout>} />
       </Route>
 
     </Routes>

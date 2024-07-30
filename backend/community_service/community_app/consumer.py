@@ -22,10 +22,10 @@ consumer = Consumer({
     'auto.offset.reset': 'earliest'
 })
 
-consumer.subscribe(['users'])
+consumer.subscribe(['users', 'users-deleted'])
 
 def store_user_in_db(user_data):
-    print("------------------store_user view called-----------------")
+    print("------------------store_user view called in community service-----------------")
     with transaction.atomic():
         try:
             User.objects.update_or_create(
@@ -39,6 +39,17 @@ def store_user_in_db(user_data):
             )
         except Exception as e:
             print(f"Error storing user data: {e}")
+
+def delete_user_from_db(user_data):
+    print("------------------delete_user view called in community service-----------------")
+    with transaction.atomic():
+        try:
+            user_id = user_data['id']
+            User.objects.filter(id=user_id).delete()
+            print(f"User {user_id} deleted from database")
+        except Exception as e:
+            print(f"Error deleting user data: {e}")
+
 
 def consume_messages():
     try:
@@ -63,10 +74,14 @@ def consume_messages():
                     if topic == 'users':
                         store_user_in_db(message_data)
                         print(f"User {message_data['id']} data stored in database")
+                    elif topic == 'users-deleted':
+                        delete_user_from_db(message_data)
+                        print(f"User {message_data['id']} deleted from database")
                 except json.JSONDecodeError as e:
                     print(f"JSON decode error: {e}")
                 except Exception as e:
                     print(f"Error processing message: {e}")
+
     except Exception as e:
         print(f"Unexpected error: {e}")
     finally:

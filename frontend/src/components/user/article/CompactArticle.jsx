@@ -12,6 +12,9 @@ const CompactArticle = ({ article }) => {
     created_at
   } = article;
 
+  const createdAtDate = new Date(created_at);
+  const isValidDate = !isNaN(createdAtDate);
+
   return (
     <Link to={`/article/${id}`}>
       <article className="bg-gray-50 dark:bg-gray-900 p-3 sm:p-4 shadow-md rounded-lg mb-4 hover:scale-101 transition-transform duration-200">
@@ -40,11 +43,10 @@ const CompactArticle = ({ article }) => {
             </div>
           </div>
           <div className="text-xs sm:text-sm">
-            {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
+            {isValidDate ? formatDistanceToNow(createdAtDate, { addSuffix: true }) : 'Invalid date'}
           </div>
         </footer>
       </article>
-
     </Link>
   );
 }

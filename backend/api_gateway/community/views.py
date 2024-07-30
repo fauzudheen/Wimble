@@ -8,7 +8,8 @@ class CommunityView(APIView):
         if pk:
             service_url = f"{COMMUNITY_SERVICE_URL}/communities/{pk}/"
         else:
-            service_url = f"{COMMUNITY_SERVICE_URL}/communities/"
+            page = request.query_params.get('page', 1)
+            service_url = f"{COMMUNITY_SERVICE_URL}/communities/?page={page}"
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
     

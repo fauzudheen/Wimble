@@ -11,7 +11,7 @@ const Layout = ({children}) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-blue-100 dark:bg-gray-700">
+    <div className="flex min-h-screen bg-blue-100 dark:bg-black">
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="flex-1 md:ml-64"> {/* Add left margin for large screens */}
         <div className="md:hidden fixed top-4 left-4 z-50">

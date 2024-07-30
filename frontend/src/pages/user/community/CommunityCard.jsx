@@ -62,24 +62,20 @@ const CommunityCard = ({ community }) => {
             <UserGroupIcon className="w-5 h-5 mr-1" />
             <span>{community.member_count} members</span>
           </div>
-          <div className="flex items-center">
-            <ChatBubbleLeftIcon className="w-5 h-5 mr-1" />
-            <span>{community.postCount || 0} articles</span>
-          </div>
+          {isMember && (
+            <div className="flex items-center space-x-1">
+              <CheckIcon className="w-5 h-5 text-green-500" strokeWidth={3} />
+              <p className="dark:text-white text-sm">Joined</p>
+            </div>
+          )}
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-center">
           <Link
             to={`/communities/${community.id}`}
             className={`${Buttons.cancelButton} rounded-md text-sm`}
           >
             View Community
           </Link>
-          {isMember && (
-            <div className="flex items-center space-x-1">
-              <CheckIcon className="w-5 h-5 text-green-500" strokeWidth={3} />
-              <p className="dark:text-white text-sm">Member</p>
-            </div>
-          )}
         </div>
       </div>
     </div>

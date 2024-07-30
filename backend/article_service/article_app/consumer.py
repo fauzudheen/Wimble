@@ -21,7 +21,7 @@ consumer = Consumer({
     'auto.offset.reset': 'earliest'
 })
 
-consumer.subscribe(['users', 'interests'])
+consumer.subscribe(['users', 'interests', 'users-deleted', 'interests-deleted'])
 
 def store_user_in_db(user_data):
     with transaction.atomic():
@@ -45,7 +45,27 @@ def store_interest_in_db(interest_data):
                 'name': interest_data['name'],
             }
         )
+    print(f"Stored interest: {interest_data['name']}")
     
+def delete_user_from_db(user_data):
+    print("------------------delete_user view called in article service-----------------")
+    with transaction.atomic():
+        try:
+            user_id = user_data['id']
+            User.objects.filter(id=user_id).delete()
+            print(f"User {user_id} deleted from database")
+        except Exception as e:
+            print(f"Error deleting user data: {e}")
+
+def delete_interest_from_db(interest_data):
+    print("------------------delete_interest view called in article service-----------------")
+    with transaction.atomic():
+        try:
+            interest_id = interest_data['id']
+            Interest.objects.filter(id=interest_id).delete()
+            print(f"Interest {interest_id} deleted from database")
+        except Exception as e:
+            print(f"Error deleting interest data: {e}")
 
 def consume_messages():
     try:
@@ -70,6 +90,12 @@ def consume_messages():
                 elif topic == 'interests':
                     store_interest_in_db(message_data)
                     print(f"Interest {message_data['id']} data stored in database")
+                elif topic == 'users-deleted':
+                    delete_user_from_db(message_data)
+                    print(f"User {message_data['id']} deleted from database")
+                elif topic == 'interests-deleted':
+                    delete_interest_from_db(message_data)
+                    print(f"Interest {message_data['id']} deleted from database")
 
     except Exception as e:
         print(f"Unexpected error: {e}")

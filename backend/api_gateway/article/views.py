@@ -11,7 +11,8 @@ class ArticleView(APIView):
         if pk:
             service_url = f"{ARTICLE_SERVICE_URL}/articles/{pk}/"
         else:
-            service_url = f"{ARTICLE_SERVICE_URL}/articles/"
+            page = request.query_params.get('page', 1)
+            service_url = f"{ARTICLE_SERVICE_URL}/articles/?page={page}"
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
 

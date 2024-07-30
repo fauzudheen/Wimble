@@ -94,7 +94,6 @@ class SkillListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAdminOrReadOnly]
     serializer_class = serializers.SkillSerializer
     queryset = models.Skill.objects.all()
-    pagination_class = None
 
 class SkillRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAdminOrReadOnly]
@@ -105,7 +104,6 @@ class UserSkillListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = serializers.UserSkillSerializer
     queryset = models.UserSkill.objects.all()
-    pagination_class = None
 
     def perform_create(self, serializer):
         skill_id = self.request.data['skill']
@@ -124,7 +122,6 @@ class InterestListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAdminOrCreateOnly]
     serializer_class = serializers.InterestSerializer
     queryset = models.Interest.objects.all()
-    pagination_class = None
 
 class InterestRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAdminOrReadOnly]
@@ -135,7 +132,6 @@ class UserInterestListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = serializers.UserInterestSerializer
     queryset = models.UserInterest.objects.all()
-    pagination_class = None
 
     def perform_create(self, serializer):
         interest_id = self.request.data['interest']

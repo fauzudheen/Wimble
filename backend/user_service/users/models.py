@@ -19,6 +19,10 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
         self.publish_user_update()
 
+    def delete(self, *args, **kwargs):
+        self.publish_user_delete()
+        super().delete(*args, **kwargs)
+
     def publish_user_update(self):
         user_data = { 
             'id': self.id,
@@ -36,6 +40,12 @@ class User(AbstractUser):
         }
 
         kafka_producer.produce_message('users', self.id, user_data)
+
+    def publish_user_delete(self):
+        user_data = { 
+            'id': self.id
+        }
+        kafka_producer.produce_message('users-deleted', self.id, user_data)
 
 class Skill(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -71,6 +81,10 @@ class Interest(models.Model):
         super().save(*args, **kwargs)
         self.publish_interest_update()
 
+    def delete(self, *args, **kwargs):
+        self.publish_interest_delete()
+        super().delete(*args, **kwargs)
+
     def publish_interest_update(self):
         interest_data = { 
             'id': self.id,
@@ -78,6 +92,12 @@ class Interest(models.Model):
         }
 
         kafka_producer.produce_message('interests', self.id, interest_data)
+
+    def publish_interest_delete(self):
+        interest_data = { 
+            'id': self.id
+        }
+        kafka_producer.produce_message('interests-deleted', self.id, interest_data)
 
 class UserInterest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

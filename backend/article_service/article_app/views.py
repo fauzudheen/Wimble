@@ -9,16 +9,23 @@ from . import serializers, permissions, models
 from django.core.cache import cache
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
+from rest_framework.pagination import PageNumberPagination
+
+class CustomPagination(PageNumberPagination):
+    page_size = 6
+    page_size_query_param = 'page_size'
+    max_page_size = 100 
 
 class ArticleListCreateView(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = serializers.ArticleSerializer
     parser_classes = (MultiPartParser, FormParser)
+    pagination_class = CustomPagination
   
 class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
     serializer_class = serializers.ArticleSerializer
-    permission_classes = [IsOwnerOrAdminForArticle]
+    permission_classes = [IsOwnerOrAdminForArticle]  
 
 class TagListCreateView(generics.ListCreateAPIView):
     queryset = models.Tag.objects.all()

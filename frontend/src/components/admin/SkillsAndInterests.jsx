@@ -10,10 +10,10 @@ const SkillsAndInterests = () => {
   const [activeTab, setActiveTab] = useState('skills');
   const [items, setItems] = useState({ skills: [], interests: [] });
   const [newItem, setNewItem] = useState('');
-  const [editingIndex, setEditingIndex] = useState(null);
+  const [editingItem, setEditingItem] = useState(null);
   const token = useSelector(state => state.auth.adminAccess);
   const [errors, setErrors] = useState({});
-  const [deleteModalState, setDeleteModalState] = useState({ isOpen: false, index: null });
+  const [deleteModalState, setDeleteModalState] = useState({ isOpen: false, item: null });
 
   useEffect(() => {
     const fetchSkillsAndInterests = async () => {
@@ -39,13 +39,11 @@ const SkillsAndInterests = () => {
       try {
         const axiosInstance = createAxiosInstance(token);
         const response = await axiosInstance.post(`${GatewayUrl}api/${activeTab}/`, { name: newItem.trim() });
-        console.log('Response:', response.data);
-        setItems(prev => ({ ...prev, [activeTab]: [...prev[activeTab], response.data] }));
+        setItems(prev => ({ ...prev, [activeTab]: [...prev[activeTab], response.data].sort((a, b) => a.name.localeCompare(b.name)) }));
         setNewItem('');
         setErrors({});
       } catch (error) {
         if (error.response && error.response.data) {
-          console.error('Validation errors:', error.response.data);
           setErrors(error.response.data);
         } else {
           console.error('Error creating item:', error);
@@ -54,20 +52,18 @@ const SkillsAndInterests = () => {
     }
   };
 
-  const handleEditItem = async (index, value) => {
+  const handleEditItem = async (item, newName) => {
     try {
       const axiosInstance = createAxiosInstance(token);
-      const itemId = items[activeTab][index].id;
-      const response = await axiosInstance.patch(`${GatewayUrl}api/${activeTab}/${itemId}/`, { name: value });
+      const response = await axiosInstance.patch(`${GatewayUrl}api/${activeTab}/${item.id}/`, { name: newName });
       setItems(prev => ({
         ...prev,
-        [activeTab]: prev[activeTab].map((item, i) => (i === index ? response.data : item))
+        [activeTab]: prev[activeTab].map(i => i.id === item.id ? response.data : i).sort((a, b) => a.name.localeCompare(b.name))
       }));
-      setEditingIndex(null);
+      setEditingItem(null);
       setErrors({});
     } catch (error) {
       if (error.response && error.response.data) {
-        console.error('Validation errors:', error.response.data);
         setErrors(error.response.data);
       } else {
         console.error('Error editing item:', error);
@@ -76,43 +72,95 @@ const SkillsAndInterests = () => {
   };
 
   const handleDeleteItem = async () => {
-    const index = deleteModalState.index;
-    if (index === null) return;
+    if (!deleteModalState.item) return;
 
     try {
       const axiosInstance = createAxiosInstance(token);
-      const itemId = items[activeTab][index].id;
-      await axiosInstance.delete(`${GatewayUrl}api/${activeTab}/${itemId}/`);
+      await axiosInstance.delete(`${GatewayUrl}api/${activeTab}/${deleteModalState.item.id}/`);
       setItems(prev => ({
         ...prev,
-        [activeTab]: prev[activeTab].filter((_, i) => i !== index)
+        [activeTab]: prev[activeTab].filter(i => i.id !== deleteModalState.item.id)
       }));
       setErrors({});
     } catch (error) {
       if (error.response && error.response.data) {
-        console.error('Validation errors:', error.response.data);
         setErrors(error.response.data);
       } else {
         console.error('Error deleting item:', error);
       }
     } finally {
-      setDeleteModalState({ isOpen: false, index: null });
+      setDeleteModalState({ isOpen: false, item: null });
     }
   };
 
-  return (
-    <div className="container mx-auto px-4 py-8 dark:bg-gray-800">
-      <div className="mx-auto">
-        <h2 className="text-2xl font-semibold leading-tight mb-6 dark:text-white text-center">Skills and Interests</h2>
+  const groupItemsByLetter = (items) => {
+    return items.reduce((acc, item) => {
+      const firstLetter = item.name[0].toUpperCase();
+      if (!acc[firstLetter]) {
+        acc[firstLetter] = [];
+      }
+      acc[firstLetter].push(item);
+      return acc;
+    }, {});
+  };
 
-        <div className="bg-white dark:bg-gray-900 p-6 rounded-md shadow-lg border border-gray-200 dark:border-teal-500/30">
+  const renderGroupedItems = (groupedItems) => {
+    return Object.entries(groupedItems).sort().map(([letter, items]) => (
+      <div key={letter} className="mb-6">
+        <h3 className="text-xl font-semibold mb-2 text-gray-700 dark:text-gray-300">{letter}</h3>
+        <div className="flex flex-wrap gap-2">
+          {items.map(item => (
+            <div key={item.id} className="group relative">
+              {editingItem?.id === item.id ? (
+                <input
+                  type="text"
+                  value={editingItem.name}
+                  onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
+                  onBlur={() => handleEditItem(item, editingItem.name)}
+                  className="px-3 py-1 bg-white dark:bg-gray-700 rounded-full text-sm text-gray-900 dark:text-white border border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  autoFocus
+                />
+              ) : (
+                <span className="px-3 py-1 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-full text-sm shadow-sm">
+                  {item.name}
+                </span>
+              )}
+              <div className="absolute top-0 right-0 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => setEditingItem(item)}
+                  className="p-1 bg-yellow-500 rounded-full text-white hover:bg-yellow-600 transition-colors"
+                >
+                  <PencilIcon className="h-3 w-3" />
+                </button>
+                <button
+                  onClick={() => setDeleteModalState({ isOpen: true, item })}
+                  className="p-1 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
+                >
+                  <TrashIcon className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ));
+  };
+
+  const groupedItems = groupItemsByLetter(items[activeTab]);
+
+  return (
+    <div className="container mx-auto py-2 ">
+      <div className="max-w-4xl mx-auto">
+        <h2 className="text-2xl font-bold leading-tight mb-6 text-gray-900 dark:text-white text-center">Skills and Interests</h2>
+
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
           <div className="flex mb-6 bg-gray-100 dark:bg-gray-800 rounded-md p-1">
             {['skills', 'interests'].map(tab => (
               <button
                 key={tab}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-300 ${
+                className={`flex-1 py-2 px-4 mx-6 my-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                   activeTab === tab
-                    ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white shadow-md'
+                    ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white shadow-lg'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
                 onClick={() => setActiveTab(tab)}
@@ -121,7 +169,7 @@ const SkillsAndInterests = () => {
               </button>
             ))}
           </div>
-          <div className="mb-4 flex">
+          <div className="mb-6 flex">
             <input
               type="text"
               value={newItem}
@@ -139,48 +187,15 @@ const SkillsAndInterests = () => {
           {errors.name && (
             <p className="text-red-500 mt-1 text-center mb-2">{errors.name[0]}</p>
           )}
-          <ul className="space-y-2">
-            {items[activeTab].map((item, index) => (
-              <li key={item.id} className="flex items-center bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:border-teal-500/50">
-                {editingIndex === index ? (
-                  <input
-                    type="text"
-                    value={item.name}
-                    onChange={(e) => {
-                      const newItems = [...items[activeTab]];
-                      newItems[index] = { ...newItems[index], name: e.target.value };
-                      setItems({ ...items, [activeTab]: newItems });
-                    }}
-                    onBlur={() => handleEditItem(index, item.name)}
-                    className="flex-grow px-3 py-1 bg-white dark:bg-gray-700 rounded-md text-gray-900 dark:text-white mr-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    autoFocus
-                  />
-                ) : (
-                  <span className="flex-grow text-gray-800 dark:text-gray-200">{item.name}</span>
-                )}
-                <button
-                  onClick={() => setEditingIndex(index)}
-                  className="text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 p-1 transition-colors"
-                >
-                  <PencilIcon className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => setDeleteModalState({ isOpen: true, index })}
-                  className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-1 transition-colors"
-                >
-                  <TrashIcon className="h-5 w-5" />
-                </button>
-              </li>
-            ))}
-          </ul>
+          {renderGroupedItems(groupedItems)}
         </div>
       </div>
       <ConfirmModal 
         isOpen={deleteModalState.isOpen}
         onConfirm={handleDeleteItem}
-        onClose={() => setDeleteModalState({ isOpen: false, index: null })}
+        onClose={() => setDeleteModalState({ isOpen: false, item: null })}
         title="Confirm Deletion"
-        message={`Are you sure you want to delete the ${activeTab.slice(0, -1)} "${deleteModalState.index !== null ? items[activeTab][deleteModalState.index]?.name : ''}"?`}
+        message={`Are you sure you want to delete the ${activeTab.slice(0, -1)} "${deleteModalState.item?.name}"?`}
         confirmButtonText="Delete"
         cancelButtonText="Cancel"
       />
