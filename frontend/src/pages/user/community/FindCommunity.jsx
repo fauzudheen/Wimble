@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import CommunityCard from './CommunityCard';
 import axios from 'axios';
 import { GatewayUrl } from '../../../components/const/urls';
+import CommunityCard from '../../../components/user/community/CommunityCard';
 
 const FindCommunity = () => {
   const [searchTerm, setSearchTerm] = useState('');

@@ -41,28 +41,13 @@ const ProfileContent = () => {
     }
   };
 
-  const fetchArticles = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${GatewayUrl}api/articles/?user=${userId}&page=${page}`);
-      const newArticles = response.data.results;
-      setArticles(prevArticles => [...prevArticles, ...newArticles]);
-      setHasMore(response.data.next !== null);
-    } catch (err) {
-      console.error("Error fetching articles", err);
-    }
-    setLoading(false);
-  };
+
 
   useEffect(() => {
     fetchUserInteractions();
   }, [userId]);
 
-  useEffect(() => {
-    if (activeTab === 'articles') {
-      fetchArticles();
-    }
-  }, [page, activeTab]);
+
 
   const renderContent = () => {
     if (!userInteractions) return null;
@@ -71,7 +56,7 @@ const ProfileContent = () => {
       case 'articles':
         return (
           <UserArticles 
-            articles={articles} 
+            articles={userInteractions.articles} 
             lastArticleRef={lastArticleRef}
           />
         );

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import CommunityCard from './CommunityCard';
 import { GatewayUrl } from '../../../components/const/urls';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import Colors from '../../../components/user/misc/Colors';
+import CommunityCard from '../../../components/user/community/CommunityCard';
 
 const MyCommunities = () => {
   // Dummy data for user's joined communities

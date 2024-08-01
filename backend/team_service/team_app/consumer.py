@@ -11,6 +11,7 @@ sys.path.append(parent_dir)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'team_service.settings')
 django.setup()
 
+from team_app.models import User #This line should be below django.setup(), otherwise it will not work
 from django.db import transaction
 
 # Kafka configuration
@@ -22,7 +23,18 @@ consumer = Consumer({
 
 consumer.subscribe(['users'])
 
-
+def store_user_in_db(user_data):
+    with transaction.atomic():
+        User.objects.update_or_create(
+            id=user_data['id'],
+            defaults={
+                'first_name': user_data.get('first_name', ''),
+                'last_name': user_data.get('last_name', ''),
+                'tagline': user_data.get('tagline', ''),
+                'profile': user_data.get('profile', ''),
+            }
+        )
+    print(f"Stored user with profile URL: {user_data.get('profile', '')}")
 
 def consume_messages():
     try:
@@ -41,6 +53,9 @@ def consume_messages():
                 topic = msg.topic()
                 message_data = json.loads(msg.value().decode('utf-8'))
                 print(f"Received message: {message_data}")
+                if topic == 'users':
+                    store_user_in_db(message_data)
+                    print(f"User {message_data['id']} data stored in database")
 
     except Exception as e:
         print(f"Unexpected error: {e}")

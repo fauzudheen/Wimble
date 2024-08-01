@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import CommunityCard from './CommunityCard';
 import Buttons from '../../../components/user/misc/Buttons';
 import Colors from '../../../components/user/misc/Colors';
 import axios from 'axios';
 import { GatewayUrl } from '../../../components/const/urls';
 import { useSelector } from 'react-redux';
+import CommunityCard from '../../../components/user/community/CommunityCard';
 
 const JoinedCommunities = () => {
   const [searchTerm, setSearchTerm] = useState('');

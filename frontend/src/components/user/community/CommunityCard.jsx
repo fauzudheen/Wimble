@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { UserGroupIcon, ChatBubbleLeftIcon, PhotoIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
-import Buttons from '../../../components/user/misc/Buttons';
+import Buttons from '../misc/Buttons';
 import axios from 'axios';
-import { GatewayUrl } from '../../../components/const/urls';
+import { GatewayUrl } from '../../const/urls';
 import { useSelector } from 'react-redux';
 
 const CommunityCard = ({ community }) => {
