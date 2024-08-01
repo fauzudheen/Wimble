@@ -25,6 +25,9 @@ class Team(models.Model):
     privacy = models.CharField(max_length=10, choices=PRIVACY_CHOICES, default='public')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']  
+
 
 class TeamMember(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='members')
@@ -32,6 +35,9 @@ class TeamMember(models.Model):
     role = models.CharField(max_length=20, choices=[('admin', 'Admin'), ('member', 'Member')], default='member')
     request_status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')], default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
 
 class TeamPermission(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='permissions')

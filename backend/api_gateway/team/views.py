@@ -8,18 +8,41 @@ class TeamView(APIView):
         if pk:
             service_url = f"{TEAM_SERVICE_URL}/teams/{pk}/"
         else:
-            service_url = f"{TEAM_SERVICE_URL}/teams/"
+            page = request.query_params.get('page', 1)
+            service_url = f"{TEAM_SERVICE_URL}/teams/?page={page}"
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
 
     def post(self, request):
         service_url = f"{TEAM_SERVICE_URL}/teams/"
-        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
-        return Response(response.json(), status=response.status_code)
+        files = {}
+        if 'profile_image' in request.data:
+            files['profile_image'] = request.data['profile_image']
+            request.data.pop('profile_image', None) 
+
+        response = requests.post(
+            service_url, 
+            data=request.data,
+            files=files,
+            headers={key: value for key, value in request.headers.items() if key != 'Content-Type'}
+        )
+
+        return Response(response.json(), status=response.status_code)  
     
     def put(self, request, pk):
         service_url = f"{TEAM_SERVICE_URL}/teams/{pk}/"
-        response = requests.put(service_url, json=request.data, headers=dict(request.headers))
+        files = {}
+        if 'profile_image' in request.data:
+            files['profile_image'] = request.data['profile_image']
+            request.data.pop('profile_image', None) 
+
+        response = requests.put(
+            service_url, 
+            data=request.data,
+            files=files,
+            headers={key: value for key, value in request.headers.items() if key != 'Content-Type'}
+        )
+
         return Response(response.json(), status=response.status_code)
     
     def delete(self, request, pk):

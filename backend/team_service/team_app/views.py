@@ -9,15 +9,20 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 
-
+class CustomPagination(PageNumberPagination):
+    page_size = 6
+    page_size_query_param = 'page_size'
+    
 class TeamListCreateView(generics.ListCreateAPIView):
     queryset = models.Team.objects.all()
-    serializer_class = serializers.TeamSerializer
+    serializer_class = serializers.TeamSerializer 
+    pagination_class = CustomPagination
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
         team = serializer.save()
         models.TeamMember.objects.create(user_id=self.request.user.id, team=team, role='admin', request_status='accepted')
+
 
 class TeamRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Team.objects.all()
@@ -36,7 +41,7 @@ class TeamMemberListCreateView(generics.ListCreateAPIView):
         team_id = self.kwargs['pk']
         serializer.save(user_id=self.request.user.id, team_id=team_id)
 
-class TeamMemberRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+class TeamMemberRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView): 
     serializer_class = serializers.TeamMemberSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, permissions.IsOwnerOrCreatorOrReadOnly]
     # When there are multiple parameters, you need to customize the get_queryset method, rest_framework will handle the rest

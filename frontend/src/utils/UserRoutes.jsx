@@ -19,6 +19,8 @@ import ArticlesByTag from '../pages/user/article/ArticlesByTag';
 import CommunitiesLayout from '../pages/user/community/CommunitiesLayout';
 import CommunityPage from '../pages/user/community/CommunityPage';
 import CommunitySettings from '../pages/user/community/CommunitySettings';
+import TeamsLayout from '../pages/user/team/TeamsLayout';
+import TeamPage from '../pages/user/team/TeamPage';
 
 const UserRoutes = () => {
   return (
@@ -29,14 +31,15 @@ const UserRoutes = () => {
         </Route>
         
         <Route element={<NavbarLayout />}>
-          <Route path="/" element={<MainLayout />}>
-            <Route path="home" element={<UserHome />} />
-            <Route path="tags" element={<Tags />} />
-            <Route path="/articles-by-tag/:interestId" element={<ArticlesByTag />} />
-            <Route path="/communities" element={<CommunitiesLayout />} />
-          </Route>
+            <Route path="/home" element={<MainLayout><UserHome /></MainLayout>} />
+            <Route path="/tags" element={<MainLayout><Tags /></MainLayout>} />
+            <Route path="/articles-by-tag/:interestId" element={<MainLayout><ArticlesByTag /></MainLayout>} />
+            <Route path="/communities" element={<MainLayout><CommunitiesLayout /></MainLayout>} />
+            <Route path="/teams" element={<MainLayout><TeamsLayout /></MainLayout>} />
+
             <Route path="/communities/:id" element={<CommunityPage />} />
             <Route path="/communities/:id/settings" element={<CommunitySettings />} />
+            <Route path='/teams/:id' element={<TeamPage />} />
             <Route path='/user-profile/:id' element={<ProfilePage />} />
           <Route element={<UserProtectedRoutes />}>
               <Route path='/my-profile' element={<ProfilePage />} />

@@ -5,7 +5,7 @@ import CommunityPromotion from '../../components/user/CommunityPromotion';
 import HomeSidebar from '../../components/user/HomeSidebarLeft';
 import PlusPromotion from '../../components/user/PlusPromotion';
 
-const MainLayout = () => {
+const MainLayout = ({children}) => {
   const isAuthenticated = useSelector(state => state.auth.isUserAuthenticated);
 
   return (
@@ -16,7 +16,7 @@ const MainLayout = () => {
         <PlusPromotion />
       </div>
       <div className="w-full lg:w-4/5 lg:ml-[20%] p-4">
-        <Outlet />
+        {children}
       </div>
     </div>
   );
