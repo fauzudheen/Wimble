@@ -6,4 +6,5 @@ urlpatterns = [
     path('teams/<int:pk>/', views.TeamRetrieveUpdateDestroyView.as_view()),
     path('teams/<int:pk>/members/', views.TeamMemberListCreateView.as_view()),
     path('teams/<int:pk>/members/<int:user_id>/', views.TeamMemberRetrieveUpdateDestroyView.as_view()), 
+    path('member-teams/', views.MemberTeamListView.as_view()),
 ] 

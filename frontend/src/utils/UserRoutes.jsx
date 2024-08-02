@@ -35,16 +35,18 @@ const UserRoutes = () => {
             <Route path="/tags" element={<MainLayout><Tags /></MainLayout>} />
             <Route path="/articles-by-tag/:interestId" element={<MainLayout><ArticlesByTag /></MainLayout>} />
             <Route path="/communities" element={<MainLayout><CommunitiesLayout /></MainLayout>} />
-            <Route path="/teams" element={<MainLayout><TeamsLayout /></MainLayout>} />
 
             <Route path="/communities/:id" element={<CommunityPage />} />
             <Route path="/communities/:id/settings" element={<CommunitySettings />} />
-            <Route path='/teams/:id' element={<TeamPage />} />
             <Route path='/user-profile/:id' element={<ProfilePage />} />
+            
           <Route element={<UserProtectedRoutes />}>
               <Route path='/my-profile' element={<ProfilePage />} />
               <Route path='/create-article' element={<CreateArticle />} />
               <Route path="/edit-article/:id" element={<EditArticle />} />
+              <Route path="/teams" element={<MainLayout><TeamsLayout /></MainLayout>} />
+              <Route path='/teams/:id' element={<TeamPage />} />
+
               <Route path="settings" element={<SettingsLayout />}>
                 <Route index element={<General />} />
                 <Route path="general" element={<General />} />

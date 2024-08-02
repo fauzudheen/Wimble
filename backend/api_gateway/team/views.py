@@ -73,3 +73,9 @@ class TeamMemberView(APIView):
         service_url = f"{TEAM_SERVICE_URL}/teams/{pk}/members/{user_id}/"
         response = requests.delete(service_url, headers=dict(request.headers))
         return Response(status=response.status_code)
+    
+class MemberTeamView(APIView):
+    def get(self, request):
+        service_url = f"{TEAM_SERVICE_URL}/member-teams/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)

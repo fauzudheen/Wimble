@@ -41,7 +41,7 @@ class TeamMember(models.Model):
 
 class TeamPermission(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='permissions')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='team_permissions')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='team_permissions') 
     can_create_project = models.BooleanField(default=False)
     can_manage_members = models.BooleanField(default=False)
     can_schedule_meetings = models.BooleanField(default=False)
