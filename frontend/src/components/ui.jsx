@@ -55,3 +55,51 @@ export const AvatarFallback = ({ children }) => (
     {children}
   </div>
 );
+
+
+// Input Component
+export const Input = ({ type = 'text', placeholder = '', className = '', ...props }) => (
+  <input
+    type={type}
+    placeholder={placeholder}
+    className={`border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 ${className}`}
+    {...props}
+  />
+);
+
+// Textarea Component
+export const Textarea = ({ placeholder = '', className = '', ...props }) => (
+  <textarea
+    placeholder={placeholder}
+    className={`border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 ${className}`}
+    {...props}
+  />
+);
+
+// Switch Component
+export const Switch = ({ checked, onChange, className = '' }) => (
+  <label className={`inline-flex items-center cursor-pointer ${className}`}>
+    <input
+      type="checkbox"
+      className="sr-only"
+      checked={checked}
+      onChange={onChange}
+    />
+    <div className="relative">
+      <div className={`block w-14 h-8 rounded-full ${checked ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
+      <div
+        className={`absolute left-1 top-1 w-6 h-6 rounded-full transition-transform duration-200 ease-in-out ${checked ? 'transform translate-x-full bg-blue-500' : 'bg-white'}`}
+      ></div>
+    </div>
+  </label>
+);
+
+// Button Component
+export const Button = ({ children, className = '', ...props }) => (
+  <button
+    className={`bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 ${className}`}
+    {...props}
+  >
+    {children}
+  </button>
+);

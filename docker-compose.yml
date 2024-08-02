@@ -126,8 +126,7 @@ services:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
-      - ZOO_LOG4J_LOGGERS=INFO,stdout
-      - ZOO_LOG4J_ROOT_LOGLEVEL=ERROR  # Set log level to ERROR to reduce logs
+      - ZOO_LOG4J_PROP=log4j.rootLogger=OFF, stdout
 
   kafka:
     image: 'bitnami/kafka:latest'
@@ -140,8 +139,7 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_LOG4J_LOGGERS=INFO,stdout
-      - KAFKA_LOG4J_ROOT_LOGLEVEL=ERROR  # Set log level to ERROR to reduce logs
+      - KAFKA_LOG4J_OPTS=-Dlog4j.rootLogger=OFF
     depends_on:
       - zookeeper 
 

@@ -7,17 +7,21 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TeamSerializer(serializers.ModelSerializer):
+    member_count = serializers.SerializerMethodField()
     is_member = serializers.SerializerMethodField()
     class Meta:
         model = models.Team
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'admin']
     
+    def get_member_count(self, obj):
+        return obj.members.count()
+    
     def get_is_member(self, obj):
-        user_id = self.context['request'].user.id
-        print("-----------------Team service get_is_member called-----------------user_id", user_id)
-        return obj.members.filter(user_id=user_id).exists()  
+        request = self.context.get('request')
+        return obj.members.filter(user_id=request.user.id).exists()
 
+    
 class TeamMemberSerializer(serializers.ModelSerializer):
     user_data = serializers.SerializerMethodField()
     class Meta:

@@ -30,9 +30,9 @@ class JWTAuthentication(BaseAuthentication):
         except jwt.InvalidTokenError:
             raise AuthenticationFailed('Invalid token')
         user_id = payload['user_id']
-        
+
         # Fetch user info from User Service
-        user_info = self.get_user_info(user_id)
+        user_info = self.get_user_info(user_id) 
         if not user_info:
             raise AuthenticationFailed('User not found')
         

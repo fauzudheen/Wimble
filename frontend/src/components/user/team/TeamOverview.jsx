@@ -1,80 +1,106 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Calendar, Clock, Users, Briefcase, TrendingUp, CheckCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, Alert, AlertTitle, Progress, Avatar, AvatarImage, AvatarFallback } from '../../ui';
-import Article from '../Article';
+import { Users, Briefcase, Calendar, TrendingUp, CheckCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, Alert, AlertTitle, Progress } from '../../ui';
+import axios from 'axios';
+import { GatewayUrl } from '../../const/urls';
 
 const TeamOverview = ({ id }) => {
-  const [teamData, setTeamData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [team, setTeam] = React.useState({});
+
   useEffect(() => {
-    // Simulating API call to fetch team data
-    const fetchTeamData = async () => {
-      // In a real application, replace this with an actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setTeamData({
-        name: "Innovation Squad",
-        members: 12,
-        activeProjects: 5,
-        completedProjects: 23,
-        upcomingMeetings: 3,
-        productivity: 87,
-        recentActivities: [
-          { id: 1, user: "Alice", action: "completed task", project: "Project Alpha", time: "2 hours ago" },
-          { id: 2, user: "Bob", action: "commented on", project: "Project Beta", time: "4 hours ago" },
-          { id: 3, user: "Charlie", action: "created new task", project: "Project Gamma", time: "Yesterday" },
-        ],
-        performanceData: [
-          { month: 'Jan', performance: 65 },
-          { month: 'Feb', performance: 59 },
-          { month: 'Mar', performance: 80 },
-          { month: 'Apr', performance: 81 },
-          { month: 'May', performance: 56 },
-          { month: 'Jun', performance: 55 },
-          { month: 'Jul', performance: 40 },
-        ],
-        topPerformers: [
-          { name: "David", avatar: "/api/placeholder/32", performance: 95 },
-          { name: "Eva", avatar: "/api/placeholder/32", performance: 92 },
-          { name: "Frank", avatar: "/api/placeholder/32", performance: 88 },
-        ],
-        upcomingDeadlines: [
-          { project: "Project Delta", deadline: "2024-08-15", progress: 75 },
-          { project: "Project Epsilon", deadline: "2024-08-22", progress: 40 },
-          { project: "Project Zeta", deadline: "2024-08-30", progress: 10 },
-        ],
-      });
-      setLoading(false);
+    const fetchTeam = async () => {
+      try {
+        const response = await axios.get(`${GatewayUrl}api/teams/${id}/`);
+        console.log(response.data);
+        setTeam(response.data);
+      } catch (error) {
+        console.error('Error fetching team data:', error);
+      }
     };
-
-    fetchTeamData();
+    fetchTeam();
   }, [id]);
+  
+  const performanceData = [
+    { month: 'Jan', performance: 65 },
+    { month: 'Feb', performance: 59 },
+    { month: 'Mar', performance: 80 },
+    { month: 'Apr', performance: 81 },
+    { month: 'May', performance: 56 },
+    { month: 'Jun', performance: 55 },
+    { month: 'Jul', performance: 40 },
+  ];
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading team overview...</div>;
-  }
+  const recentActivities = [
+    { id: 1, user: "Alice", action: "completed task", project: "Project Alpha", time: "2 hours ago" },
+    { id: 2, user: "Bob", action: "commented on", project: "Project Beta", time: "4 hours ago" },
+    { id: 3, user: "Charlie", action: "created new task", project: "Project Gamma", time: "Yesterday" },
+  ];
 
-  if (!teamData) {
-    return <div className="text-center text-red-500">Failed to load team data</div>;
-  }
+  const upcomingDeadlines = [
+    { project: "Project Delta", deadline: "2024-08-15", progress: 75 },
+    { project: "Project Epsilon", deadline: "2024-08-22", progress: 40 },
+    { project: "Project Zeta", deadline: "2024-08-30", progress: 10 },
+  ];
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{teamData.name} Overview</h2>
+    <div className="space-y-4 p-4">
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{team.name} Overview</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium flex justify-between items-center">
-              Team Members
-              <Users className="h-4 w-4 text-gray-500" />
-            </CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Team Members</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{teamData.members}</div>
+            <div className="text-2xl font-bold">{team.member_count} / {team.maximum_members}</div>
+            <p className="text-xs text-muted-foreground">
+              {team.maximum_members - team.member_count} spots available
+            </p>
           </CardContent>
         </Card>
-        {/* Repeat similar Card structures for Active Projects, Upcoming Meetings, and Team Productivity */}
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Team Status</CardTitle>
+            <Briefcase className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold capitalize">{team.status}</div>
+            <p className="text-xs text-muted-foreground">
+              {team.privacy} team
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Created</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {new Date(team.created_at).toLocaleDateString()}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {new Date(team.created_at).toLocaleTimeString()}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Team Productivity</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">87%</div>
+            <p className="text-xs text-muted-foreground">
+              +2% from last month
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
@@ -83,7 +109,7 @@ const TeamOverview = ({ id }) => {
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={teamData.performanceData}>
+            <LineChart data={performanceData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -101,12 +127,12 @@ const TeamOverview = ({ id }) => {
           </CardHeader>
           <CardContent>
             <ul className="space-y-4">
-              {teamData.recentActivities.map((activity) => (
+              {recentActivities.map((activity) => (
                 <li key={activity.id} className="flex items-start space-x-2">
-                  <Clock className="h-5 w-5 text-gray-500 mt-0.5" />
+                  <div className="w-2 h-2 mt-1 rounded-full bg-sky-500" />
                   <div>
                     <p className="text-sm font-medium">{activity.user} {activity.action} {activity.project}</p>
-                    <p className="text-xs text-gray-500">{activity.time}</p>
+                    <p className="text-xs text-muted-foreground">{activity.time}</p>
                   </div>
                 </li>
               ))}
@@ -116,22 +142,17 @@ const TeamOverview = ({ id }) => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Top Performers</CardTitle>
+            <CardTitle>Upcoming Project Deadlines</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-4">
-              {teamData.topPerformers.map((performer, index) => (
-                <li key={index} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Avatar>
-                      <AvatarImage src={performer.avatar} />
-                      <AvatarFallback>{performer.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span className="font-medium">{performer.name}</span>
+              {upcomingDeadlines.map((project, index) => (
+                <li key={index} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">{project.project}</span>
+                    <span className="text-sm text-muted-foreground">{project.deadline}</span>
                   </div>
-                  <span className="text-sm font-semibold text-green-600 dark:text-green-400">
-                    {performer.performance}%
-                  </span>
+                  <Progress value={project.progress} className="h-2" />
                 </li>
               ))}
             </ul>
@@ -141,27 +162,17 @@ const TeamOverview = ({ id }) => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Upcoming Project Deadlines</CardTitle>
+          <CardTitle>Team Description</CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-4">
-            {teamData.upcomingDeadlines.map((project, index) => (
-              <li key={index} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">{project.project}</span>
-                  <span className="text-sm text-gray-500">{project.deadline}</span>
-                </div>
-                <Progress value={project.progress} />
-              </li>
-            ))}
-          </ul>
+          <p className="text-muted-foreground">{team.description || "No description provided."}</p>
         </CardContent>
       </Card>
 
       <Alert>
         <CheckCircle className="h-4 w-4 inline-block mr-2" />
-        <AlertTitle>Team Milestone Achieved!</AlertTitle>
-        <p>{teamData.name} has completed {teamData.completedProjects} projects. Great job, team!</p>
+        <AlertTitle>Team Created Successfully!</AlertTitle>
+        <p>{team.name} was created on {new Date(team.created_at).toLocaleDateString()}. Start collaborating with your team members!</p>
       </Alert>
     </div>
   );

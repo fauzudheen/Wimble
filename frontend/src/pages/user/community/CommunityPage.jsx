@@ -197,9 +197,11 @@ const CommunityPage = () => {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 sm:p-4 mb-4 sm:mb-6">
               <div className="flex justify-between items-center mb-3">
                 <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Recent Articles</h2>
+                {isMember && (
                 <Link to="/create-article" state={{ communityId: id, communityName: community.name }}>
                   <button className={`${Buttons.tealBlueGradientButton} text-xs sm:text-sm`}>Post Article</button>
                 </Link>
+                )}
               </div>
                 <hr className='border-gray-200 dark:border-gray-600 mb-2'/>
 

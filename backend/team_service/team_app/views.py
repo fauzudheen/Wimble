@@ -23,6 +23,11 @@ class TeamListCreateView(generics.ListCreateAPIView):
         team = serializer.save()
         models.TeamMember.objects.create(user_id=self.request.user.id, team=team, role='admin', request_status='accepted')
 
+    def get_serializer_context(self):
+        return {'request': self.request} 
+    
+
+
 
 class TeamRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Team.objects.all()
@@ -48,7 +53,7 @@ class TeamMemberRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView)
     def get_queryset(self):
         team_id = self.kwargs['pk']
         user_id = self.kwargs['user_id']
-        return models.TeamMember.objects.filter(team_id=team_id, user_id=user_id)
+        return models.TeamMember.objects.filter(team_id=team_id, user_id=user_id)  
     
 
         

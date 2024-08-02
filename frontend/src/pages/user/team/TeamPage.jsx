@@ -13,6 +13,7 @@ import {
   HomeIcon,
   Bars3Icon,
   XMarkIcon,
+  PhotoIcon,
 } from '@heroicons/react/24/outline';
 
 import TeamChat from '../../../components/user/team/TeamChat';
@@ -87,7 +88,13 @@ const TeamPage = () => {
   const Sidebar = ({ mobile = false }) => (
     <div className={`flex flex-col ${mobile ? 'w-64' : 'w-64'} bg-gradient-to-b from-teal-600 to-blue-700 dark:from-teal-900 dark:to-blue-950 text-white h-full overflow-y-auto`}>
       <div className="p-6">
-        <img className="h-20 w-20 rounded-full mx-auto border-4 border-white dark:border-gray-200 shadow-lg" src={team.profile_image.replace('8000', '8004')} alt={team.name} />
+        { team.profile_image ? (
+          <img className="h-20 w-20 rounded-full object-cover mx-auto border-4 border-white dark:border-gray-200 shadow-lg" src={team.profile_image.replace('8000', '8004')} alt={team.name} />
+        ) : (
+          <div className="h-20 w-20 rounded-full mx-auto border-4 border-white dark:border-gray-200 shadow-lg">
+            <UserGroupIcon className="p-2 text-gray-200 dark:text-gray-400" />
+          </div>
+        )}
         <h2 className="mt-4 text-2xl font-bold text-center text-white">{team.name}</h2>
       </div>
       <nav className="mt-8 px-4">
