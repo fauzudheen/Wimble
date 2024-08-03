@@ -1,14 +1,58 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { UserGroupIcon, ChatBubbleLeftIcon, PhotoIcon, CheckIcon, LockClosedIcon, LockOpenIcon, EyeIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
+import { UserGroupIcon, LockClosedIcon, LockOpenIcon, CheckIcon, ClockIcon, XCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 import { useSelector } from 'react-redux';
 
 const TeamCard = ({ team }) => {
   const userId = useSelector((state) => state.auth.userId);
   const isPublic = team.privacy === 'public';
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    if (isPublic || team.request_status === 'accepted') {
+      navigate(`/teams/${team.id}`);
+    }
+  };
+
+  const renderStatusIcon = () => {
+    switch (team.request_status) {
+      case 'accepted':
+        return (
+          <div className="flex items-center ml-4 text-green-500">
+            <CheckIcon className="w-4 h-4 mr-1" strokeWidth={3} />
+            <span>Member</span>
+          </div>
+        );
+      case 'pending':
+        return (
+          <div className="flex items-center ml-4 text-yellow-500">
+            <ClockIcon className="w-4 h-4 mr-1" strokeWidth={3} />
+            <span>Pending</span>
+          </div>
+        );
+      case 'rejected':
+        return (
+          <div className="flex items-center ml-4 text-red-500">
+            <XCircleIcon className="w-4 h-4 mr-1" strokeWidth={3} />
+            <span>Rejected</span>
+          </div>
+        );
+      default:
+        return isPublic ? (
+          <div className="flex items-center ml-4 text-blue-500">
+            <PlusCircleIcon className="w-4 h-4 mr-1" strokeWidth={3} />
+            <span>Join</span>
+          </div>
+        ) : null;
+    }
+  };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden transition-transform transform duration-200 mb-6 p-4">
+    <div 
+      className={`bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden transition-all duration-200 mb-6 p-4 
+        ${(isPublic || team.request_status === 'accepted') ? 'hover:scale-101 cursor-pointer' : ''}`}
+      onClick={handleCardClick}
+    >
       <div className="flex items-center">
         <div className="flex-shrink-0">
           {team.profile_image ? (
@@ -45,27 +89,13 @@ const TeamCard = ({ team }) => {
               )}
               <span className="capitalize">{team.privacy}</span>
             </div>
-            {team.is_member && (
-              <div className="flex items-center ml-4">
-                <CheckIcon className="w-4 h-4 text-green-500 mr-1" strokeWidth={3} />
-                <span>Member</span>
-              </div>
-            )}
+            {renderStatusIcon()}
           </div>
         </div>
-        {(isPublic || team.is_member) && (
-          <Link
-          to={`/teams/${team.id}`}
-          className={`px-4 py-2 rounded-full text-white flex items-center space-x-1 ${
-            'bg-gradient-to-r from-teal-400 to-blue-600 hover:from-teal-500 hover:to-blue-700 dark:bg-gradient-to-r dark:from-teal-600 dark:to-blue-800 dark:hover:from-teal-700 dark:hover:to-blue-900'
-          } transition-colors duration-300 text-sm font-semibold`}
-          
-          
-        >
-          <EyeIcon className="w-4 h-4" />
-          <span>View Team</span>
-        </Link>
-        
+        {(!isPublic && team.request_status !== 'accepted') && (
+          <div className="flex items-center ml-4">
+            <LockClosedIcon className="w-6 h-6 text-yellow-500 stroke-2" />
+          </div>
         )}
       </div>
     </div>

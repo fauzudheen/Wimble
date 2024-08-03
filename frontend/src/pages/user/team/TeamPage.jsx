@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import { GatewayUrl } from '../../../components/const/urls';
-
 import {
   UserGroupIcon,
   ChatBubbleLeftIcon,
@@ -13,15 +11,17 @@ import {
   HomeIcon,
   Bars3Icon,
   XMarkIcon,
-  PhotoIcon,
 } from '@heroicons/react/24/outline';
-
 import TeamChat from '../../../components/user/team/TeamChat';
 import TeamMeetings from '../../../components/user/team/TeamMeetings';
 import TeamProjects from '../../../components/user/team/TeamProjects';
 import TeamMembers from '../../../components/user/team/TeamMembers';
 import TeamSettings from '../../../components/user/team/TeamSettings';
 import TeamOverview from '../../../components/user/team/TeamOverview';
+import { Alert, AlertTitle, Button } from '../../../components/ui';
+import { LogOut, UserPlus, Clock, X } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import createAxiosInstance from '../../../api/axiosInstance';
 
 const TeamPage = () => {
   const { id } = useParams();
@@ -29,11 +29,17 @@ const TeamPage = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const token = useSelector((state) => state.auth.userAccess);
+  const userId = useSelector((state) => state.auth.userId);
 
   useEffect(() => {
-    const fetchTeamData = async () => {
+    const fetchTeam = async () => {
       try {
-        const response = await axios.get(`${GatewayUrl}api/teams/${id}/`);
+        const axiosInstance = createAxiosInstance(token);
+        const response = await axiosInstance.get(`${GatewayUrl}api/teams/${id}/`);
         setTeam(response.data);
       } catch (error) {
         console.error('Error fetching team data:', error);
@@ -41,9 +47,37 @@ const TeamPage = () => {
         setLoading(false);
       }
     };
+    fetchTeam();
+  }, [id, token]);
 
-    fetchTeamData();
-  }, [id]);
+  const handleLeaveTeam = async () => {
+    setIsLoading(true);
+    try {
+      const axiosInstance = createAxiosInstance(token);
+      await axiosInstance.delete(`${GatewayUrl}api/teams/${id}/members/${userId}/`);
+      setTeam({ ...team, request_status: null });
+    } catch (error) {
+      console.error('Error leaving team:', error);
+      setError('Failed to leave the team. Please try again later.');
+    } finally {
+      setIsLoading(false);
+      setShowLeaveConfirm(false);
+    }
+  };
+
+  const handleJoinRequest = async () => {
+    setIsLoading(true);
+    try {
+      const axiosInstance = createAxiosInstance(token);
+      await axiosInstance.post(`${GatewayUrl}api/teams/${id}/members/`, {});
+      setTeam({ ...team, request_status: 'pending' });
+    } catch (error) {
+      console.error('Error sending join request:', error);
+      setError('Failed to send join request. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -82,22 +116,132 @@ const TeamPage = () => {
     { name: 'Meetings', icon: CalendarIcon, id: 'meetings' },
     { name: 'Projects', icon: FolderIcon, id: 'projects' },
     { name: 'Members', icon: UserGroupIcon, id: 'members' },
-    { name: 'Settings', icon: CogIcon, id: 'settings' },
   ];
+  
+  if (userId === team.admin_data.id) {
+    navItems.push({ name: 'Settings', icon: CogIcon, id: 'settings' });
+  }
 
   const Sidebar = ({ mobile = false }) => (
     <div className={`flex flex-col ${mobile ? 'w-64' : 'w-64'} bg-gradient-to-b from-teal-600 to-blue-700 dark:from-teal-900 dark:to-blue-950 text-white h-full overflow-y-auto`}>
       <div className="p-6">
-        { team.profile_image ? (
+        {team.profile_image ? (
           <img className="h-20 w-20 rounded-full object-cover mx-auto border-4 border-white dark:border-gray-200 shadow-lg" src={team.profile_image.replace('8000', '8004')} alt={team.name} />
         ) : (
-          <div className="h-20 w-20 rounded-full mx-auto border-4 border-white dark:border-gray-200 shadow-lg">
-            <UserGroupIcon className="p-2 text-gray-200 dark:text-gray-400" />
+          <div className="h-20 w-20 rounded-full mx-auto border-4 border-white dark:border-gray-200 shadow-lg flex items-center justify-center bg-white bg-opacity-20">
+            <UserGroupIcon className="h-12 w-12 text-white" />
           </div>
         )}
         <h2 className="mt-4 text-2xl font-bold text-center text-white">{team.name}</h2>
+        <div className="mt-4">
+          {team.request_status === 'accepted' ? (
+            <Button
+              onClick={() => setShowLeaveConfirm(true)}
+              disabled={isLoading}
+              className="
+                relative overflow-hidden
+                flex items-center justify-center w-full 
+                text-white border border-white border-opacity-20 
+                transform transition-all duration-300 ease-in-out
+                text-sm
+                group
+                bg-white bg-opacity-10
+                backdrop-filter backdrop-blur-sm
+                hover:bg-opacity-20
+                rounded-md
+              "
+            >
+              <span className="
+                absolute inset-0 bg-white opacity-10
+                transition-opacity duration-300 ease-in-out
+                rounded-md
+              "></span>
+              <span className="
+                absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 opacity-0
+                group-hover:opacity-100
+                transition-opacity duration-300 ease-in-out
+                rounded-md
+              "></span>
+              <span className="relative z-10 flex items-center">
+                <LogOut className="w-4 h-4 mr-2" />
+                Leave Team
+              </span>
+            </Button>
+          ) : team.request_status === 'pending' ? (
+            <div className="
+              relative overflow-hidden
+              flex items-center justify-center w-full 
+              text-white border border-white border-opacity-20 
+              text-sm
+              bg-white bg-opacity-10
+              backdrop-filter backdrop-blur-sm
+              rounded-md
+            ">
+              <span className="
+                absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-500 opacity-50
+                rounded-md 
+              "></span>
+              <span className="relative z-10 flex items-center py-2 font-semibold">
+                <Clock className="w-4 h-4 mr-2" />
+                Request Pending
+              </span>
+            </div>
+          ) : team.request_status === 'rejected' ? (
+            <div className="
+              relative overflow-hidden
+              flex items-center justify-center w-full 
+              text-white border border-white border-opacity-20 
+              text-sm
+              bg-white bg-opacity-10
+              backdrop-filter backdrop-blur-sm
+              rounded-md
+            ">
+              <span className="
+                absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 opacity-50
+                rounded-md
+              "></span>
+              <span className="relative z-10 flex items-center py-2 font-semibold">
+                <X className="w-4 h-4 mr-2" />
+                Request Rejected
+              </span>
+            </div>
+          ) : (
+            <Button
+              onClick={handleJoinRequest}
+              disabled={isLoading}
+              className="
+                relative overflow-hidden
+                flex items-center justify-center w-full 
+                text-white border border-white border-opacity-20 
+                transform transition-all duration-300 ease-in-out
+                text-sm
+                group
+                bg-white bg-opacity-10
+                backdrop-filter backdrop-blur-sm
+                hover:bg-opacity-20
+                rounded-md
+              "
+            >
+              <span className="
+                absolute inset-0 bg-white opacity-10
+                transition-opacity duration-300 ease-in-out
+                rounded-md
+              "></span>
+              <span className="
+                absolute inset-0 bg-gradient-to-r from-green-500 to-green-600 opacity-0
+                group-hover:opacity-100
+                transition-opacity duration-300 ease-in-out
+                rounded-md
+              "></span>
+              <span className="relative z-10 flex items-center">
+                <UserPlus className="w-4 h-4 mr-2" />
+                Send Join Request
+              </span>
+            </Button>
+          )}
+        </div>
       </div>
-      <nav className="mt-8 px-4">
+      <nav className="mt-4 px-4">
         {navItems.map((item) => (
           <a
             key={item.name}
@@ -147,7 +291,7 @@ const TeamPage = () => {
       )}
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-gray-100 dark:bg-gray-900">
+      <div className="flex-1 flex flex-col overflow-hidden bg-gray-100 dark:bg-black">
         {/* Toggle button for smaller screens */}
         <div className="lg:hidden sticky top-0 z-40 flex items-center justify-between bg-white dark:bg-gray-800 p-4 shadow-md">
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white">{team.name}</h1>
@@ -161,6 +305,26 @@ const TeamPage = () => {
 
         <main className="flex-1 overflow-x-hidden overflow-y-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {showLeaveConfirm && (
+              <Alert variant="destructive" className="dark:bg-red-900 dark:border-red-700">
+                <AlertTitle className="dark:text-white">Are you sure you want to leave this team?</AlertTitle>
+                <p className="dark:text-gray-300">This action cannot be undone. You will need to request to join again if you change your mind.</p>
+                <div className="mt-4 flex justify-end space-x-4">
+                  <Button onClick={() => setShowLeaveConfirm(false)} className="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-700 text-gray-800 dark:text-white">
+                    Cancel
+                  </Button>
+                  <Button onClick={handleLeaveTeam} className="bg-red-500 hover:bg-red-600 text-white">
+                    Yes, Leave Team
+                  </Button>
+                </div>
+              </Alert>
+            )}
+            {error && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <p>{error}</p>
+              </Alert>
+            )}
             {renderContent()}
           </div>
         </main>

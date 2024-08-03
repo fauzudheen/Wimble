@@ -61,6 +61,7 @@ class TeamMemberView(APIView):
     
     def post(self, request, pk):
         service_url = f"{TEAM_SERVICE_URL}/teams/{pk}/members/"
+        print("-------------request.data-------------", request.data)
         response = requests.post(service_url, json=request.data, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
     
@@ -76,6 +77,7 @@ class TeamMemberView(APIView):
     
 class MemberTeamView(APIView):
     def get(self, request):
-        service_url = f"{TEAM_SERVICE_URL}/member-teams/"
+        page = request.query_params.get('page', 1)
+        service_url = f"{TEAM_SERVICE_URL}/member-teams/?page={page}"
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)

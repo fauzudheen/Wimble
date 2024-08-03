@@ -8,18 +8,36 @@ class UserSerializer(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     member_count = serializers.SerializerMethodField()
-    is_member = serializers.SerializerMethodField()
+    request_status = serializers.SerializerMethodField()
+    admin_data = serializers.SerializerMethodField()
     class Meta:
         model = models.Team
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'admin']
     
     def get_member_count(self, obj):
-        return obj.members.count()
+        return obj.members.filter(request_status="accepted").count()  
     
-    def get_is_member(self, obj):
+    def get_request_status(self, obj):
         request = self.context.get('request')
-        return obj.members.filter(user_id=request.user.id).exists()
+        member = obj.members.filter(user_id=request.user.id).first()
+        if member:
+            return member.request_status
+        return None
+    
+    def get_admin_data(self, obj):
+        admin = obj.members.filter(role='admin').first()
+        if admin:
+            return {
+                'id': admin.user.id,
+                'first_name': admin.user.first_name,
+                'last_name': admin.user.last_name,
+                'tagline': admin.user.tagline,
+                'profile': admin.user.profile.url if admin.user.profile else None
+            }
+        return None
+        
+
 
     
 class TeamMemberSerializer(serializers.ModelSerializer):
@@ -27,7 +45,7 @@ class TeamMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TeamMember
         fields = '__all__'
-        read_only_fields = ['id', 'created_at', 'team', 'user', 'user_data']
+        read_only_fields = ['id', 'created_at', 'team', 'user', 'user_data'] 
 
     def get_user_data(self, obj):
         return {
