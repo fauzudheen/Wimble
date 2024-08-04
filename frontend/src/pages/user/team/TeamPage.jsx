@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, Outlet, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { GatewayUrl } from '../../../components/const/urls';
 import {
   UserGroupIcon,
   ChatBubbleLeftIcon,
   CalendarIcon,
   FolderIcon,
-  ChartBarIcon,
   CogIcon,
   HomeIcon,
   Bars3Icon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import TeamChat from '../../../components/user/team/TeamChat';
-import TeamMeetings from '../../../components/user/team/TeamMeetings';
-import TeamProjects from '../../../components/user/team/TeamProjects';
-import TeamMembers from '../../../components/user/team/TeamMembers';
-import TeamSettings from '../../../components/user/team/TeamSettings';
-import TeamOverview from '../../../components/user/team/TeamOverview';
 import { Alert, AlertTitle, Button } from '../../../components/ui';
 import { LogOut, UserPlus, Clock, X } from 'lucide-react';
 import { useSelector } from 'react-redux';
@@ -25,9 +18,10 @@ import createAxiosInstance from '../../../api/axiosInstance';
 
 const TeamPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [team, setTeam] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -43,12 +37,14 @@ const TeamPage = () => {
         setTeam(response.data);
       } catch (error) {
         console.error('Error fetching team data:', error);
+        setError('Failed to fetch team data. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
     fetchTeam();
   }, [id, token]);
+
 
   const handleLeaveTeam = async () => {
     setIsLoading(true);
@@ -90,25 +86,6 @@ const TeamPage = () => {
   if (!team) {
     return <div className="text-center text-2xl mt-10 text-gray-800 dark:text-gray-200">Team not found</div>;
   }
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'overview':
-        return <TeamOverview id={team.id} />;
-      case 'chat':
-        return <TeamChat id={team.id} />;
-      case 'meetings':
-        return <TeamMeetings id={team.id} />;
-      case 'projects':
-        return <TeamProjects id={team.id} />;
-      case 'members':
-        return <TeamMembers id={team.id} />;
-      case 'settings':
-        return <TeamSettings id={team.id} />;
-      default:
-        return <TeamOverview id={team.id} />;
-    }
-  };
 
   const navItems = [
     { name: 'Overview', icon: HomeIcon, id: 'overview' },
@@ -243,22 +220,21 @@ const TeamPage = () => {
       </div>
       <nav className="mt-4 px-4">
         {navItems.map((item) => (
-          <a
+          <Link
             key={item.name}
-            href="#"
+            to={`/teams/${id}/${item.id}`}
             className={`flex items-center px-4 py-3 mb-2 text-sm font-medium rounded-lg transition-all duration-200 ease-in-out ${
-              activeTab === item.id
+              location.pathname.includes(item.id)
                 ? 'bg-white bg-opacity-20 text-white shadow-md'
                 : 'text-blue-100 hover:bg-white hover:bg-opacity-10'
             }`}
             onClick={() => {
-              setActiveTab(item.id);
               if (mobile) setSidebarOpen(false);
             }}
           >
             <item.icon className="mr-3 h-6 w-6" />
-            {item.name}
-          </a>
+            {item.name}   
+          </Link>
         ))}
       </nav>
     </div>
@@ -325,7 +301,7 @@ const TeamPage = () => {
                 <p>{error}</p>
               </Alert>
             )}
-            {renderContent()}
+            <Outlet context={{ id }} />
           </div>
         </main>
       </div>

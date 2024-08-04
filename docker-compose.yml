@@ -60,6 +60,18 @@ services:
     volumes:
       - ./backend/team_service:/app
 
+  communication_service:
+    container_name: communication_service
+    build: ./backend/communication_service
+    ports:
+      - "8005:8005"
+    depends_on:
+      - communication_db
+      - communication_redis
+      - kafka
+    volumes:
+      - ./backend/communication_service:/app
+
   user_db:
     container_name: user_db
     image: postgres
@@ -109,7 +121,17 @@ services:
     volumes:
       - team_db_data:/var/lib/postgresql/data
 
-  
+  communication_db:
+    container_name: communication_db
+    image: postgres
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_DB: communication_db
+      POSTGRES_USER: fauzu
+      POSTGRES_PASSWORD: password
+    volumes:
+      - communication_db_data:/var/lib/postgresql/data
   
   user_redis:
     container_name: user_redis
@@ -118,6 +140,14 @@ services:
       - "6379:6379"
     volumes:
       - user_redis_data:/data
+
+  communication_redis:
+    container_name: communication_redis
+    image: "redis:alpine"
+    ports:
+      - "6380:6379"
+    volumes:
+      - communication_redis_data:/data
 
   zookeeper:
     image: 'bitnami/zookeeper:latest'
@@ -149,6 +179,8 @@ volumes:
   article_db_data:
   community_db_data:
   team_db_data:
+  communication_db_data:
   user_redis_data:
+  communication_redis_data:
   kafka_data:
   zookeeper_data:

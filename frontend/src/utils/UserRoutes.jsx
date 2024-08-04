@@ -21,6 +21,12 @@ import CommunityPage from '../pages/user/community/CommunityPage';
 import CommunitySettings from '../pages/user/community/CommunitySettings';
 import TeamsLayout from '../pages/user/team/TeamsLayout';
 import TeamPage from '../pages/user/team/TeamPage';
+import TeamOverview from '../components/user/team/TeamOverview';
+import TeamChat from '../components/user/team/TeamChat';
+import TeamMeetings from '../components/user/team/TeamMeetings';
+import TeamProjects from '../components/user/team/TeamProjects';
+import TeamMembers from '../components/user/team/TeamMembers';
+import TeamSettings from '../components/user/team/TeamSettings';
 
 const UserRoutes = () => {
   return (
@@ -45,7 +51,6 @@ const UserRoutes = () => {
               <Route path='/create-article' element={<CreateArticle />} />
               <Route path="/edit-article/:id" element={<EditArticle />} />
               <Route path="/teams" element={<MainLayout><TeamsLayout /></MainLayout>} />
-              <Route path='/teams/:id' element={<TeamPage />} />
 
               <Route path="settings" element={<SettingsLayout />}>
                 <Route index element={<General />} />
@@ -53,6 +58,17 @@ const UserRoutes = () => {
                 <Route path="notifications" element={<Notifications />} />
                 <Route path="account" element={<Account />} />
               </Route>
+
+              <Route path="/teams/:id" element={<TeamPage />}>
+                <Route path="overview" element={<TeamOverview />} />
+                <Route path="chat" element={<TeamChat />} />
+                <Route path="meetings" element={<TeamMeetings />} />
+                <Route path="projects" element={<TeamProjects />} />
+                <Route path="members" element={<TeamMembers />} />
+                <Route path="settings" element={<TeamSettings />} />
+              </Route>
+
+
           </Route>
               <Route path='/article/:id' element={<ReadArticle />} />
         </Route>

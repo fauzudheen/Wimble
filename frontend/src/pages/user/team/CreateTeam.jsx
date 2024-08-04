@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { PlusIcon, PhotoIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import CustomAlert from '../../../components/ui/CustomAlert';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { GatewayUrl } from '../../../components/const/urls';
 
@@ -13,14 +12,13 @@ const CreateTeam = () => {
   const [status, setStatus] = useState('active');
   const [privacy, setPrivacy] = useState('public');
   const [profileImage, setProfileImage] = useState(null);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [errors, setErrors] = useState({});
   const token = useSelector(state => state.auth.userAccess);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setErrors({}); // Reset errors on submit
     try {
       const formData = new FormData();
       formData.append('name', name);
@@ -39,11 +37,15 @@ const CreateTeam = () => {
         },
       });
       console.log('Team created:', response.data);
-      setSuccess('Team created successfully!');
       navigate(`/teams/${response.data.id}`);
     } catch (error) {
-      console.error('Error creating Team:', error);
-      setError('Failed to create team. Please try again.');
+      if (error.response && error.response.data) {
+        console.log(error.response.data);
+        setErrors(error.response.data);
+      } else {
+        console.error('Error creating team:', error);
+        setErrors({ general: 'An unexpected error occurred. Please try again.' });
+      }
     }
   };
 
@@ -59,10 +61,19 @@ const CreateTeam = () => {
     setProfileImage(null);
   };
 
+  // Function to clear specific error when user starts editing the field
+  const handleChange = (setter) => (e) => {
+    setter(e.target.value);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [e.target.id]: undefined, // Clear error for this field
+    }));
+  };
+
   return (
     <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-50">Create a New Team</h2>
-      
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column */}
@@ -75,10 +86,11 @@ const CreateTeam = () => {
                 type="text"
                 id="name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={handleChange(setName)}
                 required
-                className="block w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-teal-500"
+                className={`block w-full p-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-teal-500`}
               />
+              {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name[0]}</p>}
             </div>
 
             <div>
@@ -88,11 +100,12 @@ const CreateTeam = () => {
               <textarea
                 id="description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={handleChange(setDescription)}
                 rows="4"
                 required
-                className="block w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-teal-500"
+                className={`block w-full p-3 border ${errors.description ? 'border-red-500' : 'border-gray-300'} dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-teal-500`}
               />
+              {errors.description && <p className="mt-2 text-sm text-red-600">{errors.description[0]}</p>}
             </div>
           </div>
 
@@ -106,11 +119,12 @@ const CreateTeam = () => {
                 type="number"
                 id="maximumMembers"
                 value={maximumMembers}
-                onChange={(e) => setMaximumMembers(e.target.value)}
+                onChange={handleChange(setMaximumMembers)}
                 required
                 min="1"
-                className="block w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-teal-500"
+                className={`block w-full p-3 border ${errors.maximum_members ? 'border-red-500' : 'border-gray-300'} dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-teal-500`}
               />
+              {errors.maximum_members && <p className="mt-2 text-sm text-red-600">{errors.maximum_members[0]}</p>}
             </div>
 
             <div>
@@ -203,20 +217,6 @@ const CreateTeam = () => {
           </button>
         </div>
       </form>
-      {error && (
-        <CustomAlert
-          type="error"
-          message={error}
-          onClose={() => setError('')}
-        />
-      )}
-      {success && (
-        <CustomAlert
-          type="success"
-          message={success}
-          onClose={() => setSuccess('')}
-        />
-      )}
     </div>
   );
 };

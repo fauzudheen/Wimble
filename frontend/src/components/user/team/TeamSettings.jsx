@@ -5,10 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle, Input, Textarea, Button, Aler
 import { User, Shield, Trash2, Save, XCircle, Activity, Upload } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import createAxiosInstance from '../../../api/axiosInstance';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import CustomAlert from '../../ui/CustomAlert';
 
-const TeamSettings = ({ id }) => {
+const TeamSettings = () => {
+  const { id } = useOutletContext();
   const [team, setTeam] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);

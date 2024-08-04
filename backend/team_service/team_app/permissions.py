@@ -22,11 +22,20 @@ class IsCreatorOrReadOnly(permissions.BasePermission):
         return True
 
 class IsOwnerOrCreatorOrReadOnly(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
+    def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        if obj.team_admin_id == request.user.id or obj.user_id == request.user.id:
-            return True
-        
-        raise PermissionDenied("User is not authorized to access this resource.")
+        obj = view.get_object()
+
+        if request.method in ['PUT', 'PATCH']:
+            # Check if the user is the team admin
+            if obj.team.members.filter(user_id=request.user.id, role='admin').exists():
+                return True
+            else:
+                print("------------User is not the team admin------------")
+
+        if request.method in ['DELETE']:
+            return obj.user_id == request.user.id or obj.team.members.filter(user_id=request.user.id, role='admin').exists() 
+
+        return False 

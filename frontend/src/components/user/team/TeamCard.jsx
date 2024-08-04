@@ -10,7 +10,7 @@ const TeamCard = ({ team }) => {
 
   const handleCardClick = () => {
     if (isPublic || team.request_status === 'accepted') {
-      navigate(`/teams/${team.id}`);
+      navigate(`/teams/${team.id}/overview`);
     }
   };
 

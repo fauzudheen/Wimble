@@ -1,0 +1,10 @@
+communication_env/
+.env
+*.log
+*.pot
+*.pyc
+
+__pycache__
+.vscode/
+
+media/

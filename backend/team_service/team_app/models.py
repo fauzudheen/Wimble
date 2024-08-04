@@ -17,7 +17,7 @@ class Team(models.Model):
         ('public', 'Public'),
         ('private', 'Private'),
     ]
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     profile_image = models.ImageField(upload_to="team_profiles/", blank=True, null=True)
     description = models.TextField()
     maximum_members = models.IntegerField()

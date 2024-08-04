@@ -9,6 +9,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from django.http import Http404
+from .permissions import IsOwnerOrCreatorOrReadOnly
 
 class CustomPagination(PageNumberPagination):
     page_size = 6
@@ -21,8 +22,11 @@ class TeamListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        team = serializer.save()
-        models.TeamMember.objects.create(user_id=self.request.user.id, team=team, role='admin', request_status='accepted')
+        try:
+            team = serializer.save()
+            models.TeamMember.objects.create(user_id=self.request.user.id, team=team, role='admin', request_status='accepted')
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)  
 
     def get_serializer_context(self):
         return {'request': self.request} 
@@ -48,7 +52,6 @@ class TeamMemberListCreateView(generics.ListCreateAPIView):
 class TeamMemberRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView): 
     serializer_class = serializers.TeamMemberSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, permissions.IsOwnerOrCreatorOrReadOnly]
-    # When there are multiple parameters, you need to customize the get_queryset method, rest_framework will handle the rest
     def get_object(self):
         team_id = self.kwargs['pk']
         user_id = self.kwargs['user_id']

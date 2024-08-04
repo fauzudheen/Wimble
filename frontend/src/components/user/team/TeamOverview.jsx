@@ -6,8 +6,10 @@ import axios from 'axios';
 import { GatewayUrl } from '../../const/urls';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { useSelector } from 'react-redux';
+import { useOutletContext } from 'react-router-dom';
 
-const TeamOverview = ({ id }) => {
+const TeamOverview = () => {
+  const { id } = useOutletContext(); // Access the id from context
   const [team, setTeam] = useState({});
   const token = useSelector((state) => state.auth.userAccess);
 

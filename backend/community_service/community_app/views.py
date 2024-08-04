@@ -22,8 +22,11 @@ class CommunityListCreateView(generics.ListCreateAPIView):
     pagination_class = CustomPagination 
 
     def perform_create(self, serializer):
-        community = serializer.save()
-        models.CommunityMember.objects.create(community=community,user_id=self.request.user.id,role='admin')
+        try:
+            community = serializer.save()
+            models.CommunityMember.objects.create(community=community, user_id=self.request.user.id, role='admin')
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class CommunityRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Community.objects.all()

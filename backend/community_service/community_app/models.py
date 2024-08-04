@@ -8,7 +8,7 @@ class User(models.Model):
     profile = models.ImageField(upload_to='user_profiles/', null=True, blank=True)
 
 class Community(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     profile_image = models.ImageField(upload_to="community_profiles/", blank=True, null=True)
     cover_image = models.ImageField(upload_to="community_covers/", blank=True, null=True) 
     description = models.TextField()
