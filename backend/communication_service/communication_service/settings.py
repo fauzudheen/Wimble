@@ -29,12 +29,13 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['host.docker.internal']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne', #Daphne provides a separate runserver command and may conflict with other third-party apps. In order to solve such issues, make sure daphne is at the top of your INSTALLED_APPS
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -74,6 +75,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'communication_service.wsgi.application'
 
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -87,6 +89,7 @@ DATABASES = {
         'PASSWORD' : os.getenv('PASSWORD'),
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -139,15 +142,6 @@ REST_FRAMEWORK = {
 }
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('communication_redis', 6379)],  # Use the Redis service name defined in docker-compose
-        },
-    },
-}
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
 
 ASGI_APPLICATION = 'communication_service.asgi.application'

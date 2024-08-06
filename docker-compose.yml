@@ -11,6 +11,7 @@ services:
       - article_service
       - community_service
       - team_service
+      - communication_service
     volumes:
       - ./backend/api_gateway:/app
 

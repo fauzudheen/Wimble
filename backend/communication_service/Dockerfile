@@ -1,9 +1,9 @@
 FROM python:3.11-slim-bullseye
 
 RUN apt-get update \
-&& apt-get install -y --no-install-recommends --no-install-suggests \
-build-essential \
-&& pip install --no-cache-dir --upgrade pip
+    && apt-get install -y --no-install-recommends --no-install-suggests \
+       build-essential \
+    && pip install --no-cache-dir --upgrade pip
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -18,4 +18,4 @@ COPY . /app/
 
 EXPOSE 8005
 
-CMD python manage.py runserver 0.0.0.0:8005 
+CMD python manage.py runserver 0.0.0.0:8005
