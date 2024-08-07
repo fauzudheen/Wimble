@@ -8,13 +8,13 @@ import createAxiosInstance from '../../../api/axiosInstance';
 
 const TeamMembers = () => {
   const { id } = useOutletContext();
+  const userId = useSelector(state => state.auth.userId);
   const [teamMembers, setTeamMembers] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
   const [activeTab, setActiveTab] = useState('existing');
   const [team, setTeam] = useState(null); // Add state for team
   const token = useSelector(state => state.auth.userAccess);
   const navigate = useNavigate();
-  const userId = useSelector(state => state.auth.userId);
 
   useEffect(() => {
     const fetchTeamMembers = async () => {

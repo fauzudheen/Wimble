@@ -1,5 +1,5 @@
 from django.db import models
-
+from .producer import kafka_producer
 
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -27,6 +27,33 @@ class Team(models.Model):
 
     class Meta:
         ordering = ['-created_at']  
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.publish_team_update()
+
+    def delete(self, *args, **kwargs):
+        self.publish_team_delete()
+        super().delete(*args, **kwargs)
+
+    def publish_team_update(self):
+        team_data = {
+            'id': self.id,
+            'name': self.name,
+            'profile_image': self.profile_image.url if self.profile_image else None,
+            'description': self.description,
+            'maximum_members': self.maximum_members,
+            'status': self.status,
+            'privacy': self.privacy
+        }
+
+        kafka_producer.produce_message('teams', self.id, team_data)
+
+    def publish_team_delete(self):
+        team_data = {
+            'id': self.id
+        }
+        kafka_producer.produce_message('teams-deleted', self.id, team_data)
 
 
 class TeamMember(models.Model):

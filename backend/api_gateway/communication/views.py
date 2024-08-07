@@ -14,24 +14,33 @@ from django.conf import settings
 
 #         return Response(response.json(), status=response.status_code) 
 
-class ChatView(APIView):
+class ChatTeamView(APIView):
     def get(self, request, pk=None):
-        service_url = f"{COMMUNICATION_SERVICE_URL}/chat/"
+        page = request.query_params.get('page', 1)
+        service_url = f"{COMMUNICATION_SERVICE_URL}/chat/teams/{pk}/messages/?page={page}"
 
         print("---------------------request.headers---------------------", request.headers)
         
-        # List of headers to exclude
-        exclude_headers = [
-            'content-length',
-            'host',
-            'user-agent',
-            'connection',
-            'accept-encoding',
-        ]
+        exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
         
-        # Filter headers
         headers = {
             k: v for k, v in request.headers.items()
+            if k.lower() not in exclude_headers
+        }
+        
+        response = httpx.get(service_url, headers=headers)
+        return Response(response.json(), status=response.status_code) 
+
+class ChatMessageView(APIView):
+    def get(self, request, pk=None):
+        service_url = f"{COMMUNICATION_SERVICE_URL}/chat/messages/{pk}/"
+
+        print("---------------------request.headers---------------------", request.headers)
+        
+        exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
+        
+        headers = {
+            k: v for k, v in request.headers.items() 
             if k.lower() not in exclude_headers
         }
         

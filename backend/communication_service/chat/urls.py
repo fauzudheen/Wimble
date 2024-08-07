@@ -3,5 +3,6 @@ from . import views
 
 
 urlpatterns = [ 
-    path('', views.chat, name='chat'),
+    path('teams/<int:pk>/messages/', views.TeamMessageListView.as_view()),
+    path('messages/<int:pk>/', views.MessageRetrieveUpdateDestroyView.as_view()),
 ]
