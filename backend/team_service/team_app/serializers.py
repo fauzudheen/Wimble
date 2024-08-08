@@ -61,3 +61,9 @@ class TeamPermissionSerializer(serializers.ModelSerializer):
         model = models.TeamPermission
         fields = '__all__' 
         read_only_fields = ['id', 'created_at', 'team']
+
+class TeamMeetingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.TeamMeeting
+        fields = '__all__' 
+        read_only_fields = ['id', 'created_at', 'team']

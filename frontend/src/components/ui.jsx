@@ -103,3 +103,50 @@ export const Button = ({ children, className = '', ...props }) => (
     {children}
   </button>
 );
+
+export const AlertDescription = ({ children, className = '' }) => (
+  <p className={`mt-1 ${className}`}>{children}</p>
+);
+
+
+export const AlertDialog = ({ isOpen, onClose, title, description }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black opacity-30" onClick={onClose}></div>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 z-10">
+        <h3 className="text-lg font-semibold">{title}</h3>
+        <p className="mt-2">{description}</p>
+        <div className="mt-4 flex justify-end">
+          <button className="bg-blue-600 text-white py-2 px-4 rounded-lg" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+export const AlertDialogAction = ({ children, className = '', onClick }) => (
+  <button
+    className={`bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none ${className}`}
+    onClick={onClick}
+  >
+    {children}
+  </button>
+);
+
+
+export const Chip = ({ children, className = '', selected = false }) => (
+  <span
+    className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-medium ${
+      selected
+        ? 'bg-gradient-to-r from-teal-500 to-blue-500 text-white'
+        : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+    } ${className}`}
+  >
+    {children}
+  </span>
+);

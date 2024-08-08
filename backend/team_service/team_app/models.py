@@ -73,3 +73,15 @@ class TeamPermission(models.Model):
     can_manage_members = models.BooleanField(default=False)
     can_schedule_meetings = models.BooleanField(default=False)
     can_send_messages = models.BooleanField(default=True)
+
+class TeamMeeting(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='meetings')
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    members = models.ManyToManyField(User, related_name='team_meetings')
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['start_time']

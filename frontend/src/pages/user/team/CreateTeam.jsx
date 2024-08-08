@@ -37,7 +37,7 @@ const CreateTeam = () => {
         },
       });
       console.log('Team created:', response.data);
-      navigate(`/teams/${response.data.id}`);
+      navigate(`/teams/${response.data.id}/overview`);
     } catch (error) {
       if (error.response && error.response.data) {
         console.log(error.response.data);

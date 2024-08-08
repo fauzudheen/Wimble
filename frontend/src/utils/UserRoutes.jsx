@@ -27,6 +27,7 @@ import TeamMeetings from '../components/user/team/TeamMeetings';
 import TeamProjects from '../components/user/team/TeamProjects';
 import TeamMembers from '../components/user/team/TeamMembers';
 import TeamSettings from '../components/user/team/TeamSettings';
+import Meet from '../components/user/team/Meet';
 
 const UserRoutes = () => {
   return (
@@ -63,6 +64,7 @@ const UserRoutes = () => {
                 <Route path="overview" element={<TeamOverview />} />
                 <Route path="chat" element={<TeamChat />} />
                 <Route path="meetings" element={<TeamMeetings />} />
+                <Route path="meet" element={<Meet />} />
                 <Route path="projects" element={<TeamProjects />} />
                 <Route path="members" element={<TeamMembers />} />
                 <Route path="settings" element={<TeamSettings />} />

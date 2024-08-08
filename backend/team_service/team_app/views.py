@@ -83,6 +83,25 @@ class MemberTeamListView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.request.user.id
         return models.Team.objects.filter(members__user_id=user_id, members__request_status='accepted')   
+    
+class TeamMeetingListCreateView(generics.ListCreateAPIView):
+    serializer_class = serializers.TeamMeetingSerializer
+
+    def get_queryset(self):
+        team_id = self.kwargs['pk']
+        return models.TeamMeeting.objects.filter(team_id=team_id)
+
+    def perform_create(self, serializer):
+        team_id = self.kwargs['pk']
+        serializer.save(team_id=team_id)
       
+class TeamMeetingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = serializers.TeamMeetingSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, permissions.IsOwnerOrCreatorOrReadOnly]
+
+    def get_object(self):
+        meeting_id = self.kwargs['meeting_id']
+        return models.TeamMeeting.objects.get(id=meeting_id)  
+        
 
 
