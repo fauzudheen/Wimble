@@ -40,7 +40,7 @@ const Article = ({ article }) => {
           <img
             src={`${GatewayUrl}api/user_service/media/${profile.split('/media/media/')[1]}`}
             alt={author}
-            className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full mr-2 cursor-pointer"
+            className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full mr-2 cursor-pointer object-cover"
             onClick={handleProfileClick}
           />
         )}

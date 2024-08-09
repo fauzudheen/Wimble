@@ -127,7 +127,7 @@ const TeamChat = () => {
         <div className={`flex ${isSent ? 'justify-end' : 'justify-start'} mb-4`}>
             <div className={`flex ${isSent ? 'flex-row-reverse' : 'flex-row'} items-end`}>
                 {msg.sender?.profile ? (
-                    <img src={`${GatewayUrl}api/user_service/media/${msg.sender.profile.split('/media/media/')[1]}`} alt={`${msg.sender.first_name} ${msg.sender.last_name}`} className="w-8 h-8 rounded-full" />
+                    <img src={`${GatewayUrl}api/user_service/media/${msg.sender.profile.split('/media/media/')[1]}`} alt={`${msg.sender.first_name} ${msg.sender.last_name}`} className="w-8 h-8 rounded-full object-cover" />
                 ) : (
                     <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
                 )}

@@ -6,5 +6,5 @@ urlpatterns = [
     path('chat/messages/<int:pk>/', views.ChatMessageView.as_view()),
     path('notifications/', views.NotificationView.as_view()),
     path('notifications/<int:pk>/', views.NotificationView.as_view()), 
-    path('unread-notifications/', views.NotificationView.as_view()),  
+    path('unread-notifications/', views.UnreadNotificationView.as_view()),  
 ]

@@ -23,5 +23,7 @@ class UnreadNotificationListView(generics.ListAPIView):
         return models.Notification.objects.filter(receiver_id=self.request.user.id, is_read=False)
     
 class NotificationUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = serializers.NotificationSerializer
-    queryset = models.Notification.objects.all()            
+    serializer_class = serializers.NotificationSerializer 
+
+    def get_object(self):
+        return models.Notification.objects.get(id=self.kwargs['pk']) 

@@ -66,8 +66,10 @@ class NotificationView(APIView):
             k: v for k, v in request.headers.items() 
             if k.lower() not in exclude_headers
         }
+
+        print("----------------request.data----------------", request.data)
         
-        response = httpx.patch(service_url, headers=headers) 
+        response = httpx.patch(service_url, json=request.data, headers=headers) 
         return Response(response.json(), status=response.status_code)
     
     def delete(self, request, pk):

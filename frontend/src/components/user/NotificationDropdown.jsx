@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BellIcon, ChatBubbleLeftIcon, CheckCircleIcon, HeartIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import createAxiosInstance from '../../api/axiosInstance';
@@ -11,13 +11,15 @@ const NotificationDropdown = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const token = useSelector((state) => state.auth.userAccess);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUnreadNotifications = async () => {
       try {
         const axiosInstance = createAxiosInstance(token);
         const response = await axiosInstance.get(`${GatewayUrl}api/unread-notifications/`);
-        console.log(response.data);
+        console.log("Unread Notifications:", response.data);
         setNotifications(response.data);
         setUnreadCount(response.data.length);
       } catch (error) {
@@ -51,9 +53,23 @@ const NotificationDropdown = () => {
     return () => socket.close();
   }, [token]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const toggleDropdown = () => setIsOpen(!isOpen);
 
-  const markAsRead = async (id) => {
+  const markAsRead = async (id, event) => {
+    event.stopPropagation();
     try {
       const axiosInstance = createAxiosInstance(token);
       await axiosInstance.patch(`${GatewayUrl}api/notifications/${id}/`, { is_read: true });
@@ -64,10 +80,22 @@ const NotificationDropdown = () => {
     }
   };
 
-  const getNotificationIcon = (type) => {
+  const handleNotificationClick = (notification) => {
+    setIsOpen(false);
+    if (notification.notification_type === 'follow') {
+      navigate(`/user-profile/${notification.sender.id}`);
+    }
+    // Add more navigation logic for other notification types if needed
+  };
+
+  const getNotificationIcon = (type, sender=null, team=null) => {
     switch (type) {
       case 'follow':
-        return <UserPlusIcon className="h-5 w-5 text-teal-500" />;
+        if (sender && sender.profile) {
+          return <img src={`${GatewayUrl}api/user_service/media/${sender.profile.split('/media/media/')[1]}`} className="h-8 w-8 mt-2 object-cover rounded-full " />;
+        } else {
+            return <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" className="h-6 w-6 mt-2 text-teal-500" />;
+        }
       case 'like':
         return <HeartIcon className="h-5 w-5 text-red-500" />;
       case 'comment':
@@ -78,7 +106,7 @@ const NotificationDropdown = () => {
   };
 
   return (
-    <div className="relative z-50">
+    <div className="relative z-50" ref={dropdownRef}>
       <button
         className="flex items-center focus:outline-none"
         onClick={toggleDropdown}
@@ -103,25 +131,20 @@ const NotificationDropdown = () => {
               notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className="flex items-start p-4 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out"
+                  className="flex items-start p-4 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out cursor-pointer"
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex-shrink-0 mr-3">
-                    {getNotificationIcon(notification.notification_type)}
+                    {getNotificationIcon(notification.notification_type, notification.sender, notification.team)}
                   </div>
                   <div className="flex-grow">
-                    {notification.notification_type === 'follow' ? (
-                      <Link to={`/user-profile/${notification.sender}`} className="text-sm text-gray-800 dark:text-gray-200 hover:text-teal-500 dark:hover:text-teal-400">
-                        {notification.content}
-                      </Link>
-                    ) : (
-                      <p className="text-sm text-gray-800 dark:text-gray-200">{notification.content}</p>
-                    )}
+                    <p className="text-sm text-gray-800 dark:text-gray-200">{notification.content}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       {format(new Date(notification.created_at), 'MMM d, yyyy HH:mm')}
                     </p>
                   </div>
                   <button
-                    onClick={() => markAsRead(notification.id)}
+                    onClick={(e) => markAsRead(notification.id, e)}
                     className="ml-2 text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300"
                   >
                     <CheckCircleIcon className="h-5 w-5" />
