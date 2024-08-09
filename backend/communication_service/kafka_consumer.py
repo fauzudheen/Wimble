@@ -13,6 +13,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'communication_service.settings'
 django.setup()
 
 from chat.models import User, Team #This line should be below django.setup(), otherwise it will not work
+from notification.models import Notification
 from django.db import transaction
 
 # Kafka configuration
@@ -22,10 +23,10 @@ consumer = Consumer({
     'auto.offset.reset': 'earliest'
 })
 
-consumer.subscribe(['users', 'users-deleted', 'teams', 'teams-deleted'])
+consumer.subscribe(['users', 'users-deleted', 'teams', 'teams-deleted', 'relations'])
 
 def store_user_in_db(user_data):
-    print("------------------store_user view called in community service-----------------")
+    print("------------------store_user view called in communication service-----------------")
     with transaction.atomic():
         try:
             User.objects.update_or_create(
@@ -41,7 +42,7 @@ def store_user_in_db(user_data):
             print(f"Error storing user data: {e}")
 
 def delete_user_from_db(user_data):
-    print("------------------delete_user view called in community service-----------------")
+    print("------------------delete_user view called in communication service-----------------")
     with transaction.atomic():
         try:
             user_id = user_data['id']
@@ -51,7 +52,7 @@ def delete_user_from_db(user_data):
             print(f"Error deleting user data: {e}")
 
 def store_team_in_db(team_data):
-    print("------------------store_team view called in community service-----------------")
+    print("------------------store_team view called in communication service-----------------")
     with transaction.atomic():
         try:
             Team.objects.update_or_create(
@@ -70,7 +71,7 @@ def store_team_in_db(team_data):
             print(f"Error storing team data: {e}")
 
 def delete_team_from_db(team_data):
-    print("------------------delete_team view called in community service-----------------")
+    print("------------------delete_team view called in communication service-----------------")
     with transaction.atomic():
         try:
             team_id = team_data['id']
@@ -79,7 +80,22 @@ def delete_team_from_db(team_data):
         except Exception as e:
             print(f"Error deleting team data: {e}")
 
+def store_relation_in_db(relation_data):
+    print("------------------store_relation view called in communication service-----------------")
+    with transaction.atomic():
+        try:
+            follower = User.objects.get(id=relation_data['follower_id'])
+            notification = Notification.objects.create(
+                sender_id=relation_data['follower_id'],
+                receiver_id=relation_data['following_id'],
+                notification_type='follow',
+                content=f"{follower.first_name} {follower.last_name} started following you",
+            )
 
+            print("------------------Notification created-----------------", notification)
+            print(f"Rel {notification.id} data stored in database") 
+        except Exception as e:
+            print(f"Error storing relation data: {e}")
 
 
 def consume_messages():
@@ -114,6 +130,9 @@ def consume_messages():
                     elif topic == 'teams-deleted':
                         delete_team_from_db(message_data)
                         print(f"Team {message_data['id']} deleted from database")
+                    elif topic == 'relations':
+                        store_relation_in_db(message_data)
+                        print(f"Relation {message_data['id']} data stored in database")
                 except json.JSONDecodeError as e:
                     print(f"JSON decode error: {e}")
                 except Exception as e:

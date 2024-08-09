@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import UserProfileDropdown from './UserProfileDropdown';
 import Colors from './misc/Colors';
 import HomeSidebar from './HomeSidebarLeft';
+import Notifications from './Notifications';
+import NotificationDropdown from './NotificationDropdown';
 
 const Navbar = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -62,6 +64,7 @@ const Navbar = () => {
                                 </Link>
                             </>
                         )}
+                        <NotificationDropdown />
                         <UserProfileDropdown />
                     </div>
                 </div>

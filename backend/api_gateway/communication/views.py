@@ -19,8 +19,6 @@ class ChatTeamView(APIView):
         page = request.query_params.get('page', 1)
         service_url = f"{COMMUNICATION_SERVICE_URL}/chat/teams/{pk}/messages/?page={page}"
 
-        print("---------------------request.headers---------------------", request.headers)
-        
         exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
         
         headers = {
@@ -35,7 +33,19 @@ class ChatMessageView(APIView):
     def get(self, request, pk=None):
         service_url = f"{COMMUNICATION_SERVICE_URL}/chat/messages/{pk}/"
 
-        print("---------------------request.headers---------------------", request.headers)
+        exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
+        
+        headers = {
+            k: v for k, v in request.headers.items() 
+            if k.lower() not in exclude_headers
+        }
+        
+        response = httpx.get(service_url, headers=headers)
+        return Response(response.json(), status=response.status_code)
+    
+class NotificationView(APIView):
+    def get(self, request):
+        service_url = f"{COMMUNICATION_SERVICE_URL}/notifications/"
         
         exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
         
@@ -46,3 +56,43 @@ class ChatMessageView(APIView):
         
         response = httpx.get(service_url, headers=headers)
         return Response(response.json(), status=response.status_code)
+    
+    def patch(self, request, pk): 
+        service_url = f"{COMMUNICATION_SERVICE_URL}/notifications/{pk}/"
+        
+        exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
+        
+        headers = {
+            k: v for k, v in request.headers.items() 
+            if k.lower() not in exclude_headers
+        }
+        
+        response = httpx.patch(service_url, headers=headers) 
+        return Response(response.json(), status=response.status_code)
+    
+    def delete(self, request, pk):
+        service_url = f"{COMMUNICATION_SERVICE_URL}/notifications/{pk}/"
+        
+        exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
+        
+        headers = {
+            k: v for k, v in request.headers.items() 
+            if k.lower() not in exclude_headers
+        }
+        
+        response = httpx.delete(service_url, headers=headers)
+        return Response(response.json(), status=response.status_code)
+    
+class UnreadNotificationView(APIView):
+    def get(self, request):
+        service_url = f"{COMMUNICATION_SERVICE_URL}/unread-notifications/"
+        
+        exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
+        
+        headers = {
+            k: v for k, v in request.headers.items() 
+            if k.lower() not in exclude_headers
+        }
+        
+        response = httpx.get(service_url, headers=headers)
+        return Response(response.json(), status=response.status_code) 

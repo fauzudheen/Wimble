@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
 from .utils import generate_otp, send_otp
 from django.core.cache import cache
-
+from .producer import kafka_producer
 
 class SignupView(APIView):
     permission_classes = [AllowAny]
@@ -167,6 +167,12 @@ class RelationView(APIView):
             return Response({"message": "Unfollowed successfully"}, status=status.HTTP_200_OK)
         except models.Relation.DoesNotExist:
             relation = models.Relation.objects.create(follower_id=follower_id, following_id=following_id)
+            relation_data = {
+                'id': relation.id, 
+                'follower_id': follower_id,
+                'following_id': following_id
+            }
+            kafka_producer.produce_message('relations', relation.id, relation_data)
             return Response({"message": "Followed successfully"}, status=status.HTTP_201_CREATED)
 
 class FollowersView(APIView):

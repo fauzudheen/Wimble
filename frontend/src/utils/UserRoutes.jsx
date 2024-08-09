@@ -10,7 +10,7 @@ import NavbarLayout from '../pages/user/NavbarLayout';
 import ReadArticle from '../pages/user/article/ReadArticle';
 import SettingsLayout from '../pages/user/SettingsLayout';
 import General from '../components/user/settings/General';
-import Notifications from '../components/user/settings/Notifications';
+import SettingsNotifications from '../components/user/settings/Notifications';
 import Account from '../components/user/settings/Account';
 import MainLayout from '../pages/user/MainLayout';
 import Tags from '../pages/user/Tags';
@@ -28,6 +28,7 @@ import TeamProjects from '../components/user/team/TeamProjects';
 import TeamMembers from '../components/user/team/TeamMembers';
 import TeamSettings from '../components/user/team/TeamSettings';
 import Meet from '../components/user/team/Meet';
+import Notifications from '../components/user/Notifications';
 
 const UserRoutes = () => {
   return (
@@ -51,12 +52,13 @@ const UserRoutes = () => {
               <Route path='/my-profile' element={<ProfilePage />} />
               <Route path='/create-article' element={<CreateArticle />} />
               <Route path="/edit-article/:id" element={<EditArticle />} />
+              <Route path="/notifications" element={<Notifications />} />
               <Route path="/teams" element={<MainLayout><TeamsLayout /></MainLayout>} />
 
               <Route path="settings" element={<SettingsLayout />}>
                 <Route index element={<General />} />
                 <Route path="general" element={<General />} />
-                <Route path="notifications" element={<Notifications />} />
+                <Route path="notifications" element={<SettingsNotifications />} />
                 <Route path="account" element={<Account />} />
               </Route>
 
