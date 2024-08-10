@@ -27,6 +27,12 @@ class Team(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+class TeamMember(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='members')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='team_members')
+    role = models.CharField(max_length=20, choices=[('admin', 'Admin'), ('member', 'Member')], default='member')
+    request_status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')], default='pending')
+
 class ChatRoom(models.Model):
     ROOM_TYPE_CHOICES = [
         ('individual', 'Individual'),
@@ -39,17 +45,11 @@ class ChatRoom(models.Model):
 
 
 class Message(models.Model):
-    FILE_TYPE_CHOICES = [
-        ('image', 'Image'),
-        ('audio', 'Audio'),
-        ('video', 'Video'),
-        ('document', 'Document')
-    ]
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
-    file = models.FileField(upload_to='chat_files/', null=True, blank=True)
-    file_type = models.CharField(max_length=20, choices=FILE_TYPE_CHOICES, null=True, blank=True)
+    file = models.URLField(blank=True, null=True)
+    file_type = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -6,7 +6,6 @@ import createAxiosInstance from '../../../api/axiosInstance';
 import { GatewayUrl } from '../../const/urls';
 import { format } from 'date-fns';
 import { Send, Paperclip, X } from 'lucide-react';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 const TeamChat = () => {
     const { id: teamId } = useOutletContext();
@@ -15,19 +14,39 @@ const TeamChat = () => {
     const [messages, setMessages] = useState([]);
     const [file, setFile] = useState(null);
     const token = useSelector(state => state.auth.userAccess);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const messageListRef = useRef(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const observer = useRef();
+    const messageListRef = useRef(null);
 
-    const socketUrl = `ws://localhost:8005/ws/chat/team/${teamId}/`;
+    const socketUrl = `ws://localhost:8005/ws/chat/team/${teamId}/?token=${token}`;
 
     const { sendMessage, lastMessage } = useWebSocket(socketUrl, {
         onOpen: () => console.log('WebSocket connected'),
         onClose: () => console.log('WebSocket disconnected'),
         shouldReconnect: (closeEvent) => true,
     });
+
+    useEffect(() => {
+        if (page === 1 && messageListRef.current) {
+            messageListRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
+        }
+    }, [page, messages]);
+    
+    
+
+    const firstMessageRef = useCallback(node => {
+        if (isLoading) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+        if (node) observer.current.observe(node);
+    }, [isLoading, hasMore]);
 
     const fetchMessages = async (pageNum) => {
         setIsLoading(true);
@@ -47,8 +66,8 @@ const TeamChat = () => {
     };
 
     useEffect(() => {
-        fetchMessages(1);
-    }, [teamId, token]);
+        fetchMessages(page);
+    }, [page, teamId, token]);
 
     useEffect(() => {
         if (lastMessage !== null) {
@@ -57,24 +76,24 @@ const TeamChat = () => {
                 if (data && (data.message || data.file_name)) {
                     setMessages((prevMessages) => [{
                         content: data.message,
-                        sender: { id: data.user_id },
+                        sender: {
+                            id: data.user_id,
+                            profile: data.user_profile,
+                            first_name: data.user_first_name,
+                            last_name: data.user_last_name
+                        },
                         file: data.file_name,
                         file_type: data.file_type,
                         created_at: new Date().toISOString(),
                     }, ...prevMessages]);
+                    
+                    
                 }
             } catch (error) {
                 console.error('Error parsing WebSocket message:', error);
             }
         }
     }, [lastMessage]);
-
-    const loadMoreMessages = () => {
-        if (hasMore) {
-            fetchMessages(page + 1);
-            setPage(prevPage => prevPage + 1);
-        }
-    };
 
     const handleSendMessage = useCallback(async () => {
         const trimmedMessage = message.trim();
@@ -89,7 +108,7 @@ const TeamChat = () => {
                     const formData = new FormData();
                     formData.append('file', file);
                     const axiosInstance = createAxiosInstance(token);
-                    const response = await axiosInstance.post(`${GatewayUrl}api/upload-file/`, formData);
+                    const response = await axiosInstance.post(`${GatewayUrl}api/chat/upload-file/`, formData);
                     messageData.file_name = response.data.file_url;
                     messageData.file_type = file.type;
                 } catch (error) {
@@ -110,7 +129,7 @@ const TeamChat = () => {
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         if (selectedFile) {
-            if (selectedFile.size > 5 * 1024 * 1024) { // 5MB limit
+            if (selectedFile.size > 5 * 1024 * 1024) {
                 setError('File size exceeds 5MB limit.');
             } else {
                 setFile(selectedFile);
@@ -150,24 +169,17 @@ const TeamChat = () => {
         </div>
     );
 
-    if (isLoading && messages.length === 0) return <div className="flex justify-center items-center h-full text-gray-900 dark:text-gray-100">Loading...</div>;
-
     return (
         <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-            <div className="flex-1 p-4 overflow-y-auto" ref={messageListRef} id="scrollableDiv">
-                <InfiniteScroll
-                    dataLength={messages.length}
-                    next={loadMoreMessages}
-                    hasMore={hasMore}
-                    loader={<h4 className="text-center text-gray-500 dark:text-gray-400">Loading...</h4>}
-                    scrollableTarget="scrollableDiv"
-                    style={{ display: 'flex', flexDirection: 'column-reverse' }}
-                >
-                    {messages.map((msg, index) => (
-                        <MessageBubble key={index} msg={msg} isSent={msg.sender?.id === userId} />
-                    ))}
-                </InfiniteScroll>
+            <div className="flex-1 p-4 overflow-y-auto" ref={messageListRef}>
+                {isLoading && <div className="text-center py-2 text-gray-500 dark:text-gray-400">Loading more messages...</div>}
+                {[...messages].reverse().map((msg, index) => (
+                    <div key={index} ref={index === 0 ? firstMessageRef : null}>
+                        <MessageBubble msg={msg} isSent={msg.sender?.id === userId} />
+                    </div>
+                ))}
             </div>
+
             <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                 {error && <div className="text-red-500 mb-2">{error}</div>}
                 {file && (

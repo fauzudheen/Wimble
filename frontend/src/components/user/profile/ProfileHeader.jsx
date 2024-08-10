@@ -44,7 +44,7 @@ const ProfileHeader = () => {
   const fetchUserDetails = async () => {
     try {
       const response = await axios.get(`${GatewayUrl}api/users/${userId}/`);
-      console.log(response.data);
+      console.log("User", response.data);
       setUser({
         first_name: response.data.first_name,
         last_name: response.data.last_name,

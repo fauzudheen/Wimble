@@ -12,7 +12,7 @@ sys.path.append(parent_dir)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'communication_service.settings')
 django.setup()
 
-from chat.models import User, Team #This line should be below django.setup(), otherwise it will not work
+from chat.models import User, Team, TeamMember #This line should be below django.setup(), otherwise it will not work
 from notification.models import Notification
 from django.db import transaction
 
@@ -23,7 +23,7 @@ consumer = Consumer({
     'auto.offset.reset': 'earliest'
 })
 
-consumer.subscribe(['users', 'users-deleted', 'teams', 'teams-deleted', 'relations'])
+consumer.subscribe(['users', 'users-deleted', 'teams', 'teams-deleted', 'relations', 'team-members', 'team-members-deleted'])
 
 def store_user_in_db(user_data):
     print("------------------store_user view called in communication service-----------------")
@@ -97,6 +97,32 @@ def store_relation_in_db(relation_data):
         except Exception as e:
             print(f"Error storing relation data: {e}")
 
+def store_team_member_in_db(team_member_data):
+    print("------------------store_team_member view called in communication service-----------------")
+    with transaction.atomic():
+        try:
+            TeamMember.objects.update_or_create(
+                id=team_member_data['id'],
+                defaults={
+                    'team_id': team_member_data['team_id'],
+                    'user_id': team_member_data['user_id'],
+                    'role': team_member_data['role'],
+                    'request_status': team_member_data['request_status'],
+                }
+            )
+            print(f"Team member {team_member_data['id']} data stored in database")
+        except Exception as e:
+            print(f"Error storing team member data: {e}")
+
+def delete_team_member_from_db(team_member_data):
+    print("------------------delete_team_member view called in communication service-----------------")
+    with transaction.atomic():
+        try:
+            team_member_id = team_member_data['id']
+            TeamMember.objects.filter(id=team_member_id).delete()
+            print(f"Team member {team_member_id} deleted from database")
+        except Exception as e:
+            print(f"Error deleting team member data: {e}")
 
 def consume_messages():
     try:
@@ -120,19 +146,20 @@ def consume_messages():
                     print(f"Message: {msg}")
                     if topic == 'users':
                         store_user_in_db(message_data)
-                        print(f"User {message_data['id']} data stored in database")
                     elif topic == 'users-deleted':
                         delete_user_from_db(message_data)
-                        print(f"User {message_data['id']} deleted from database")
                     elif topic == 'teams':
                         store_team_in_db(message_data)
-                        print(f"Team {message_data['id']} data stored in database")
                     elif topic == 'teams-deleted':
                         delete_team_from_db(message_data)
-                        print(f"Team {message_data['id']} deleted from database")
                     elif topic == 'relations':
                         store_relation_in_db(message_data)
-                        print(f"Relation {message_data['id']} data stored in database")
+                    elif topic == 'relations-deleted':
+                        pass
+                    elif topic == 'team-members':
+                        store_team_member_in_db(message_data)
+                    elif topic == 'team-members-deleted':
+                        delete_team_member_from_db(message_data)
                 except json.JSONDecodeError as e:
                     print(f"JSON decode error: {e}")
                 except Exception as e:

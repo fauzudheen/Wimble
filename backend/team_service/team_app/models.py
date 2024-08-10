@@ -66,6 +66,31 @@ class TeamMember(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.publish_team_member_update()
+
+    def delete(self, *args, **kwargs):
+        self.publish_team_member_delete()
+        super().delete(*args, **kwargs)
+
+    def publish_team_member_update(self):
+        team_member_data = {
+            'id': self.id,
+            'team_id': self.team.id,
+            'user_id': self.user.id,
+            'role': self.role,
+            'request_status': self.request_status
+        }
+
+        kafka_producer.produce_message('team-members', self.id, team_member_data)
+
+    def publish_team_member_delete(self):
+        team_member_data = {
+            'id': self.id
+        }
+        kafka_producer.produce_message('team-members-deleted', self.id, team_member_data)
+
 class TeamPermission(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='permissions')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='team_permissions') 

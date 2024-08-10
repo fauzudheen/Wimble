@@ -98,3 +98,17 @@ class UnreadNotificationView(APIView):
         
         response = httpx.get(service_url, headers=headers)
         return Response(response.json(), status=response.status_code) 
+    
+class UploadFileView(APIView):
+    def post(self, request):
+        service_url = f"{COMMUNICATION_SERVICE_URL}/chat/upload-file/" 
+        
+        exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
+        
+        headers = {
+            k: v for k, v in request.headers.items() 
+            if k.lower() not in exclude_headers
+        }
+        
+        response = httpx.post(service_url, files=request.data, headers=headers)
+        return Response(response.json(), status=response.status_code)

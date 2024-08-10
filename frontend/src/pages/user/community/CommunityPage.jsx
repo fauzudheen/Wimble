@@ -116,7 +116,7 @@ const CommunityPage = () => {
                 <img
                   src={community.profile_image.replace('8000', '8003')}
                   alt={`${community.name} profile`}
-                  className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-4 border-white dark:border-gray-800 shadow-lg"
+                  className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-4 border-white dark:border-gray-800 shadow-lg object-cover"
                 />
               ) : (
                 <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-4 border-white dark:border-gray-800 shadow-lg flex items-center justify-center bg-gray-200 dark:bg-gray-700">
