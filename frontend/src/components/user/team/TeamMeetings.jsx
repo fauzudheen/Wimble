@@ -1,107 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { Calendar, Clock } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { GatewayUrl } from '../../const/urls';
 import createAxiosInstance from '../../../api/axiosInstance';
-
-const Card = ({ children, className }) => (
-  <div className={`bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-lg shadow-md ${className}`}>
-    {children}
-  </div>
-);
-
-const CardHeader = ({ children }) => (
-  <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-    {children}
-  </div>
-);
-
-const CardContent = ({ children }) => (
-  <div className="px-6 py-4">
-    {children}
-  </div>
-);
-
-const Button = ({ children, variant, className, ...props }) => (
-  <button
-    className={`rounded-md px-4 py-2 font-medium ${
-      variant === 'primary'
-        ? 'bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600'
-        : 'bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700'
-    } ${className}`}
-    {...props}
-  >
-    {children}
-  </button>
-);
-
-const Input = ({ className, ...props }) => (
-  <input
-    className={`bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 ${className}`}
-    {...props}
-  />
-);
-
-const Textarea = ({ className, ...props }) => (
-  <textarea
-    className={`bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 ${className}`}
-    {...props}
-  />
-);
-
-const DatePicker = ({ className, ...props }) => (
-  <input
-    type="datetime-local"
-    className={`bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 ${className}`}
-    {...props}
-  />
-);
-
-const Select = ({ options, value, onChange, className, ...props }) => (
-  <select
-    className={`bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 ${className}`}
-    value={value}
-    onChange={onChange}
-    {...props}
-  >
-    <option value="">Select members</option>
-    {options.map((option) => (
-      <option key={option.value} value={option.value}>
-        {option.label}
-      </option>
-    ))}
-  </select>
-);
+import MeetingCard from './MeetingCard';
 
 const TeamMeetings = () => {
   const { id: teamId } = useOutletContext();
   const [meetings, setMeetings] = useState([]);
+  const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [startDateTime, setStartDateTime] = useState(null);
-  const [endDateTime, setEndDateTime] = useState(null);
+  const [startDateTime, setStartDateTime] = useState('');
+  const [endDateTime, setEndDateTime] = useState('');
   const [selectedMembers, setSelectedMembers] = useState([]);
   const token = useSelector((state) => state.auth.userAccess);
   const [teamMembers, setTeamMembers] = useState([]);
-  const [userIds, setUserIds] = useState([]);
-
-  useEffect(() => {
-    const fetchMeetings = async () => {
-      try {
-        const response = await axios.get(`${GatewayUrl}api/teams/${teamId}/meetings/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setMeetings(response.data);
-      } catch (error) {
-        console.error('Error fetching team meetings:', error);
-      }
-    };
-    fetchMeetings();
-  }, [teamId, token]);
+  const userId = useSelector((state) => state.auth.userId);
+  const [showJoinDialog, setShowJoinDialog] = useState(false);
 
   const fetchTeamMembers = async () => {
     try {
@@ -109,7 +27,6 @@ const TeamMeetings = () => {
       const acceptedMembers = data.filter((m) => m.request_status === 'accepted');
       console.log('team members', acceptedMembers);
       setTeamMembers(acceptedMembers);
-      setUserIds(acceptedMembers.map((m) => m.user));
     } catch (error) {
       console.error('Error fetching team members:', error);
     }
@@ -117,143 +34,182 @@ const TeamMeetings = () => {
 
   useEffect(() => {
     fetchTeamMembers();
-  }, []);
+  }, [teamId, token]);
+
+  const fetchTeam = async () => {
+    try {
+      const axiosInstance = createAxiosInstance(token);
+      const response = await axiosInstance.get(`${GatewayUrl}api/teams/${teamId}/`);
+      console.log('team data', response.data);
+      if(response.data.request_status && response.data.request_status === 'accepted') {
+        fetchMeetings();
+      } else {
+        setShowJoinDialog(true);
+      }
+    } catch (error) {
+      console.error('Error fetching team data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTeam();
+  }, [teamId, token]);
+
+
+  const fetchMeetings = async () => {
+    try {
+      const response = await axios.get(`${GatewayUrl}api/teams/${teamId}/meetings/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log('team meetings', response.data);
+      setMeetings(response.data);
+    } catch (error) {
+      console.error('Error fetching team meetings:', error);
+    }
+  };
 
   const handleScheduleMeeting = async (e) => {
     e.preventDefault();
     try {
       const axiosInstance = createAxiosInstance(token);
-      await axiosInstance.post(
-        `${GatewayUrl}api/teams/${teamId}/meetings/`,
-        {
-          title,
-          description,
-          start_time: startDateTime,
-          end_time: endDateTime,
-          members: selectedMembers,
-        }
-      );
-      setTitle('');
-      setDescription('');
-      setStartDateTime(null);
-      setEndDateTime(null);
-      setSelectedMembers([]);
-      // Refetch meetings to update the list
-      const response = await axios.get(`${GatewayUrl}api/teams/${teamId}/meetings/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      await axiosInstance.post(`${GatewayUrl}api/teams/${teamId}/meetings/`, {
+        title,
+        description,
+        start_time: startDateTime,
+        end_time: endDateTime,
+        members: selectedMembers,
       });
-      setMeetings(response.data);
+      resetForm();
+      fetchMeetings();
     } catch (error) {
       console.error('Error scheduling meeting:', error);
     }
   };
 
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setStartDateTime('');
+    setEndDateTime('');
+    setSelectedMembers([]);
+    setShowForm(false);
+  };
+
+  const toggleMemberSelection = (userId) => {
+    setSelectedMembers(prev =>
+      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
+    );
+  };
+
+  const handleDeleteMeeting = (deletedMeetingId) => {
+    setMeetings(prevMeetings => prevMeetings.filter(meeting => meeting.id !== deletedMeetingId));
+  };
+
   return (
-    <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4 p-4 bg-gray-100 dark:bg-black">
-      <div className="flex-1 lg:w-3/5">
+    <div className="p-4 bg-gray-100 dark:bg-black">
+      {showJoinDialog && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 max-w-sm w-full mx-4">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Unauthorized</h2>
+            <p className="text-sm text-gray-800 dark:text-gray-300 mt-3">
+              You are not a member of this team and cannot access this page. Please contact your team administrator to be added as a member.
+            </p>
+            <div className="flex justify-end mt-3">
+              <Link to={`/teams/${teamId}/overview`}>
+                <button className="rounded-md px-3 py-2 text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600">
+                  Go Back to Overview
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Team Meetings</h2>
-        <div className="grid grid-cols-1 gap-4 mt-4">
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600"
+        >
+          {showForm ? <X size={16} /> : <Plus size={16} />}
+          <span>{showForm ? 'Cancel' : 'Create Meeting'}</span>
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Schedule a Meeting</h3>
+          <form onSubmit={handleScheduleMeeting} className="space-y-4">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Title"
+              className="w-full px-3 py-2 bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            />
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description"
+              className="w-full px-3 py-2 bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            />
+            <div className="flex space-x-4">
+              <input
+                type="datetime-local"
+                value={startDateTime}
+                onChange={(e) => setStartDateTime(e.target.value)}
+                className="flex-1 px-3 py-2 bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+              <input
+                type="datetime-local"
+                value={endDateTime}
+                onChange={(e) => setEndDateTime(e.target.value)}
+                className="flex-1 px-3 py-2 bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 rounded-md border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Select Team Members</p>
+              <div className="flex flex-wrap gap-2">
+                {teamMembers.map((member) => (
+                  <button
+                    key={member.user}
+                    type="button"
+                    onClick={() => toggleMemberSelection(member.user)}
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      selectedMembers.includes(member.user)
+                        ? 'bg-gradient-to-r from-teal-500 to-blue-500 text-white'
+                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {member.user_data.first_name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <button type="submit" className="px-4 py-2 rounded-md text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600">
+                Schedule Meeting
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {meetings.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-gray-600 dark:text-gray-400">No meetings scheduled. Create a new meeting to get started!</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {meetings.map((meeting) => (
-            <Card key={meeting.id}>
-              <CardHeader>
-                <div className="flex items-center space-x-1">
-                  <Calendar className="h-4 w-4 text-gray-900 dark:text-gray-100" />
-                  <span className="font-medium text-sm text-gray-900 dark:text-gray-100">{new Date(meeting.start_time).toLocaleDateString()}</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center space-x-1">
-                  <Clock className="h-4 w-4 text-gray-900 dark:text-gray-100" />
-                  <span className="text-gray-900 text-sm dark:text-gray-100">{new Date(meeting.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(meeting.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                </div>
-                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{meeting.title}</p>
-                <p className="text-muted-foreground text-sm text-gray-900 dark:text-gray-100">{meeting.description}</p>
-                <a href={`/teams/${teamId}/meet?roomID=${meeting.id}`}>
-                  <Button variant="primary" className="mt-2 text-sm">Join Meeting</Button>
-                </a>
-              </CardContent>
-            </Card>
+            <MeetingCard 
+              key={meeting.id} 
+              meeting={meeting} 
+              teamId={teamId} 
+              onDelete={handleDeleteMeeting}
+            />
           ))}
         </div>
-      </div>
-      <div className="lg:w-2/5">
-      <Card className="bg-white dark:bg-gray-800">
-  <CardHeader>
-    <h3 className="font-semibold text-gray-900 dark:text-gray-100">Schedule a Meeting</h3>
-  </CardHeader>
-  <CardContent>
-    <form onSubmit={handleScheduleMeeting} className="space-y-3">
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-900 dark:text-gray-100">
-          Title
-        </label>
-        <Input
-          id="title"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="outline outline-1 w-full text-sm py-1"
-        />
-      </div>
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-900 dark:text-gray-100">
-          Description
-        </label>
-        <Textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="outline outline-1 w-full text-sm py-1"
-        />
-      </div>
-      <div>
-        <label htmlFor="start-date" className="block text-sm font-medium text-gray-900 dark:text-gray-100">
-          Start Date and Time
-        </label>
-        <DatePicker
-          id="start-date"
-          value={startDateTime}
-          onChange={(e) => setStartDateTime(e.target.value)}
-          className="outline outline-1 w-full text-sm py-1"
-        />
-      </div>
-      <div>
-        <label htmlFor="end-date" className="block text-sm font-medium text-gray-900 dark:text-gray-100">
-          End Date and Time
-        </label>
-        <DatePicker
-          id="end-date"
-          value={endDateTime}
-          onChange={(e) => setEndDateTime(e.target.value)}
-          className="outline outline-1 w-full text-sm py-1"
-        />
-      </div>
-      <div>
-        <label htmlFor="members" className="block text-sm font-medium text-gray-900 dark:text-gray-100">
-          Select Team Members
-        </label>
-        <Select
-          id="members"
-          options={teamMembers.map((member) => ({ value: member.user, label: member.user_data.first_name }))}
-          value={selectedMembers}
-          onChange={(e) => setSelectedMembers(Array.from(e.target.selectedOptions, (option) => option.value))}
-          className="outline outline-1 w-full text-sm py-1"
-          multiple
-        />
-      </div>
-      <div className="flex justify-end">
-        <Button type="submit" variant="primary" className="text-sm py-1 px-3">
-          Schedule Meeting
-        </Button>
-      </div>
-    </form>
-  </CardContent>
-</Card>
-
-
-      </div>
+      )}
     </div>
   );
 };

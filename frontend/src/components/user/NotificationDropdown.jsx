@@ -19,7 +19,6 @@ const NotificationDropdown = () => {
       try {
         const axiosInstance = createAxiosInstance(token);
         const response = await axiosInstance.get(`${GatewayUrl}api/unread-notifications/`);
-        console.log("Unread Notifications:", response.data);
         setNotifications(response.data);
         setUnreadCount(response.data.length);
       } catch (error) {

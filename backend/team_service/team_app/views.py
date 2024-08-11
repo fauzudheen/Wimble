@@ -97,7 +97,7 @@ class TeamMeetingListCreateView(generics.ListCreateAPIView):
       
 class TeamMeetingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.TeamMeetingSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, permissions.IsOwnerOrCreatorOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, permissions.IsCreatorOrReadOnly]
 
     def get_object(self):
         meeting_id = self.kwargs['meeting_id']

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import { useSelector } from 'react-redux';
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import useWebSocket from 'react-use-websocket';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { GatewayUrl } from '../../const/urls';
@@ -20,6 +20,7 @@ const TeamChat = () => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const messageListRef = useRef(null);
+    const [showJoinDialog, setShowJoinDialog] = useState(false);
 
     const socketUrl = `ws://localhost:8005/ws/chat/team/${teamId}/?token=${token}`;
 
@@ -34,6 +35,26 @@ const TeamChat = () => {
             messageListRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
         }
     }, [page, messages]);
+
+    const fetchTeam = async () => {
+        try {
+          const axiosInstance = createAxiosInstance(token);
+          const response = await axiosInstance.get(`${GatewayUrl}api/teams/${teamId}/`);
+          console.log('team data', response.data);
+          if(response.data.request_status && response.data.request_status === 'accepted') {
+            fetchMessages();
+          } else {
+            setShowJoinDialog(true);
+          }
+        } catch (error) {
+          console.error('Error fetching team data:', error);
+        }
+      };
+    
+      useEffect(() => {
+        fetchTeam();
+      }, [teamId, token]);
+
     
     const fetchMessages = async (pageNum) => {
         setIsLoading(true);
@@ -47,7 +68,6 @@ const TeamChat = () => {
             setError(null);
         } catch (error) {
             console.error(error);
-            setError('Failed to load messages. Please try again later.');
         } finally {
             setIsLoading(false);
         }
@@ -240,16 +260,21 @@ const TeamChat = () => {
                                 )}
                             </>
                         )}
-    
-                        {/* Display message content if it's not empty */}
-                        {msg.content !== '' && (
-                            <p className="text-sm mt-2 text-gray-800 dark:text-gray-200">{msg.content}</p>
-                        )}
-    
-                        {/* Timestamp */}
-                        <p className="text-xs text-right text-gray-600 dark:text-gray-400 mt-1">
-                            {format(new Date(msg.created_at), 'hh:mm a')}
-                        </p>
+                        <div className="flex justify-between gap-1">
+                        {/* Content Container */}
+                        <div className="flex items-center flex-1">
+                            {msg.content !== '' && (
+                                <p className="text-sm text-gray-900 dark:text-gray-100">{msg.content}</p>
+                            )}
+                        </div>
+
+                        {/* Timestamp Container */}
+                        <div className="flex items-end">
+                            <p className="text-[11px] text-gray-600 leading-none dark:text-gray-400">
+                                {format(new Date(msg.created_at), 'hh:mm a')}
+                            </p>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -265,6 +290,23 @@ const TeamChat = () => {
     
     return (
         <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            {showJoinDialog && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 max-w-sm w-full mx-4">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Unauthorized</h2>
+                    <p className="text-sm text-gray-800 dark:text-gray-300 mt-3">
+                    You are not a member of this team and cannot access this resource. Please contact your team administrator to be added as a member.
+                    </p>
+                    <div className="flex justify-end mt-3">
+                    <Link to={`/teams/${teamId}/overview`}>
+                        <button className="rounded-md px-3 py-2 text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600">
+                        Go Back to Overview
+                        </button>
+                    </Link>
+                    </div>
+                </div>
+                </div>
+            )}
             <div className="flex-1 p-4 overflow-y-auto" ref={messageListRef}>
                 {hasMore && (
                     <button 
@@ -297,7 +339,7 @@ const TeamChat = () => {
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Type your message here..."
-                        className="flex-1 p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 h-10"
+                        className="flex-1 p-2 border rounded-l-lg focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 h-10"
                         onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
                     />
                     <label className="flex items-center justify-center w-10 h-10 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors border-t border-b border-gray-300 dark:border-gray-600">
@@ -310,7 +352,7 @@ const TeamChat = () => {
                     </label>
                     <button 
                         onClick={handleSendMessage}
-                        className="w-10 h-10 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-r-lg hover:from-teal-500 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors flex items-center justify-center"
+                        className="w-10 h-10 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-r-lg hover:from-teal-500 hover:to-blue-600 focus:outline-none transition-colors flex items-center justify-center"
                     >
                         <Send size={20} />
                     </button>
