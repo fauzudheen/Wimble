@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { useOutletContext } from 'react-router-dom';
 import useWebSocket from 'react-use-websocket';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { GatewayUrl } from '../../const/urls';
 import { format } from 'date-fns';
-import { Send, Paperclip, X } from 'lucide-react';
+import { Send, Paperclip, X, AudioLinesIcon, File, FileTextIcon, PlayIcon } from 'lucide-react';
+import ImageModal from './ImageModal';
 
 const TeamChat = () => {
     const { id: teamId } = useOutletContext();
@@ -18,7 +19,6 @@ const TeamChat = () => {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-    const observer = useRef();
     const messageListRef = useRef(null);
 
     const socketUrl = `ws://localhost:8005/ws/chat/team/${teamId}/?token=${token}`;
@@ -35,19 +35,6 @@ const TeamChat = () => {
         }
     }, [page, messages]);
     
-    
-
-    const firstMessageRef = useCallback(node => {
-        if (isLoading) return;
-        if (observer.current) observer.current.disconnect();
-        observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
-                setPage(prevPage => prevPage + 1);
-            }
-        });
-        if (node) observer.current.observe(node);
-    }, [isLoading, hasMore]);
-
     const fetchMessages = async (pageNum) => {
         setIsLoading(true);
         try {
@@ -55,6 +42,7 @@ const TeamChat = () => {
             const response = await axiosInstance.get(`${GatewayUrl}api/chat/team/${teamId}/messages/?page=${pageNum}`);
             const newMessages = response.data.results;
             setMessages(prevMessages => [...prevMessages, ...newMessages]);
+            console.log("new messages", newMessages);
             setHasMore(!!response.data.next);
             setError(null);
         } catch (error) {
@@ -86,8 +74,6 @@ const TeamChat = () => {
                         file_type: data.file_type,
                         created_at: new Date().toISOString(),
                     }, ...prevMessages]);
-                    
-                    
                 }
             } catch (error) {
                 console.error('Error parsing WebSocket message:', error);
@@ -142,64 +128,179 @@ const TeamChat = () => {
         setFile(null);
     };
 
-    const MessageBubble = ({ msg, isSent }) => (
-        <div className={`flex ${isSent ? 'justify-end' : 'justify-start'} mb-4`}>
-            <div className={`flex ${isSent ? 'flex-row-reverse' : 'flex-row'} items-end`}>
-                {msg.sender?.profile ? (
-                    <img src={`${GatewayUrl}api/user_service/media/${msg.sender.profile.split('/media/media/')[1]}`} alt={`${msg.sender.first_name} ${msg.sender.last_name}`} className="w-8 h-8 rounded-full object-cover" />
-                ) : (
-                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
-                )}
-                <div className={`max-w-xs mx-2 p-3 rounded-lg ${isSent ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 dark:text-gray-100'}`}>
-                    {msg.content && <p className="text-sm">{msg.content}</p>}
-                    {msg.file && (
-                        <div className="mt-2">
-                            {msg.file_type && msg.file_type.startsWith('image/') ? (
-                                <img src={msg.file} alt="Uploaded" className="max-w-full h-auto rounded" />
-                            ) : (
-                                <a href={msg.file} target="_blank" rel="noopener noreferrer" className="text-xs underline">
-                                    Attached File
-                                </a>
-                            )}
-                        </div>
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedImageUrl, setSelectedImageUrl] = useState('');
+
+    const openImageModal = useCallback((url) => {
+        setSelectedImageUrl(url);
+        setIsModalOpen(true);
+    }, []);
+
+    const closeImageModal = useCallback(() => {
+        setIsModalOpen(false);
+        setSelectedImageUrl('');
+    }, []);
+
+    const MessageBubble = memo(({ msg, isSent }) => {
+        const formatFileUrl = (url) => url.replace('host.docker.internal', 'localhost');
+    
+        return (
+            <div className={`flex ${isSent ? 'justify-end' : 'justify-start'} mb-1`}>
+                <div className={`flex ${isSent ? 'flex-row-reverse' : 'flex-row'} items-start`}>
+                    {/* Profile Picture */}
+                    {!isSent && msg.sender?.profile && (
+                        <img 
+                            src={`${GatewayUrl}api/user_service/media/${msg.sender.profile.split('/media/media/')[1]}`} 
+                            alt={`${msg.sender.first_name} ${msg.sender.last_name}`} 
+                            className="w-8 h-8 rounded-full object-cover mr-2" 
+                        />
                     )}
-                    <p className="text-xs mt-1 text-gray-500 dark:text-gray-400">{format(new Date(msg.created_at), 'HH:mm')}</p>
+    
+                    {/* Message Content */}
+                    <div className={`max-w-xs p-2 rounded-lg shadow ${isSent ? 'bg-gradient-to-r from-teal-100 to-blue-100 dark:from-teal-800 dark:to-blue-900' : 'bg-gray-100 dark:bg-gray-700'}`}>
+                        {msg.file && (
+                            <>
+                                {/* Image Handling */}
+                                {msg.file_type.startsWith('image/') && (
+                                    <img 
+                                        src={formatFileUrl(msg.file)} 
+                                        alt="Uploaded Image" 
+                                        className="w-full rounded-md mb-2 cursor-pointer"
+                                        onClick={() => openImageModal(formatFileUrl(msg.file))}
+                                    />
+                                )}
+    
+                                {/* Video Handling */}
+                                {msg.file_type.startsWith('video/') && (
+                                    <video controls className="w-full rounded-md mb-2">
+                                        <source src={formatFileUrl(msg.file)} type={msg.file_type} />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                )}
+    
+                                {/* Audio Handling */}
+                                {msg.file_type === 'audio/mpeg' && (
+                                    <div className="flex items-center mb-2">
+                                        <audio
+                                            src={formatFileUrl(msg.file)}
+                                            className="hidden"
+                                            ref={(audio) => {
+                                                if (audio) {
+                                                    audio.oncanplaythrough = () => {
+                                                        // You can keep this line to handle any logic when ready
+                                                    };
+                                                }
+                                            }}
+                                        />
+                                        <button
+                                            onClick={(e) => {
+                                                const audio = e.currentTarget.previousElementSibling;
+                                                if (audio.paused) {
+                                                    audio.play();
+                                                } else {
+                                                    audio.pause();
+                                                }
+                                            }}
+                                            className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-full p-2 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-300"
+                                        >
+                                            <PlayIcon className="w-4 h-4" />
+                                        </button>
+                                        <span className="text-sm text-gray-600 dark:text-gray-300">Audio Message</span>
+                                    </div>
+                                )}
+    
+                                {/* Text File Handling */}
+                                {msg.file_type === 'text/plain' && (
+                                    <div className="p-2 bg-white dark:bg-gray-600 rounded-md mb-2 border border-gray-300 dark:border-gray-500">
+                                        <FileTextIcon className="text-gray-600 dark:text-gray-300 mr-2 inline" size={14} />
+                                        <a 
+                                            href={formatFileUrl(msg.file)} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="text-sm underline text-blue-500 dark:text-blue-300 hover:text-blue-600 dark:hover:text-blue-400"
+                                        >
+                                            Download Text File
+                                        </a>
+                                    </div>
+                                )}
+    
+                                {/* Generic File Download */}
+                                {!msg.file_type.startsWith('image/') && 
+                                 !msg.file_type.startsWith('video/') && 
+                                 msg.file_type !== 'audio/mpeg' &&
+                                 msg.file_type !== 'text/plain' && (
+                                    <a 
+                                        href={formatFileUrl(msg.file)} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="text-xs underline text-blue-500 dark:text-blue-300 hover:text-blue-600 dark:hover:text-blue-400"
+                                    >
+                                        Download File
+                                    </a>
+                                )}
+                            </>
+                        )}
+    
+                        {/* Display message content if it's not empty */}
+                        {msg.content !== '' && (
+                            <p className="text-sm mt-2 text-gray-800 dark:text-gray-200">{msg.content}</p>
+                        )}
+    
+                        {/* Timestamp */}
+                        <p className="text-xs text-right text-gray-600 dark:text-gray-400 mt-1">
+                            {format(new Date(msg.created_at), 'hh:mm a')}
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    });
 
+    const renderedMessages = useMemo(() => (
+        [...messages].reverse().map((msg, index) => (
+            <MessageBubble key={msg.id || index} msg={msg} isSent={msg.sender?.id === userId} />
+        ))
+    ), [messages, userId]);
+    
+    
     return (
         <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-lg">
             <div className="flex-1 p-4 overflow-y-auto" ref={messageListRef}>
-                {isLoading && <div className="text-center py-2 text-gray-500 dark:text-gray-400">Loading more messages...</div>}
-                {[...messages].reverse().map((msg, index) => (
-                    <div key={index} ref={index === 0 ? firstMessageRef : null}>
-                        <MessageBubble msg={msg} isSent={msg.sender?.id === userId} />
-                    </div>
-                ))}
+                {hasMore && (
+                    <button 
+                        onClick={() => setPage(prevPage => prevPage + 1)} 
+                        className="mb-4 mx-auto text-blue-500 dark:text-blue-300 hover:underline"
+                    >
+                        Load More Messages
+                    </button>
+                )}
+                {renderedMessages}
             </div>
-
+            <ImageModal 
+                isOpen={isModalOpen} 
+                imageUrl={selectedImageUrl} 
+                onClose={closeImageModal} 
+            />
             <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                 {error && <div className="text-red-500 mb-2">{error}</div>}
                 {file && (
                     <div className="flex items-center mb-2 p-2 bg-gray-100 dark:bg-gray-700 rounded">
                         <span className="text-sm truncate flex-1 text-gray-900 dark:text-gray-100">{file.name}</span>
-                        <button onClick={removeFile} className="ml-2 text-red-500">
+                        <button onClick={removeFile} className="ml-2 text-red-500 hover:text-red-600 transition-colors">
                             <X size={16} />
                         </button>
                     </div>
                 )}
-                <div className="flex items-center">
+                <div className="flex items-stretch">
                     <input
                         type="text"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Type your message here..."
-                        className="flex-1 p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                        className="flex-1 p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 h-10"
                         onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
                     />
-                    <label className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
+                    <label className="flex items-center justify-center w-10 h-10 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors border-t border-b border-gray-300 dark:border-gray-600">
                         <input
                             type="file"
                             onChange={handleFileChange}
@@ -209,7 +310,7 @@ const TeamChat = () => {
                     </label>
                     <button 
                         onClick={handleSendMessage}
-                        className="p-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-10 h-10 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-r-lg hover:from-teal-500 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors flex items-center justify-center"
                     >
                         <Send size={20} />
                     </button>
