@@ -150,11 +150,11 @@ const CommentSection = ({ articleId, token }) => {
       <textarea
         name="comment"
         placeholder={placeholder}
-        className="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ease-in-out dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm sm:text-base"
+        className="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ease-in-out dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm "
         rows="3"
         ref={inputRef}
       ></textarea>
-      <button type="submit" className={`${Colors.tealBlueGradientText} mt-2 px-4 py-2 rounded-md font-medium transition-all duration-200 ease-in-out hover:opacity-80`}>
+      <button type="submit" className={`${Colors.tealBlueGradientText} mt-2 mx-4 rounded-md text- font-medium transition-all duration-200 ease-in-out hover:opacity-80`}>
         Post Comment
       </button>
       <Modal
@@ -201,45 +201,45 @@ const CommentSection = ({ articleId, token }) => {
     };
   
     return (
-      <div className={`bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow-md transition-all duration-200 ease-in-out hover:shadow-lg ${depth > 0 ? 'ml-4 sm:ml-8' : ''}`}>
-        <div className="flex items-start space-x-2 sm:space-x-3">
-          <img src={`${GatewayUrl}api/user_service/media/${comment.user_data.profile.split('/media/media/')[1]}`} alt={`${comment.user_data.first_name} ${comment.user_data.last_name}`} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full" />
+      <div className={`bg-white dark:bg-gray-800 p-2 sm:p-3 rounded-lg shadow-md transition-all duration-200 ease-in-out hover:shadow-lg ${depth > 0 ? 'ml-2 sm:ml-4' : ''}`}>
+        <div className="flex items-start space-x-1 sm:space-x-2">
+          <img src={`${GatewayUrl}api/user_service/media/${comment.user_data.profile.split('/media/media/')[1]}`} alt={`${comment.user_data.first_name} ${comment.user_data.last_name}`} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full" />
           <div className="flex-1 min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-              <h4 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base truncate">{`${comment.user_data.first_name} ${comment.user_data.last_name}`}</h4>
-              <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 sm:mt-0">
+              <h4 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm truncate">{`${comment.user_data.first_name} ${comment.user_data.last_name}`}</h4>
+              <span className="text-xs text-gray-500 dark:text-gray-400 mt-0 sm:mt-0">
                 {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
               </span>
             </div>
             {isEditing ? (
-              <div className="mt-2">
+              <div className="mt-1">
                 <textarea
                   value={editedText}
                   onChange={(e) => setEditedText(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm sm:text-base"
-                  rows="3"
+                  className="w-full p-1 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 text-xs sm:text-sm"
+                  rows="2"
                 />
-                <div className="mt-2 space-x-2 flex justify-end">
-                  <button onClick={handleSaveEdit} className={`${Colors.tealBlueGradientText} px-3 py-1 rounded-md text-sm font-medium`}>Save</button>
-                  <button onClick={handleCancelEdit} className="text-gray-600 dark:text-gray-400 px-3 py-1 rounded-md text-sm">Cancel</button>
+                <div className="mt-1 space-x-1 flex justify-end">
+                  <button onClick={handleSaveEdit} className={`${Colors.tealBlueGradientText} px-2 py-1 rounded-md text-xs font-medium`}>Save</button>
+                  <button onClick={handleCancelEdit} className="text-gray-600 dark:text-gray-400 px-2 py-1 rounded-md text-xs">Cancel</button>
                 </div>
               </div>
             ) : (
-              <p className="mt-1 text-gray-700 dark:text-gray-300 text-sm sm:text-base break-words">{comment.text}</p>
+              <p className="mt-1 text-gray-700 dark:text-gray-300 text-xs sm:text-sm break-words">{comment.text}</p>
             )}
-            <div className="mt-2 flex flex-wrap items-center gap-2 sm:gap-4">
+            <div className="mt-1 flex flex-wrap items-center gap-1 sm:gap-2">
               <button
                 onClick={handleReply}
-                className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 flex items-center transition-all duration-200 ease-in-out hover:text-blue-800 dark:hover:text-blue-300"
+                className="text-xs text-blue-600 dark:text-blue-400 flex items-center transition-all duration-200 ease-in-out hover:text-blue-800 dark:hover:text-blue-300"
               >
                 {replyingTo === comment.id ? (
                   <>
-                    <XCircleIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <XCircleIcon className="h-3 w-3 sm:h-3 sm:w-3 mr-1" />
                     Close
                   </>
                 ) : (
                   <>
-                    <ArrowUturnLeftIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <ArrowUturnLeftIcon className="h-3 w-3 sm:h-3 sm:w-3 mr-1" />
                     Reply
                   </>
                 )}
@@ -248,13 +248,13 @@ const CommentSection = ({ articleId, token }) => {
                 <>
                   <button
                     onClick={handleEdit}
-                    className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 transition-all duration-200 ease-in-out hover:text-green-800 dark:hover:text-green-300"
+                    className="text-xs text-gray-700 dark:text-gray-300 transition-all duration-200 ease-in-out hover:text-green-800 dark:hover:text-green-300"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDeleteComment(comment.id)}
-                    className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 transition-all duration-200 ease-in-out hover:text-red-800 dark:hover:text-red-300"
+                    className="text-xs text-gray-700 dark:text-gray-300 transition-all duration-200 ease-in-out hover:text-red-800 dark:hover:text-red-300"
                   >
                     Delete
                   </button>
@@ -263,16 +263,16 @@ const CommentSection = ({ articleId, token }) => {
               {comment.replies && comment.replies.length > 0 && (
                 <button
                   onClick={toggleReplies}
-                  className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 flex items-center transition-all duration-200 ease-in-out hover:text-blue-800 dark:hover:text-blue-300"
+                  className="text-xs text-blue-600 dark:text-blue-400 flex items-center transition-all duration-200 ease-in-out hover:text-blue-800 dark:hover:text-blue-300"
                 >
                   {showReplies ? (
                     <>
-                      <ChevronUpIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                      <ChevronUpIcon className="h-3 w-3 sm:h-3 sm:w-3 mr-1" />
                       Hide Replies
                     </>
                   ) : (
                     <>
-                      <ChevronDownIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                      <ChevronDownIcon className="h-3 w-3 sm:h-3 sm:w-3 mr-1" />
                       Show Replies ({comment.replies.length})
                     </>
                   )}
@@ -280,7 +280,7 @@ const CommentSection = ({ articleId, token }) => {
               )}
             </div>
             {replyingTo === comment.id && (
-              <div className="mt-3">
+              <div className="mt-2">
                 <CommentForm 
                   onSubmit={(e) => {
                     handleSubmitComment(e, comment.id);
@@ -292,7 +292,7 @@ const CommentSection = ({ articleId, token }) => {
               </div>
             )}
             {(showReplies || replyingTo === comment.id) && comment.replies && comment.replies.length > 0 && (
-              <div className="mt-3 space-y-3">
+              <div className="mt-2 space-y-2">
                 {comment.replies.map((reply) => (
                   <Comment key={reply.id} comment={reply} depth={depth + 1} />
                 ))}
@@ -303,23 +303,24 @@ const CommentSection = ({ articleId, token }) => {
       </div>
     );
   };
-
-  return (
-    <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-6">
-      <h3 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-white">Comments</h3>
-      <CommentForm 
-        onSubmit={(e) => handleSubmitComment(e)} 
-        placeholder="Add a comment..." 
-        inputRef={mainCommentInputRef}
-      />
-
-      <div className="space-y-3 sm:space-y-4">
-        {comments.map((comment) => (
-          <Comment key={comment.id} comment={comment} />
-        ))}
+    
+    return (
+      <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
+        <h3 className="text-md sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-white">Comments</h3>
+        <CommentForm 
+          onSubmit={(e) => handleSubmitComment(e)} 
+          placeholder="Add a comment..." 
+          inputRef={mainCommentInputRef}
+        />
+    
+        <div className="space-y-2 sm:space-y-3">
+          {comments.map((comment) => (
+            <Comment key={comment.id} comment={comment} />
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+    
 };
 
 export default CommentSection;

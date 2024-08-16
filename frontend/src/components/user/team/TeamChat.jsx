@@ -5,8 +5,9 @@ import useWebSocket from 'react-use-websocket';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { GatewayUrl } from '../../const/urls';
 import { format } from 'date-fns';
-import { Send, Paperclip, X, AudioLinesIcon, File, FileTextIcon, PlayIcon } from 'lucide-react';
+import { Send, Paperclip, X, AudioLinesIcon, File, FileTextIcon, PlayIcon, Search, MoreVertical } from 'lucide-react';
 import ImageModal from './ImageModal';
+import { UserGroupIcon } from '@heroicons/react/24/solid';
 
 const TeamChat = () => {
     const { id: teamId } = useOutletContext();
@@ -21,6 +22,7 @@ const TeamChat = () => {
     const [hasMore, setHasMore] = useState(true);
     const messageListRef = useRef(null);
     const [showJoinDialog, setShowJoinDialog] = useState(false);
+    const [team, setTeam] = useState({});
 
     const socketUrl = `ws://localhost:8005/ws/chat/team/${teamId}/?token=${token}`;
 
@@ -41,6 +43,7 @@ const TeamChat = () => {
           const axiosInstance = createAxiosInstance(token);
           const response = await axiosInstance.get(`${GatewayUrl}api/teams/${teamId}/`);
           console.log('team data', response.data);
+          setTeam(response.data);
           if(response.data.request_status && response.data.request_status === 'accepted') {
             fetchMessages();
           } else {
@@ -177,7 +180,7 @@ const TeamChat = () => {
                     )}
     
                     {/* Message Content */}
-                    <div className={`max-w-xs p-2 rounded-lg shadow ${isSent ? 'bg-gradient-to-r from-teal-100 to-blue-100 dark:from-teal-800 dark:to-blue-900' : 'bg-gray-100 dark:bg-gray-700'}`}>
+                    <div className={`max-w-xs p-2 rounded-lg shadow ${isSent ? 'bg-gradient-to-r from-teal-100 to-blue-100 dark:from-teal-800 dark:to-blue-900' : 'bg-gray-50 dark:bg-gray-700'}`}>
                         {msg.file && (
                             <>
                                 {/* Image Handling */}
@@ -289,41 +292,51 @@ const TeamChat = () => {
     
     
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-            {showJoinDialog && (
-                <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 max-w-sm w-full mx-4">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Unauthorized</h2>
-                    <p className="text-sm text-gray-800 dark:text-gray-300 mt-3">
-                    You are not a member of this team and cannot access this resource. Please contact your team administrator to be added as a member.
-                    </p>
-                    <div className="flex justify-end mt-3">
-                    <Link to={`/teams/${teamId}/overview`}>
-                        <button className="rounded-md px-3 py-2 text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600">
-                        Go Back to Overview
+        <div className="fixed flex flex-col h-[90vh] w-[81vw] bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg">
+            {/* Fixed top bar */}
+            <div className="sticky top-0 bg-white dark:bg-gray-800 shadow">
+                <div className="flex items-center p-3">
+                    <div className="flex items-center flex-1">
+                        {team.profile_image ? (
+                            <img className="w-10 h-10 rounded-full mr-3 border-2 border-white dark:border-gray-200" src={team.profile_image.replace('8000', '8004')} alt={team.name} />
+                        ) : (
+                            <div className="h-10 w-10 rounded-full mr-3 border-2 border-white dark:border-gray-200 shadow-lg flex items-center justify-center bg-white bg-opacity-20">
+                                <UserGroupIcon className="h-6 w-6 text-white" />
+                            </div>
+                        )}
+                        <div>
+                            <h1 className="font-semibold text-gray-900 dark:text-gray-100">{team.name}</h1>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{} online</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center">
+                        <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                            <Search size={20} />
                         </button>
-                    </Link>
+                        <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                            <MoreVertical size={20} />
+                        </button>
                     </div>
                 </div>
-                </div>
-            )}
-            <div className="flex-1 p-4 overflow-y-auto" ref={messageListRef}>
-                {hasMore && (
-                    <button 
-                        onClick={() => setPage(prevPage => prevPage + 1)} 
-                        className="mb-4 mx-auto text-blue-500 dark:text-blue-300 hover:underline"
-                    >
-                        Load More Messages
-                    </button>
-                )}
-                {renderedMessages}
             </div>
-            <ImageModal 
-                isOpen={isModalOpen} 
-                imageUrl={selectedImageUrl} 
-                onClose={closeImageModal} 
-            />
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+    
+            {/* Scrollable chat area */}
+            <div className="flex-1 overflow-y-auto min-h-0">
+                <div className="p-4" ref={messageListRef}>
+                    {hasMore && (
+                        <button 
+                            onClick={() => setPage(prevPage => prevPage + 1)} 
+                            className="mb-4 mx-auto text-blue-500 dark:text-blue-300 hover:underline"
+                        >
+                            Load More Messages
+                        </button>
+                    )}
+                    {renderedMessages}
+                </div>
+            </div>
+    
+            {/* Fixed bottom input section */}
+            <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-800 shadow border-t border-gray-200 dark:border-gray-700 p-2">
                 {error && <div className="text-red-500 mb-2">{error}</div>}
                 {file && (
                     <div className="flex items-center mb-2 p-2 bg-gray-100 dark:bg-gray-700 rounded">
@@ -358,8 +371,33 @@ const TeamChat = () => {
                     </button>
                 </div>
             </div>
+    
+            <ImageModal 
+                isOpen={isModalOpen} 
+                imageUrl={selectedImageUrl} 
+                onClose={closeImageModal} 
+            />
+    
+            {showJoinDialog && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 max-w-sm w-full mx-4">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Unauthorized</h2>
+                        <p className="text-sm text-gray-800 dark:text-gray-300 mt-3">
+                            You are not a member of this team and cannot access this resource. Please contact your team administrator to be added as a member.
+                        </p>
+                        <div className="flex justify-end mt-3">
+                            <Link to={`/teams/${teamId}/overview`}>
+                                <button className="rounded-md px-3 py-2 text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600">
+                                    Go Back to Overview
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
+    
 };
 
 export default TeamChat;

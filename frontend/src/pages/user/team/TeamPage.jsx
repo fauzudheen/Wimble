@@ -280,7 +280,7 @@ const TeamPage = () => {
         </div>
 
         <main className="flex-1 overflow-x-hidden overflow-y-auto">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="">
             {showLeaveConfirm && (
               <Alert variant="destructive" className="dark:bg-red-900 dark:border-red-700">
                 <AlertTitle className="dark:text-white">Are you sure you want to leave this team?</AlertTitle>

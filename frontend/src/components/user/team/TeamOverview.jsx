@@ -54,12 +54,7 @@ const TeamOverview = () => {
     <div className="space-y-4 p-4 ">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{team.name} Overview</h2>
-        
       </div>
-
-        
-
-      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
