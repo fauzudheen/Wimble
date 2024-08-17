@@ -4,8 +4,8 @@ const ImageModal = ({ isOpen, imageUrl, onClose }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-            <div className="relative bg-gradient-to-br from-teal-500 to-blue-600 rounded-lg shadow-xl max-w-[95vw] max-h-[95vh] w-auto h-auto overflow-hidden">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-end justify-center">
+            <div className="relative mb-4 bg-gradient-to-br from-teal-500 to-blue-600 rounded-lg shadow-xl max-w-[95vw] max-h-[95vh] w-auto h-auto overflow-hidden">
                 <div className="absolute top-2 right-2 z-10">
                     <button 
                         onClick={onClose}
@@ -20,7 +20,7 @@ const ImageModal = ({ isOpen, imageUrl, onClose }) => {
                     <img 
                         src={imageUrl} 
                         alt="Large view" 
-                        className="max-w-full max-h-[90vh] object-contain rounded-md"
+                        className="max-w-full max-h-[85vh] object-contain rounded-md"
                     />
                 </div>
             </div>

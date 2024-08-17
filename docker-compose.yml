@@ -173,6 +173,26 @@ services:
       - zookeeper 
     restart: on-failure
 
+  celery-worker:
+    container_name: celery_worker
+    build: ./backend/communication_service 
+    command: celery -A communication_service worker -l info
+    depends_on:
+      - communication_db
+      - communication_redis
+      - kafka
+    volumes:
+      - ./backend/communication_service:/app
+    environment:
+      - CELERY_BROKER_URL=kafka://host.docker.internal:9092
+      - CELERY_RESULT_BACKEND=django-db
+      - CELERY_CACHE_BACKEND=django-cache
+      - CELERY_ACCEPT_CONTENT=json
+      - CELERY_TASK_SERIALIZER=json
+      - CELERY_RESULT_SERIALIZER=json
+      - CELERY_TIMEZONE=Asia/Kolkata
+
+
   # prometheus:
   #   image: prom/prometheus
   #   container_name: prometheus

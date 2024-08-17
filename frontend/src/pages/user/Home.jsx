@@ -20,7 +20,7 @@ const Home = () => {
             className={`w-1/2 text-sm p-2 ${activeTab === 'discussions' ? 'font-bold border-b-2 border-blue-500' : ''}`}
             onClick={() => setActiveTab('discussions')}
           >
-            Discussions
+            Suggestions
           </button>
         </div>
         {activeTab === 'feed' && <Feed />}

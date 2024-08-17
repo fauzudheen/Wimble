@@ -19,7 +19,7 @@ class TeamListCreateView(generics.ListCreateAPIView):
     queryset = models.Team.objects.all()
     serializer_class = serializers.TeamSerializer 
     pagination_class = CustomPagination
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]  
 
     def perform_create(self, serializer):
         try:

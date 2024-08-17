@@ -3,7 +3,7 @@ from confluent_kafka import Consumer, KafkaError
 import django
 import os
 import sys
-
+from datetime import datetime, timedelta
 
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
@@ -12,9 +12,12 @@ sys.path.append(parent_dir)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'communication_service.settings')
 django.setup()
 
-from chat.models import User, Team, TeamMember #This line should be below django.setup(), otherwise it will not work
+#The following lines should be below django.setup(), otherwise it will not work
+#You need to ensure that Django is properly configured before importing any Django models or apps
+from chat.models import User, Team, TeamMember 
 from notification.models import Notification
 from django.db import transaction
+from notification.tasks import send_meeting_notification
 
 # Kafka configuration
 consumer = Consumer({
@@ -23,7 +26,7 @@ consumer = Consumer({
     'auto.offset.reset': 'earliest'
 })
 
-consumer.subscribe(['users', 'users-deleted', 'teams', 'teams-deleted', 'relations', 'team-members', 'team-members-deleted'])
+consumer.subscribe(['users', 'users-deleted', 'teams', 'teams-deleted', 'relations', 'team-members', 'team-members-deleted', 'team-meetings', 'team-meetings-deleted'])
 
 def store_user_in_db(user_data):
     print("------------------store_user view called in communication service-----------------")
@@ -124,6 +127,29 @@ def delete_team_member_from_db(team_member_data):
         except Exception as e:
             print(f"Error deleting team member data: {e}")
 
+def send_meeting_notification(meeting_data):
+    print("------------------send_meeting_notification view called in communication service-----------------")
+    try:
+        start_time = datetime.fromisoformat(meeting_data['start_time'])
+        notification_time = start_time - timedelta(minutes=10)
+        members = meeting_data['members']
+        print("------------------Members--------------", members)
+        print("------------------Notification time--------------", notification_time)
+        print("------------------Start time--------------", start_time)
+        # print(f"Meeting notification sent to {meeting_data['receiver_id']}")
+    except Exception as e:
+        print(f"Error sending meeting notification: {e}")
+
+# @shared_task
+# def send_meeting_notification(sender_id, receiver_id, notification_type, team_id, content):
+#     Notification.objects.create(
+#         sender_id=sender_id,
+#         receiver_id=receiver_id,
+#         notification_type=notification_type,
+#         team_id=team_id,
+#         content=content
+#     )
+
 def consume_messages():
     try:
         print("-----------------Communication service Consuming messages...-----------------")
@@ -160,6 +186,8 @@ def consume_messages():
                         store_team_member_in_db(message_data)
                     elif topic == 'team-members-deleted':
                         delete_team_member_from_db(message_data)
+                    elif topic == 'team-meetings':
+                        send_meeting_notification(message_data)
                 except json.JSONDecodeError as e:
                     print(f"JSON decode error: {e}")
                 except Exception as e:

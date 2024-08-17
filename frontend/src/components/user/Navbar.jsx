@@ -39,31 +39,34 @@ const Navbar = () => {
                         />
                     </div>
                     <div className="flex items-center space-x-2 sm:space-x-4">
-                        {isAuthenticated ? (
-                            <>
-                                <Link to='/pricing'>
-                                <a className={`${Colors.tealBlueGradientText} text-xs sm:text-sm md:text-base lg:text-md`}>
-                                Pricing
+                    {isAuthenticated ? (
+                        <>
+                            <Link to='/pricing'>
+                                <a className={`${Colors.tealBlueGradientText} font-semibold text-[0.8rem] sm:text-[0.9rem] md:text-[1rem] lg:text-[0.95rem]`}>
+                                    Pricing
                                 </a>
-                                </Link>
-                                <Link to='/create-article'>
-                                    <button className={`${Colors.tealBlueGradientButton} text-white text-xs sm:text-sm md:text-base lg:text-md px-2 sm:px-3 py-1 sm:py-2 rounded-md`}>
-                                        Create Article
-                                    </button>
-                                </Link>
-                            </>
-                        ) : (
-                            <>
-                                <Link to='/login'>
-                                    <a className="text-teal-500 dark:text-teal-300 text-xs sm:text-sm">Login</a>
-                                </Link>
-                                <Link to='/signup'>
-                                    <button className={`${Colors.tealBlueGradientButton} text-white text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded-md`}>
-                                        Signup
-                                    </button>
-                                </Link>
-                            </>
-                        )}
+                            </Link>
+                            <Link to='/create-article'>
+                                <button className={`${Colors.tealBlueGradientButton} font-semibold text-white text-[0.8rem] sm:text-[0.9rem] md:text-[1rem] lg:text-[0.95rem] px-1 sm:px-2 py-1 sm:py-1.5 rounded-md`}>
+                                    Create Article
+                                </button>
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link to='/login'>
+                                <a className="text-teal-500 dark:text-teal-300 font-semibold text-[0.8rem] sm:text-[0.9rem]">
+                                    Login
+                                </a>
+                            </Link>
+                            <Link to='/signup'>
+                                <button className={`${Colors.tealBlueGradientButton} font-semibold text-white text-[0.8rem] sm:text-[0.9rem] px-1 sm:px-2 py-1 sm:py-1.5 rounded-md`}>
+                                    Signup
+                                </button>
+                            </Link>
+                        </>
+                    )}
+
                         <NotificationDropdown />
                         <UserProfileDropdown />
                     </div>

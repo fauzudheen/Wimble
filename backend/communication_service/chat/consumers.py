@@ -5,6 +5,7 @@ from .models import ChatRoom, Message, User, Team, TeamMember
 from django.core.exceptions import PermissionDenied
 
 class BaseChatConsumer(AsyncWebsocketConsumer):
+    connected_users = set()
     async def connect(self):
         if not self.scope["user"].is_authenticated:
             await self.close()
@@ -21,9 +22,14 @@ class BaseChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+
+        self.connected_users.add(self.user.id)
+        await self.broadcast_user_count()
         await self.accept()
 
     async def disconnect(self, close_code):
+        self.connected_users.discard(self.user.id)
+        await self.broadcast_user_count()
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -101,6 +107,22 @@ class BaseChatConsumer(AsyncWebsocketConsumer):
     def user_can_access_chat(self):
         # This method should be implemented in subclasses
         raise NotImplementedError("Subclasses must implement this method")
+
+    async def broadcast_user_count(self):
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'user_count',
+                'count': len(self.connected_users)
+            }
+        )
+
+    async def user_count(self, event):
+        count = event['count']
+        await self.send(text_data=json.dumps({
+            'type': 'user_count',
+            'count': count
+        }))
 
 class TeamChatConsumer(BaseChatConsumer):
     async def connect(self):

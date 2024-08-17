@@ -1,5 +1,8 @@
 from django.db import models
 from .producer import kafka_producer
+from django.db.models.signals import post_save, post_delete, m2m_changed
+from django.dispatch import receiver
+
 
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -110,3 +113,32 @@ class TeamMeeting(models.Model):
 
     class Meta:
         ordering = ['start_time']
+
+    # In Django, many-to-many relationships are saved after the main model instance is saved, so we need to use the post_save signal.
+    def publish_team_meeting_update(self):
+        team_meeting_data = {
+            'id': self.id,
+            'team_id': self.team.id,
+            'title': self.title,
+            'description': self.description,
+            'members': [member.id for member in self.members.all()],
+            'start_time': self.start_time.isoformat(),
+            'end_time': self.end_time.isoformat()
+        }
+
+        kafka_producer.produce_message('team-meetings', self.id, team_meeting_data)
+    
+    def publish_team_meeting_delete(self):
+        team_meeting_data = {
+            'id': self.id
+        }
+        kafka_producer.produce_message('team-meetings-deleted', self.id, team_meeting_data) 
+
+@receiver(post_delete, sender=TeamMeeting)
+def team_meeting_post_delete(sender, instance, **kwargs):
+    instance.publish_team_meeting_delete()
+
+@receiver(m2m_changed, sender=TeamMeeting.members.through)
+def team_meeting_members_changed(sender, instance, action, **kwargs):
+    if action == 'post_add':
+        instance.publish_team_meeting_update()

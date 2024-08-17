@@ -23,6 +23,7 @@ const TeamChat = () => {
     const messageListRef = useRef(null);
     const [showJoinDialog, setShowJoinDialog] = useState(false);
     const [team, setTeam] = useState({});
+    const [onlineUsers, setOnlineUsers] = useState(0);
 
     const socketUrl = `ws://localhost:8005/ws/chat/team/${teamId}/?token=${token}`;
 
@@ -84,7 +85,9 @@ const TeamChat = () => {
         if (lastMessage !== null) {
             try {
                 const data = JSON.parse(lastMessage.data);
-                if (data && (data.message || data.file_name)) {
+                if (data.type === 'user_count') {
+                    setOnlineUsers(data.count);
+                } else if (data && (data.message || data.file_name)) {
                     setMessages((prevMessages) => [{
                         content: data.message,
                         sender: {
@@ -306,7 +309,7 @@ const TeamChat = () => {
                         )}
                         <div>
                             <h1 className="font-semibold text-gray-900 dark:text-gray-100">{team.name}</h1>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{} online</p>
+                            <p className="text-sm text-green-600 dark:text-green-400">{onlineUsers} online</p>
                         </div>
                     </div>
                     <div className="flex items-center">
