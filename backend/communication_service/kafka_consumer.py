@@ -127,28 +127,15 @@ def delete_team_member_from_db(team_member_data):
         except Exception as e:
             print(f"Error deleting team member data: {e}")
 
-def send_meeting_notification(meeting_data):
-    print("------------------send_meeting_notification view called in communication service-----------------")
-    try:
-        start_time = datetime.fromisoformat(meeting_data['start_time'])
-        notification_time = start_time - timedelta(minutes=10)
-        members = meeting_data['members']
-        print("------------------Members--------------", members)
-        print("------------------Notification time--------------", notification_time)
-        print("------------------Start time--------------", start_time)
-        # print(f"Meeting notification sent to {meeting_data['receiver_id']}")
-    except Exception as e:
-        print(f"Error sending meeting notification: {e}")
+def handle_meeting_message(meeting_data):
+    print("--------------handle_meeting_message called in communication service-----------------")
+    print("--------------Meeting data------------------: ", meeting_data)
+    start_time = datetime.fromisoformat(meeting_data['start_time'])
+    print("--------------Start time------------------: ", start_time)
+    notification_time = start_time - timedelta(minutes=10)
+    print("--------------ETA------------------: ", notification_time)
+    send_meeting_notification.apply_async((meeting_data,), eta=notification_time)
 
-# @shared_task
-# def send_meeting_notification(sender_id, receiver_id, notification_type, team_id, content):
-#     Notification.objects.create(
-#         sender_id=sender_id,
-#         receiver_id=receiver_id,
-#         notification_type=notification_type,
-#         team_id=team_id,
-#         content=content
-#     )
 
 def consume_messages():
     try:
@@ -187,7 +174,7 @@ def consume_messages():
                     elif topic == 'team-members-deleted':
                         delete_team_member_from_db(message_data)
                     elif topic == 'team-meetings':
-                        send_meeting_notification(message_data)
+                        handle_meeting_message(message_data)
                 except json.JSONDecodeError as e:
                     print(f"JSON decode error: {e}")
                 except Exception as e:

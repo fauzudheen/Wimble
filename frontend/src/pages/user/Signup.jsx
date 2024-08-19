@@ -11,8 +11,8 @@ import { setUserLogin } from '../../redux/authSlice';
 import OtpVerification from '../../components/user/OtpVerification';
 
 const Signup = () => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
   const [serverErrors, setServerErrors] = useState({});
   const [ dataValid, setDataValid ] = useState(false)
@@ -58,8 +58,8 @@ const Signup = () => {
       try {
         const response = await axios.post(`${GatewayUrl}api/signup/verify-otp/`, data)
         console.log("Data from response", response.data)
-        dispatch(setUserLogin(response.data))
-        navigate('/home')
+        navigate('/select-interests', {state: {response: response.data}});
+        console.log("---------------------OTP VERIFIED---------------------")
       } catch (error) {
         console.error("Error verifying otp", error)
       }

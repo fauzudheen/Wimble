@@ -5,12 +5,12 @@ class User(models.Model):
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     tagline = models.CharField(max_length=225, null=True, blank=True)
-    profile = models.ImageField(upload_to='user_profiles/', null=True, blank=True)
+    profile = models.CharField(null=True, blank=True)
 
 class Community(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    profile_image = models.ImageField(upload_to="community_profiles/", blank=True, null=True)
-    cover_image = models.ImageField(upload_to="community_covers/", blank=True, null=True) 
+    profile_image = models.ImageField(upload_to="community_service/community_app/profiles/", blank=True, null=True)
+    cover_image = models.ImageField(upload_to="community_service/community_app/covers/", blank=True, null=True) 
     description = models.TextField()
     rules = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

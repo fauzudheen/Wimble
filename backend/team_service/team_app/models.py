@@ -1,15 +1,15 @@
 from django.db import models
 from .producer import kafka_producer
-from django.db.models.signals import post_save, post_delete, m2m_changed
+from django.db.models.signals import post_save, post_delete, m2m_changed, pre_save
 from django.dispatch import receiver
-
+from django.core.exceptions import ValidationError
 
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     tagline = models.CharField(max_length=225, null=True, blank=True)
-    profile = models.ImageField(upload_to='user_profiles/', null=True, blank=True)
+    profile = models.CharField(null=True, blank=True)
 
 class Team(models.Model):
     STATUS_CHOICES = [
@@ -21,12 +21,12 @@ class Team(models.Model):
         ('private', 'Private'),
     ]
     name = models.CharField(max_length=255, unique=True)
-    profile_image = models.ImageField(upload_to="team_profiles/", blank=True, null=True)
+    profile_image = models.ImageField(upload_to="team_service/team_app/profiles/", blank=True, null=True)
     description = models.TextField()
     maximum_members = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
     privacy = models.CharField(max_length=10, choices=PRIVACY_CHOICES, default='public')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     class Meta:
         ordering = ['-created_at']  
@@ -57,8 +57,7 @@ class Team(models.Model):
             'id': self.id
         }
         kafka_producer.produce_message('teams-deleted', self.id, team_data)
-
-
+    
 class TeamMember(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='members')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='team_members')
@@ -92,7 +91,14 @@ class TeamMember(models.Model):
         team_member_data = {
             'id': self.id
         }
-        kafka_producer.produce_message('team-members-deleted', self.id, team_member_data)
+        kafka_producer.produce_message('team-members-deleted', self.id, team_member_data) 
+
+@receiver(pre_save, sender=TeamMember)
+def check_max_members(sender, instance, **kwargs):
+    team = instance.team
+    if team.members.count() >= team.maximum_members and not instance.pk:
+        raise ValidationError(f"The team '{team.name}' already has the maximum number of members allowed.")
+    
 
 class TeamPermission(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='permissions')

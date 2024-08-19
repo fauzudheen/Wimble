@@ -103,7 +103,7 @@ const TeamPage = () => {
     <div className={`flex flex-col ${mobile ? 'w-64' : 'w-64'} bg-gradient-to-b from-teal-600 to-blue-700 dark:from-teal-900 dark:to-blue-950 text-white h-full overflow-y-auto`}>
       <div className="p-6">
         {team.profile_image ? (
-          <img className="h-20 w-20 rounded-full object-cover mx-auto border-4 border-white dark:border-gray-200 shadow-lg" src={team.profile_image.replace('8000', '8004')} alt={team.name} />
+          <img className="h-20 w-20 rounded-full object-cover mx-auto border-4 border-white dark:border-gray-200 shadow-lg" src={`${GatewayUrl}api/${team.profile_image}`} alt={team.name} />
         ) : (
           <div className="h-20 w-20 rounded-full mx-auto border-4 border-white dark:border-gray-200 shadow-lg flex items-center justify-center bg-white bg-opacity-20">
             <UserGroupIcon className="h-12 w-12 text-white" />
@@ -183,6 +183,12 @@ const TeamPage = () => {
               </span>
             </div>
           ) : (
+            <>
+            {team.member_count === team.maximum_members ? (
+            <div className="flex items-center justify-center w-full py-2 font-semibold text-sm text-white bg-gradient-to-r from-red-500 to-red-600 rounded-md dark:from-red-800 dark:to-red-700">
+            Team Full
+          </div>
+          ) : (
             <Button
               onClick={handleJoinRequest}
               disabled={isLoading}
@@ -215,6 +221,8 @@ const TeamPage = () => {
                 Send Join Request
               </span>
             </Button>
+          )}
+          </>
           )}
         </div>
       </div>

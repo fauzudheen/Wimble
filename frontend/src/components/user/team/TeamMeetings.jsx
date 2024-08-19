@@ -26,7 +26,7 @@ const TeamMeetings = () => {
       const { data } = await axios.get(`${GatewayUrl}api/teams/${teamId}/members/`);
       const acceptedMembers = data.filter((m) => m.request_status === 'accepted');
       console.log('team members', acceptedMembers);
-      setTeamMembers(acceptedMembers);
+      setTeamMembers(acceptedMembers.filter((m) => m.user !== userId));
     } catch (error) {
       console.error('Error fetching team members:', error);
     }
@@ -180,7 +180,7 @@ const TeamMeetings = () => {
                         : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
                     }`}
                   >
-                    {member.user_data.first_name}
+                    {member.user_data.first_name} {member.user_data.last_name}
                   </button>
                 ))}
               </div>

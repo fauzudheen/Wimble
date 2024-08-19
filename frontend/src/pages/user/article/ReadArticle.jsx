@@ -175,7 +175,7 @@ const ReadArticle = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center mb-1 sm:mb-0">
               <img 
-                src={`${GatewayUrl}api/user_service/media/${article.profile.split('/media/media/')[1]}`} 
+                src={`${GatewayUrl}api${article.profile}`} 
                 alt={article.author} 
                 className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full mr-1 sm:mr-3 cursor-pointer" 
                 onClick={handleProfileClick}
@@ -239,7 +239,7 @@ const ReadArticle = () => {
         {/* Thumbnail Section */}
         {article.thumbnail && (
           <div className="relative">
-            <img src={article.thumbnail.replace('8000', '8002')} alt="Article Thumbnail" className="w-full h-28 sm:h-40 md:h-56 object-cover" />
+            <img src={`${GatewayUrl}api/${article.thumbnail}`} alt="Article Thumbnail" className="w-full h-28 sm:h-40 md:h-56 object-cover" />
           </div>
         )}
   

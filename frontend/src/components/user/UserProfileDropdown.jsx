@@ -42,11 +42,11 @@ const UserProfileDropdown = () => {
       >
         {/* Placeholder for profile avatar */}
         <div className="w-10 h-10 rounded-full bg-gray-300">
-          {userProfile && (
-            <img 
-              className="w-full h-full object-cover rounded-full" 
-              src={`${GatewayUrl}api/user_service/media/${userProfile.split('/media/')[1]}`} />
-          )}
+          {isAuthenticated && userProfile && (
+              <img 
+                className="w-full h-full object-cover rounded-full" 
+                src={`${GatewayUrl}api/user_service/media/${userProfile.split('/media/')[1]}`} />
+            )}
         </div>
       </button>
 
@@ -54,6 +54,7 @@ const UserProfileDropdown = () => {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-md shadow-lg py-1">
             {isAuthenticated ? (
+              <>
           <Link
             to="/my-profile"
             className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
@@ -62,8 +63,6 @@ const UserProfileDropdown = () => {
             <UserCircleIcon className="h-5 w-5 mr-2 text-gray-500" />
             My Profile
           </Link>
-
-            ) : null}
           <Link
             to="/settings"
             className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
@@ -72,6 +71,8 @@ const UserProfileDropdown = () => {
             <CogIcon className="h-5 w-5 mr-2 text-gray-500" />
             Settings
           </Link>
+          </>
+            ) : null}
           {isAuthenticated ? (
           <button
             className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"

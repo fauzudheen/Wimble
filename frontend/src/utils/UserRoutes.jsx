@@ -29,6 +29,7 @@ import TeamMembers from '../components/user/team/TeamMembers';
 import TeamSettings from '../components/user/team/TeamSettings';
 import Meet from '../components/user/team/Meet';
 import Notifications from '../components/user/Notifications';
+import SelectInterests from '../pages/user/SelectInterests';
 
 const UserRoutes = () => {
   return (
@@ -39,6 +40,7 @@ const UserRoutes = () => {
         </Route>
         
         <Route element={<NavbarLayout />}>
+            <Route path="/select-interests" element={<SelectInterests />} />
             <Route path="/home" element={<MainLayout><UserHome /></MainLayout>} />
             <Route path="/tags" element={<MainLayout><Tags /></MainLayout>} />
             <Route path="/articles-by-tag/:interestId" element={<MainLayout><ArticlesByTag /></MainLayout>} />

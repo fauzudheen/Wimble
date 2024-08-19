@@ -31,7 +31,7 @@ const CommunityCard = ({ community }) => {
     <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden transition-transform transform">
       {community.cover_image ? (
         <img
-          src={community.cover_image.replace('8000', '8003')}
+          src={`${GatewayUrl}api/${community.cover_image}`}
           alt={community.name}
           className="w-full h-32 md:h-40 object-cover"
         />
@@ -43,9 +43,9 @@ const CommunityCard = ({ community }) => {
       <div className="relative">
         {community.profile_image ? (
           <img
-            src={community.profile_image.replace('8000', '8003')}
+            src={`${GatewayUrl}api/${community.profile_image}`}
             alt={community.name}
-            className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-white dark:border-gray-900 absolute left-1/2 transform -translate-x-1/2 -top-8"
+            className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-white dark:border-gray-900 absolute left-1/2 transform -translate-x-1/2 -top-8 object-cover"
           />
         ) : (
           <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-white dark:border-gray-900 absolute left-1/2 transform -translate-x-1/2 -top-8 flex items-center justify-center bg-gray-200 dark:bg-gray-700">

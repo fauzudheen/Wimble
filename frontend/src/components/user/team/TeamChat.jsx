@@ -133,8 +133,6 @@ const TeamChat = () => {
             sendMessage(JSON.stringify(messageData));
             setMessage('');
             setFile(null);
-        } else {
-            setError('Cannot send an empty message. Please enter some text or attach a file.');
         }
     }, [message, file, userId, sendMessage, token]);
 
@@ -176,7 +174,7 @@ const TeamChat = () => {
                     {/* Profile Picture */}
                     {!isSent && msg.sender?.profile && (
                         <img 
-                            src={`${GatewayUrl}api/user_service/media/${msg.sender.profile.split('/media/media/')[1]}`} 
+                            src={`${GatewayUrl}api${msg.sender.profile}`} 
                             alt={`${msg.sender.first_name} ${msg.sender.last_name}`} 
                             className="w-8 h-8 rounded-full object-cover mr-2" 
                         />
@@ -301,7 +299,7 @@ const TeamChat = () => {
                 <div className="flex items-center p-3">
                     <div className="flex items-center flex-1">
                         {team.profile_image ? (
-                            <img className="w-10 h-10 rounded-full mr-3 border-2 border-white dark:border-gray-200" src={team.profile_image.replace('8000', '8004')} alt={team.name} />
+                            <img className="w-10 h-10 rounded-full mr-3 border-2 border-white dark:border-gray-200 object-cover" src={team.profile_image.replace('8000', '8004')} alt={team.name} />
                         ) : (
                             <div className="h-10 w-10 rounded-full mr-3 border-2 border-white dark:border-gray-200 shadow-lg flex items-center justify-center bg-white bg-opacity-20">
                                 <UserGroupIcon className="h-6 w-6 text-white" />

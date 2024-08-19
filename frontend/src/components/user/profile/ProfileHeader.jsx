@@ -104,9 +104,9 @@ const ProfileHeader = () => {
             <div className="relative">
               {user.profile ? (
                 <img
-                  src={user.profile.replace('8000', '8001')} 
+                  src={`${GatewayUrl}api/${user.profile}`} 
                   alt={user.first_name}
-                  className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-teal-500 dark:border-gray-700" // Responsive image size
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-teal-500 dark:border-gray-700 object-cover" // Responsive image size
                 />
               ) : (
                 <UserIcon className="w-20 h-20 md:w-24 md:h-24 bg-teal-100 text-gray-500 border-4 border-teal-100 dark:border-gray-700 rounded-full" />

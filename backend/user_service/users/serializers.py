@@ -97,6 +97,23 @@ class UserInterestSerializer(serializers.ModelSerializer):
     def get_interest_name(self, obj):
         return obj.interest.name
     
+class UserInterestBatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UserInterest
+        fields = ["id"]
+    
+    def create(self, validated_data):
+        interests_data = self.context['request'].data.get('interests')
+         
+        user_id = self.context['pk']
+ 
+        user_interests = [
+            models.UserInterest(user_id=user_id, interest_id=interest['id'])
+            for interest in interests_data
+        ]
+
+        return models.UserInterest.objects.bulk_create(user_interests) 
+    
 class RelationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Relation

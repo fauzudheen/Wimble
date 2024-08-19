@@ -133,6 +133,15 @@ class UserInterestView(APIView):
         service_url = f"{USER_SERVICE_URL}/user-interests/{pk}/"
         response = requests.delete(service_url, headers=dict(request.headers))
         return Response(status=response.status_code)
+    
+class UserInterestBatchView(APIView):
+    def post(self, request, pk):
+        print("--------------POST called in user_interest_batch view---------------")
+        service_url = f"{USER_SERVICE_URL}/users/{pk}/interests-batch/"
+        print("----------------request.data----------------", request.data)
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        print("-----------------headers-----------------", dict(request.headers))
+        return Response(response.json(), status=response.status_code)
 
 class RelationView(APIView):
 

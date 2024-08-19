@@ -17,6 +17,7 @@ urlpatterns = [
     path('interests/<int:pk>/', views.InterestRetrieveUpdateDestroyView.as_view()),
     path('users/<int:pk>/skills/', views.UserSkillListCreateView.as_view()),
     path('user-skills/<int:pk>/', views.UserSkillDestroyView.as_view()),
+    path('users/<int:pk>/interests-batch/', views.UserInterestBatchCreateView.as_view()),
     path('users/<int:pk>/interests/', views.UserInterestListCreateView.as_view()),
     path('user-interests/<int:pk>/', views.UserInterestDestroyView.as_view()),
     path('relations/<int:pk>/', views.RelationView.as_view(), name='relation-toggle'),

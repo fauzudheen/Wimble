@@ -141,6 +141,16 @@ class UserInterestListCreateView(generics.ListCreateAPIView):
         user_id = self.kwargs['pk']
         return self.queryset.filter(user_id=user_id)
     
+class UserInterestBatchCreateView(generics.CreateAPIView):
+    serializer_class = serializers.UserInterestBatchSerializer
+    queryset = models.UserInterest.objects.all()
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['pk'] = self.kwargs.get('pk') 
+        return context
+
+
 class UserInterestDestroyView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = serializers.UserInterestSerializer

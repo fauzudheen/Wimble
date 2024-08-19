@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/', include('community.urls')),
     path('api/', include('team.urls')),
     path('api/', include('communication.urls')),
+    path('api/', include('media_gateway.urls')),
 ]

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserGroupIcon, LockClosedIcon, LockOpenIcon, CheckIcon, ClockIcon, XCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 import { useSelector } from 'react-redux';
+import { GatewayUrl } from '../../const/urls';
 
 const TeamCard = ({ team }) => {
   const userId = useSelector((state) => state.auth.userId);
@@ -57,7 +58,7 @@ const TeamCard = ({ team }) => {
         <div className="flex-shrink-0">
           {team.profile_image ? (
             <img
-              src={team.profile_image.replace('8000', '8004')}
+              src={`${GatewayUrl}api/${team.profile_image}`}
               alt={team.name}
               className="w-20 h-20 rounded-full border-4 border-white dark:border-gray-900 object-cover"
             />

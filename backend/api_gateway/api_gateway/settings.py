@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'article',
     'community',
     'team',
+    'media_gateway',
 ]
 
 MIDDLEWARE = [

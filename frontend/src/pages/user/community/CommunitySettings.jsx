@@ -100,7 +100,7 @@ const CommunitySettings = () => {
         {image || currentImage ? (
           <>
             <img 
-              src={image ? URL.createObjectURL(image) : currentImage.replace('8000', '8003')} 
+              src={image ? URL.createObjectURL(image) : `${GatewayUrl}api/${currentImage}`} 
               alt={label} 
               className={`w-full h-32 object-cover ${isProfile ? 'rounded-full' : 'rounded-md'}`} 
             />

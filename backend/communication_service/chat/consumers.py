@@ -98,7 +98,7 @@ class BaseChatConsumer(AsyncWebsocketConsumer):
     def get_sender_data(self, user_id):
         user = User.objects.get(id=user_id)
         return {
-            'profile': user.profile.url if user.profile else None,
+            'profile': user.profile,
             'first_name': user.first_name,
             'last_name': user.last_name
         }

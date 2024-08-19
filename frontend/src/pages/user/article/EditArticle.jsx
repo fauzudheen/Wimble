@@ -189,7 +189,7 @@ const EditArticle = () => {
                 Thumbnail
               </label>
               {currentThumbnail && (
-                <img src={currentThumbnail.replace('8000', '8002')} alt="Current thumbnail" className="mb-2 max-w-xs rounded-md" />
+                <img src={`${GatewayUrl}api/${currentThumbnail}`} alt="Current thumbnail" className="mb-2 max-w-xs rounded-md" />
               )}
               <input
                 type="file"

@@ -33,7 +33,7 @@ class TeamSerializer(serializers.ModelSerializer):
                 'first_name': admin.user.first_name,
                 'last_name': admin.user.last_name,
                 'tagline': admin.user.tagline,
-                'profile': admin.user.profile.url if admin.user.profile else None
+                'profile': admin.user.profile
             }
         return None
         
@@ -53,7 +53,7 @@ class TeamMemberSerializer(serializers.ModelSerializer):
             'first_name': obj.user.first_name,
             'last_name': obj.user.last_name,
             'tagline': obj.user.tagline,
-            'profile': obj.user.profile.url if obj.user.profile else None
+            'profile': obj.user.profile
         }
 
 class TeamPermissionSerializer(serializers.ModelSerializer):
@@ -66,4 +66,4 @@ class TeamMeetingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TeamMeeting
         fields = '__all__' 
-        read_only_fields = ['id', 'created_at', 'team']
+        read_only_fields = ['id', 'created_at', 'team'] 

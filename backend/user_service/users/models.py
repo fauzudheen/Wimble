@@ -7,7 +7,7 @@ from .producer import kafka_producer
 class User(AbstractUser):
     tagline = models.CharField(max_length=225, null=True, blank=True)
     bio = models.TextField(max_length=1000, null=True, blank=True)
-    profile = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    profile = models.ImageField(upload_to='user_service/users/profiles/', null=True, blank=True)
     account_tier = models.CharField(default="free", max_length=50)
     date_joined = models.DateField(default=datetime.date.today)
     is_active = models.BooleanField(default=True)
@@ -105,7 +105,7 @@ class UserInterest(models.Model):
 
     class Meta:
         unique_together = ('user', 'interest')
-        ordering = ['-id']
+        ordering = ['interest__name']
 
     def __str__(self):
         return f"{self.user.username} - {self.interest.name}"

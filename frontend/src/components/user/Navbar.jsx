@@ -42,32 +42,32 @@ const Navbar = () => {
                     {isAuthenticated ? (
                         <>
                             <Link to='/pricing'>
-                                <a className={`${Colors.tealBlueGradientText} font-semibold text-[0.8rem] sm:text-[0.9rem] md:text-[1rem] lg:text-[0.95rem]`}>
+                                <a className={`${Colors.tealBlueGradientText} text-[0.8rem] sm:text-[0.9rem] md:text-[1rem] lg:text-[0.95rem]`}>
                                     Pricing
                                 </a>
                             </Link>
                             <Link to='/create-article'>
-                                <button className={`${Colors.tealBlueGradientButton} font-semibold text-white text-[0.8rem] sm:text-[0.9rem] md:text-[1rem] lg:text-[0.95rem] px-1 sm:px-2 py-1 sm:py-1.5 rounded-md`}>
+                                <button className={`${Colors.tealBlueGradientButton} text-white text-[0.8rem] sm:text-[0.9rem] md:text-[1rem] lg:text-[0.95rem] px-1 sm:px-2 py-1 sm:py-1.5 rounded-md`}>
                                     Create Article
                                 </button>
                             </Link>
+                        <NotificationDropdown />
                         </>
                     ) : (
                         <>
                             <Link to='/login'>
-                                <a className="text-teal-500 dark:text-teal-300 font-semibold text-[0.8rem] sm:text-[0.9rem]">
+                                <a className="text-teal-500 dark:text-teal-300 text-[0.8rem] sm:text-[0.9rem]">
                                     Login
                                 </a>
                             </Link>
                             <Link to='/signup'>
-                                <button className={`${Colors.tealBlueGradientButton} font-semibold text-white text-[0.8rem] sm:text-[0.9rem] px-1 sm:px-2 py-1 sm:py-1.5 rounded-md`}>
+                                <button className={`${Colors.tealBlueGradientButton} text-white text-[0.8rem] sm:text-[0.9rem] px-1 sm:px-2 py-1 sm:py-1.5 rounded-md`}>
                                     Signup
                                 </button>
                             </Link>
                         </>
                     )}
 
-                        <NotificationDropdown />
                         <UserProfileDropdown />
                     </div>
                 </div>

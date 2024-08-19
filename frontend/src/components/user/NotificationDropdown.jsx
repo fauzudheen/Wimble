@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { BellIcon, ChatBubbleLeftIcon, CheckCircleIcon, HeartIcon, UserPlusIcon } from '@heroicons/react/24/outline';
-import { format } from 'date-fns';
+import { BellIcon, ChatBubbleLeftIcon, CheckCircleIcon, ClockIcon, HeartIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import createAxiosInstance from '../../api/axiosInstance';
 import { GatewayUrl } from '../const/urls';
+import { format, parseISO } from 'date-fns';
 
 const NotificationDropdown = () => {
   const [notifications, setNotifications] = useState([]);
@@ -20,6 +20,7 @@ const NotificationDropdown = () => {
         const axiosInstance = createAxiosInstance(token);
         const response = await axiosInstance.get(`${GatewayUrl}api/unread-notifications/`);
         setNotifications(response.data);
+        console.log("Notifications:", notifications);
         setUnreadCount(response.data.length);
       } catch (error) {
         console.error(error);
@@ -35,9 +36,21 @@ const NotificationDropdown = () => {
 
     socket.onmessage = (event) => {
       const newNotification = JSON.parse(event.data);
-      setNotifications(prev => [newNotification, ...prev]);
-      setUnreadCount(prev => prev + 1);
+      console.log("New notification received:", newNotification);
+      if (newNotification.created_at) {
+        const updatedNotification = {
+          ...newNotification,
+          sender: newNotification.sender_data ? newNotification.sender_data : null,
+          team: newNotification.team_data ? newNotification.team_data : null,
+        };
+  
+        setNotifications(prev => [updatedNotification, ...prev]);
+        setUnreadCount(prev => prev + 1);
+      } else {
+        console.error("Notification received with invalid or missing created_at:", newNotification);
+      }
     };
+    
 
     socket.onerror = (error) => console.error("WebSocket error:", error);
 
@@ -83,6 +96,8 @@ const NotificationDropdown = () => {
     setIsOpen(false);
     if (notification.notification_type === 'follow') {
       navigate(`/user-profile/${notification.sender.id}`);
+    } else if (notification.notification_type === 'meeting') {
+      navigate(`/teams/${notification.team.id}/meetings/`);
     }
     // Add more navigation logic for other notification types if needed
   };
@@ -91,7 +106,7 @@ const NotificationDropdown = () => {
     switch (type) {
       case 'follow':
         if (sender && sender.profile) {
-          return <img src={`${GatewayUrl}api/user_service/media/${sender.profile.split('/media/media/')[1]}`} className="h-8 w-8 mt-2 object-cover rounded-full " />;
+          return <img src={`${GatewayUrl}api${sender.profile}`} className="h-8 w-8 mt-2 object-cover rounded-full " />;
         } else {
             return <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" className="h-6 w-6 mt-2 text-teal-500" />;
         }
@@ -99,8 +114,24 @@ const NotificationDropdown = () => {
         return <HeartIcon className="h-5 w-5 text-red-500" />;
       case 'comment':
         return <ChatBubbleLeftIcon className="h-5 w-5 text-blue-500" />;
+      case 'meeting':
+        if (team && team.profile_image) {
+          return <img src={`${GatewayUrl}api${team.profile_image}`} className="h-8 w-8 mt-2 object-cover rounded-full" />;
+        } else {
+          return <ClockIcon className="h-8 w-8 mt-2 object-cover rounded-full text-purple-500" />;
+        }
       default:
         return <BellIcon className="h-5 w-5 text-gray-500" />;
+    }
+  };
+
+  const formatDate = (dateString) => {
+    try {
+      const date = parseISO(dateString);
+      return format(date, 'MMM d, yyyy HH:mm');
+    } catch (error) {
+      console.error('Invalid date:', dateString);
+      return 'Invalid date';
     }
   };
 
@@ -123,7 +154,7 @@ const NotificationDropdown = () => {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-md shadow-lg overflow-hidden">
           <div className="px-4 py-2 bg-gradient-to-r from-teal-400 to-blue-500 text-white">
-            <h3 className="text-sm font-semibold">Unread Notifications</h3>
+            <h3 className="text-sm font-semibold">Unread Notifications ({unreadCount})</h3>
           </div>
           <div className="max-h-96 overflow-y-auto">
             {notifications.length > 0 ? (
@@ -139,7 +170,7 @@ const NotificationDropdown = () => {
                   <div className="flex-grow">
                     <p className="text-sm text-gray-800 dark:text-gray-200">{notification.content}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {format(new Date(notification.created_at), 'MMM d, yyyy HH:mm')}
+                    {formatDate(notification.created_at)}
                     </p>
                   </div>
                   <button
@@ -155,7 +186,10 @@ const NotificationDropdown = () => {
             )}
           </div>
           <div className="px-4 py-2 bg-gray-100 dark:bg-gray-700 border-t dark:border-gray-600">
-            <Link to="/notifications" className="text-sm text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300">
+            <Link 
+              to="/notifications" 
+              className="text-sm text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300"
+              onClick={toggleDropdown}>
               View all notifications
             </Link>
           </div>

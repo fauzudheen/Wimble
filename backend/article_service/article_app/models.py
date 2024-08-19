@@ -6,7 +6,7 @@ class User(models.Model):
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     tagline = models.CharField(max_length=225, null=True, blank=True)
-    profile = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    profile = models.CharField(null=True, blank=True)
     is_staff = models.BooleanField(default=False)
 
 class Article(models.Model):
@@ -14,7 +14,7 @@ class Article(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    thumbnail = models.ImageField(upload_to='thumbnails/', max_length=200, null=True, blank=True)
+    thumbnail = models.ImageField(upload_to='article_service/article_app/thumbnails/', max_length=200, null=True, blank=True)
     community_id = models.IntegerField(null=True, blank=True)
     
 

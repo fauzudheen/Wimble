@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { BellIcon, ChatBubbleLeftIcon, CheckCircleIcon, HeartIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { BellIcon, ChatBubbleLeftIcon, CheckCircleIcon, ClockIcon, HeartIcon, UserPlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import createAxiosInstance from '../../api/axiosInstance';
 import { GatewayUrl } from '../const/urls';
@@ -11,6 +11,7 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
+  const [selectedNotifications, setSelectedNotifications] = useState([]);
   const token = useSelector((state) => state.auth.userAccess);
   const navigate = useNavigate();
 
@@ -21,6 +22,7 @@ const Notifications = () => {
         const axiosInstance = createAxiosInstance(token);
         const response = await axiosInstance.get(`${GatewayUrl}api/notifications/`);
         setNotifications(response.data);
+        console.log("Notifications", response.data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -41,11 +43,11 @@ const Notifications = () => {
     }
   };
 
-  const getNotificationIcon = (type, sender) => {
+  const getNotificationIcon = (type, sender=null, team=null) => {
     switch (type) {
       case 'follow':
         if (sender && sender.profile) {
-          return <img src={`${GatewayUrl}api/user_service/media/${sender.profile.split('/media/media/')[1]}`} className="h-10 w-10 object-cover rounded-full" alt={sender.username} />;
+          return <img src={`${GatewayUrl}api${sender.profile}`} className="h-10 w-10 object-cover rounded-full" alt={sender.username} />;
         } else {
           return <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" className="h-10 w-10 object-cover rounded-full" alt="Default profile" />;
         }
@@ -53,6 +55,12 @@ const Notifications = () => {
         return <HeartIcon className="h-6 w-6 text-red-500" />;
       case 'comment':
         return <ChatBubbleLeftIcon className="h-6 w-6 text-blue-500" />;
+      case 'meeting':
+        if (team && team.profile_image) {
+          return <img src={`${GatewayUrl}api${team.profile_image}`} className="h-10 w-10 object-cover rounded-full" />;
+        } else {
+          return <ClockIcon className="h-5 w-5 text-purple-500" />;
+        }
       default:
         return <BellIcon className="h-6 w-6 text-gray-500" />;
     }
@@ -61,20 +69,49 @@ const Notifications = () => {
   const handleNotificationClick = (notification) => {
     if (notification.notification_type === 'follow') {
       navigate(`/user-profile/${notification.sender.id}`);
+    } else if (notification.notification_type === 'meeting') {
+      navigate(`/teams/${notification.team.id}/meetings/`);
     }
     // Add more navigation logic for other notification types if needed
   };
 
   const tabs = [
     { name: 'All', value: 'all' },
+    { name: 'Meetings', value: 'meeting' },
     { name: 'Follows', value: 'follow' },
     { name: 'Likes', value: 'like' },
     { name: 'Comments', value: 'comment' },
+    { name: 'System', value: 'system' },
   ];
 
   const filteredNotifications = activeTab === 'all' 
     ? notifications 
     : notifications.filter(n => n.notification_type === activeTab);
+
+  const handleSelectNotification = (id) => {
+    setSelectedNotifications(prev => 
+      prev.includes(id) ? prev.filter(nId => nId !== id) : [...prev, id]
+    );
+  };
+
+  const handleDeleteSelected = async () => {
+    try {
+      const axiosInstance = createAxiosInstance(token);
+      await Promise.all(selectedNotifications.map(id => 
+        axiosInstance.delete(`${GatewayUrl}api/notifications/${id}/`)
+      ));
+      setNotifications(notifications.filter(n => !selectedNotifications.includes(n.id)));
+      setSelectedNotifications([]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getNotificationCount = (tabValue) => {
+    return tabValue === 'all' 
+      ? notifications.length 
+      : notifications.filter(n => n.notification_type === tabValue).length;
+  };
 
   if (loading) {
     return (
@@ -88,20 +125,35 @@ const Notifications = () => {
     <div className="container min-h-screen w-full max-w-full bg-gray-100 px-8 py-12 dark:bg-black box-border">
       <h1 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Notifications</h1>
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-        <nav className="flex border-b border-gray-200 dark:border-gray-700">
-          {tabs.map((tab) => (
+        <nav className="flex justify-between border-b border-gray-200 dark:border-gray-700">
+          <div className="flex">
+            {tabs.map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setActiveTab(tab.value)}
+                className={`px-4 py-4 text-sm font-medium ${
+                  activeTab === tab.value
+                    ? `${Colors.tealBlueGradientText} border-b-2 border-blue-500`
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                }`}
+              >
+                {tab.name} ({getNotificationCount(tab.value)})
+              </button>
+            ))}
+          </div>
+          {selectedNotifications.length > 0 && (
             <button
-              key={tab.value}
-              onClick={() => setActiveTab(tab.value)}
-              className={`px-4 py-4 text-sm font-medium ${
-                activeTab === tab.value
-                  ? `${Colors.tealBlueGradientText} border-b-2 border-blue-500`
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
-            >
-              {tab.name}
-            </button>
-          ))}
+            onClick={handleDeleteSelected}
+            className="flex items-center justify-center m-2 h-auto px-3 py-1.5 text-sm font-medium leading-4 rounded-md 
+            hover:opacity-90 transition-all duration-200 ease-in-out focus:outline-none 
+            bg-gradient-to-r from-red-400 to-red-600 text-white shadow-md"
+          >
+            <TrashIcon className="h-4 w-4 inline-block mr-1" />
+            Delete Selected ({selectedNotifications.length})
+          </button>
+          
+          
+          )}
         </nav>
         {filteredNotifications.length > 0 ? (
           filteredNotifications.map((notification) => (
@@ -109,13 +161,21 @@ const Notifications = () => {
               key={notification.id}
               className={`flex items-start p-4 border-b dark:border-gray-700 ${
                 !notification.is_read ? 'bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-900 dark:to-blue-900' : ''
-              } hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out cursor-pointer`}
-              onClick={() => handleNotificationClick(notification)}
+              } hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out`}
             >
-              <div className="flex-shrink-0 mr-4">
-                {getNotificationIcon(notification.notification_type, notification.sender)}
+              <div className="flex items-center justify-center mr-4 h-10">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4"
+                  checked={selectedNotifications.includes(notification.id)}
+                  onChange={() => handleSelectNotification(notification.id)}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </div>
-              <div className="flex-grow">
+              <div className="flex-shrink-0 mr-4">
+                {getNotificationIcon(notification.notification_type, notification.sender, notification.team)}
+              </div>
+              <div className="flex-grow cursor-pointer" onClick={() => handleNotificationClick(notification)}>
                 <p className="text-base text-gray-800 dark:text-gray-200">{notification.content}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   {format(new Date(notification.created_at), 'MMM d, yyyy HH:mm')}

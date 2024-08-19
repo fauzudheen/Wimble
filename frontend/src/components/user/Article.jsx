@@ -38,7 +38,7 @@ const Article = ({ article }) => {
       <header className="flex items-center mb-2">
         {profile && (
           <img
-            src={`${GatewayUrl}api/user_service/media/${profile.split('/media/media/')[1]}`}
+            src={`${GatewayUrl}api${profile}`}
             alt={author}
             className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full mr-2 cursor-pointer object-cover"
             onClick={handleProfileClick}
@@ -60,7 +60,7 @@ const Article = ({ article }) => {
       <Link to={`/article/${id}`} className="hover:text-blue-500">
         {thumbnail && (
           <img
-            src={thumbnail.replace('8000', '8002')}
+            src={`${GatewayUrl}api/${thumbnail}`}
             className="w-full h-36 sm:h-44 md:h-48 lg:h-56 object-cover rounded-lg mb-2 sm:mb-3"
             alt={title}
           />
