@@ -15,6 +15,7 @@ const ProfileHeader = () => {
   const location = useLocation(); // Get current URL path
   const isMyProfile = location.pathname === '/my-profile'; // Check if the path is for my profile
   const userId = isMyProfile ? useSelector(state => state.auth.userId) : id; // Set user ID based on path
+  const uid = useSelector(state => state.auth.userId)
   const [user, setUser] = useState({
     first_name: '',
     last_name: '',
@@ -61,6 +62,9 @@ const ProfileHeader = () => {
 
   const fetchRelation = async () => {
     console.log("fetching relation")
+    console.log("user id", userId)
+    console.log("id", id)
+    console.log("uid", uid)
     try {
       const axiosInstance = createAxiosInstance(token);
       const response = await axiosInstance.get(`${GatewayUrl}api/relations/${userId}/`);
@@ -111,7 +115,7 @@ const ProfileHeader = () => {
               ) : (
                 <UserIcon className="w-20 h-20 md:w-24 md:h-24 bg-teal-100 text-gray-500 border-4 border-teal-100 dark:border-gray-700 rounded-full" />
               )}
-              {isMyProfile && (
+              {isMyProfile || userId==uid && (
                 <button 
                   onClick={handleEditProfilePicture} 
                   className="absolute bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-1 shadow-md"
@@ -135,7 +139,7 @@ const ProfileHeader = () => {
               <span className="font-bold">{user.followings_count}</span> following
             </div>
           </div>
-          {isMyProfile ? (
+          {isMyProfile || userId==uid ? (
             <button
               className={`mt-4 ${Buttons.cancelButton} rounded-md text-sm font-medium`}
               onClick={handleEditProfile}

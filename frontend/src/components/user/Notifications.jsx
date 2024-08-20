@@ -49,12 +49,20 @@ const Notifications = () => {
         if (sender && sender.profile) {
           return <img src={`${GatewayUrl}api${sender.profile}`} className="h-10 w-10 object-cover rounded-full" alt={sender.username} />;
         } else {
-          return <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" className="h-10 w-10 object-cover rounded-full" alt="Default profile" />;
+          return <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" className="h-10 w-10 object-cover rounded-full" alt="Default profile" />;
         }
       case 'like':
-        return <HeartIcon className="h-6 w-6 text-red-500" />;
+       if (sender && sender.profile) {
+          return <img src={`${GatewayUrl}api${sender.profile}`} className="h-6 w-6 object-cover rounded-full" alt={sender.username} />;
+        } else {
+          return <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" className="h-6 w-6 object-cover rounded-full" alt="Default profile" />;
+        }
       case 'comment':
-        return <ChatBubbleLeftIcon className="h-6 w-6 text-blue-500" />;
+        if (sender && sender.profile) {
+          return <img src={`${GatewayUrl}api${sender.profile}`} className="h-6 w-6 object-cover rounded-full" alt={sender.username} />;
+        } else {
+          return <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" className="h-6 w-6 object-cover rounded-full" alt="Default profile" />;
+        }
       case 'meeting':
         if (team && team.profile_image) {
           return <img src={`${GatewayUrl}api${team.profile_image}`} className="h-10 w-10 object-cover rounded-full" />;
@@ -172,12 +180,28 @@ const Notifications = () => {
                   onClick={(e) => e.stopPropagation()}
                 />
               </div>
-              <div className="flex-shrink-0 mr-4">
-                {getNotificationIcon(notification.notification_type, notification.sender, notification.team)}
-              </div>
+                {notification.article ? (
+                <div className="flex-shrink-0 mr-4 relative">
+                    <img 
+                      src={`${GatewayUrl}api${notification.article.thumbnail}`} 
+                      alt={notification.article.title}
+                      className="w-10 h-10 object-cover rounded-md"
+                    />
+                  <div className="absolute -bottom-2 -right-2">
+                    {getNotificationIcon(notification.notification_type, notification.sender, notification.team)}
+                  </div>
+                </div>
+                ) : (
+                  <div className="flex-shrink-0 mr-4">
+                    {getNotificationIcon(notification.notification_type, notification.sender, notification.team)}
+                  </div>
+                )}
               <div className="flex-grow cursor-pointer" onClick={() => handleNotificationClick(notification)}>
-                <p className="text-base text-gray-800 dark:text-gray-200">{notification.content}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-base text-gray-800 dark:text-gray-200 font-semibold">{notification.content}</p>
+                {notification.notification_type === 'comment' && notification.comment && (
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 italic">"{notification.comment.text}"</p>
+                )}
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {format(new Date(notification.created_at), 'MMM d, yyyy HH:mm')}
                 </p>
               </div>

@@ -326,11 +326,11 @@ const TeamChat = () => {
                 <div className="p-4" ref={messageListRef}>
                     {hasMore && (
                         <button 
-                            onClick={() => setPage(prevPage => prevPage + 1)} 
-                            className="mb-4 mx-auto text-blue-500 dark:text-blue-300 hover:underline"
-                        >
-                            Load More Messages
-                        </button>
+                        onClick={() => setPage(prevPage => prevPage + 1)} 
+                        className="mb-4 mx-auto text-sm block bg-gradient-to-r from-teal-400 to-blue-500 dark:from-teal-500 dark:to-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
+                    >
+                        Load More Messages
+                    </button>
                     )}
                     {renderedMessages}
                 </div>

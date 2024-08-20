@@ -21,6 +21,30 @@ class Article(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.publish_article_update()
+
+    def delete(self, *args, **kwargs):
+        self.publish_article_delete()
+        super().delete(*args, **kwargs)
+
+    def publish_article_update(self):
+        article_data = {
+            'id': self.id,
+            'author_id': self.author.id,
+            'title': self.title,
+            'content': self.content, 
+            'thumbnail': self.thumbnail.url if self.thumbnail else None,
+        }
+        kafka_producer.produce_message('articles', self.id, article_data)
+
+    def publish_article_delete(self):
+        article_data = {
+            'id': self.id,
+        }
+        kafka_producer.produce_message('articles-deleted', self.id, article_data)
+
 class Interest(models.Model):
     name = models.CharField(max_length=50, unique=True) 
 
@@ -59,6 +83,29 @@ class Like(models.Model):
         unique_together = ('article', 'user')
         ordering = ['-created_at']
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.publish_like_update()
+
+    def delete(self, *args, **kwargs):
+        self.publish_like_delete()
+        super().delete(*args, **kwargs)
+
+    def publish_like_update(self):
+        like_data = {
+            'id': self.id,
+            'article_id': self.article.id,
+            'user_id': self.user.id
+        }
+        kafka_producer.produce_message('likes', self.id, like_data)
+
+    def publish_like_delete(self):
+        like_data = {
+            'id': self.id,
+        }   
+        kafka_producer.produce_message('likes-deleted', self.id, like_data)
+
+
 class Comment(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
@@ -68,6 +115,30 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.publish_comment_update()
+
+    def delete(self, *args, **kwargs):
+        self.publish_comment_delete()
+        super().delete(*args, **kwargs)
+
+    def publish_comment_update(self):
+        comment_data = {
+            'id': self.id,
+            'article_id': self.article.id,
+            'user_id': self.user.id,
+            'text': self.text,
+            'parent_id': self.parent.id if self.parent else None
+        }
+        kafka_producer.produce_message('comments', self.id, comment_data)
+
+    def publish_comment_delete(self):
+        comment_data = {
+            'id': self.id,
+        }
+        kafka_producer.produce_message('comments-deleted', self.id, comment_data)
 
 class Report(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='reports')

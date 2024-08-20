@@ -108,12 +108,20 @@ const NotificationDropdown = () => {
         if (sender && sender.profile) {
           return <img src={`${GatewayUrl}api${sender.profile}`} className="h-8 w-8 mt-2 object-cover rounded-full " />;
         } else {
-            return <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" className="h-6 w-6 mt-2 text-teal-500" />;
+            return <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" className="h-8 w-8 mt-2 text-teal-500" />;
         }
-      case 'like':
-        return <HeartIcon className="h-5 w-5 text-red-500" />;
-      case 'comment':
-        return <ChatBubbleLeftIcon className="h-5 w-5 text-blue-500" />;
+        case 'like':
+          if (sender && sender.profile) {
+             return <img src={`${GatewayUrl}api${sender.profile}`} className="h-6 w-6 object-cover rounded-full" alt={sender.username} />;
+           } else {
+             return <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" className="h-6 w-6 object-cover rounded-full" alt="Default profile" />;
+           }
+         case 'comment':
+           if (sender && sender.profile) {
+             return <img src={`${GatewayUrl}api${sender.profile}`} className="h-6 w-6 object-cover rounded-full" alt={sender.username} />;
+           } else {
+             return <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" className="h-6 w-6 object-cover rounded-full" alt="Default profile" />;
+           }
       case 'meeting':
         if (team && team.profile_image) {
           return <img src={`${GatewayUrl}api${team.profile_image}`} className="h-8 w-8 mt-2 object-cover rounded-full" />;
@@ -164,11 +172,27 @@ const NotificationDropdown = () => {
                   className="flex items-start p-4 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out cursor-pointer"
                   onClick={() => handleNotificationClick(notification)}
                 >
-                  <div className="flex-shrink-0 mr-3">
-                    {getNotificationIcon(notification.notification_type, notification.sender, notification.team)}
+                    {notification.article ? (
+                  <div className="flex-shrink-0 mr-4 relative">
+                      <img 
+                        src={`${GatewayUrl}api${notification.article.thumbnail}`} 
+                        alt={notification.article.title}
+                        className="w-8 h-8 object-cover rounded-sm"
+                      />
+                    <div className="absolute -bottom-2 -right-2">
+                      {getNotificationIcon(notification.notification_type, notification.sender, notification.team)}
+                    </div>
                   </div>
+                  ) : (
+                    <div className="flex-shrink-0 mr-4">
+                      {getNotificationIcon(notification.notification_type, notification.sender, notification.team)}
+                    </div>
+                  )}
                   <div className="flex-grow">
                     <p className="text-sm text-gray-800 dark:text-gray-200">{notification.content}</p>
+                    {notification.notification_type === 'comment' && notification.comment && (
+                      <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mt-1 italic">"{notification.comment.text}"</p>
+                    )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {formatDate(notification.created_at)}
                     </p>

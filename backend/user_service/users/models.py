@@ -123,3 +123,14 @@ class Relation(models.Model):
     
     def __str__(self):
         return f"{self.follower} follows {self.following}"
+    
+    def delete(self, *args, **kwargs):
+        self.publish_relation_delete()
+        super().delete(*args, **kwargs)
+
+    def publish_relation_delete(self):
+        relation_data = {
+            'id': self.id
+        }
+
+        kafka_producer.produce_message('relations-deleted', self.id, relation_data)

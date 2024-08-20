@@ -145,11 +145,12 @@ const ReadArticle = () => {
   ];
 
   const handleProfileClick = () => {
-    if (article.author_id === userId) {
-      navigate(`/my-profile`);
-    } else {
-      navigate(`/user-profile/${userId}`);
-    }
+    navigate(`/user-profile/${article.author_id}`);
+    // if (article.author_id === userId) {
+    //   navigate(`/my-profile`);
+    // } else {
+    //   navigate(`/user-profile/${userId}`);
+    // }
   };
 
   if (isArticleDeleted) {
