@@ -27,3 +27,11 @@ class NotificationUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         return models.Notification.objects.get(id=self.kwargs['pk']) 
+    
+    
+class NotificationPreferenceRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    serializer_class = serializers.NotificationPreferenceSerializer
+    permission_classes = [IsAuthenticated] 
+
+    def get_object(self):
+        return models.NotificationPreference.objects.get(user_id=self.request.user.id)

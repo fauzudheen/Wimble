@@ -15,8 +15,7 @@ django.setup()
 #The following lines should be below django.setup(), otherwise it will not work
 #You need to ensure that Django is properly configured before importing any Django models or apps
 from chat.models import User, Team, TeamMember
-from notification.models import Relation, Article, Like, Comment 
-from notification.models import Notification
+from notification.models import Relation, Article, Like, Comment, Notification, NotificationPreference
 from django.db import transaction
 from notification.tasks import send_meeting_notification
 
@@ -103,17 +102,19 @@ def store_relation_in_db(relation_data):
             print(f"Rel {relation_data['id']} data stored in database")
 
             follower = User.objects.get(id=relation_data['follower_id'])
+            notification_preference = NotificationPreference.objects.filter(user_id=relation_data['following_id']).first()
 
             if created:
-                notification = Notification.objects.create(
-                    sender_id=relation_data['follower_id'],
-                    receiver_id=relation_data['following_id'],
-                    notification_type='follow',
-                    relation_id=relation_data['id'],
-                    content=f"{follower.first_name} {follower.last_name} started following you",
-                )
+                if notification_preference.follows:
+                    notification = Notification.objects.create(
+                        sender_id=relation_data['follower_id'],
+                        receiver_id=relation_data['following_id'],
+                        notification_type='follow',
+                        relation_id=relation_data['id'],
+                        content=f"{follower.first_name} {follower.last_name} started following you",
+                    )
 
-                print("------------------Follow Notification created-----------------", notification)
+                    print("------------------Follow Notification created-----------------", notification)
             else:
                 # Find and delete the existing notification
                 notification = Notification.objects.filter(relation_id=relation_data['id']).first()
@@ -121,13 +122,14 @@ def store_relation_in_db(relation_data):
                 print("------------------Existing Relation Notification deleted-----------------", notification)
 
                 # Create a new notification
-                notification = Notification.objects.create(
-                    sender_id=relation_data['follower_id'],
-                    receiver_id=relation_data['following_id'],
-                    notification_type='follow',
-                    relation_id=relation_data['id'],
-                    content=f"{follower.first_name} {follower.last_name} started following you",
-                )
+                if notification_preference.follows:
+                    notification = Notification.objects.create(
+                        sender_id=relation_data['follower_id'],
+                        receiver_id=relation_data['following_id'],
+                        notification_type='follow',
+                        relation_id=relation_data['id'],
+                        content=f"{follower.first_name} {follower.last_name} started following you",
+                    )
 
                 print("------------------New Relation Notification created-----------------", notification)
 
@@ -221,17 +223,19 @@ def store_comment_in_db(comment_data):
 
             sender = User.objects.get(id=comment_data['user_id'])
             article = Article.objects.get(id=comment_data['article_id'])
+            notification_preference = NotificationPreference.objects.filter(user_id=article.author_id).first()
 
             if created:
-                notification = Notification.objects.create(
-                    sender_id=comment_data['user_id'],
-                    receiver_id=article.author_id,
-                    notification_type='comment',
-                    article_id=article.id,
-                    comment_id=comment_data['id'],
-                    content=f"{sender.first_name} {sender.last_name} commented on your article",
-                )
-                print("------------------Comment Notification created-----------------", notification)
+                if notification_preference.comments:
+                    notification = Notification.objects.create(
+                        sender_id=comment_data['user_id'],
+                        receiver_id=article.author_id,
+                        notification_type='comment',
+                        article_id=article.id,
+                        comment_id=comment_data['id'],
+                        content=f"{sender.first_name} {sender.last_name} commented on your article",
+                    )
+                    print("------------------Comment Notification created-----------------", notification)
             else:
                 # Find and delete the existing notification
                 notification = Notification.objects.filter(comment_id=comment_data['id']).first()
@@ -241,15 +245,16 @@ def store_comment_in_db(comment_data):
                     print("------------------Existing Comment Notification deleted-----------------")
 
                 # Create a new notification after deletion
-                new_notification = Notification.objects.create(
-                    sender_id=comment_data['user_id'],
-                    receiver_id=article.author_id,
-                    notification_type='comment',
-                    article_id=article.id,
-                    comment_id=comment_data['id'],
-                    content=f"{sender.first_name} {sender.last_name} updated their comment on your article",
-                )
-                print("------------------New Comment Notification created-----------------", new_notification)
+                if notification_preference.comments:
+                    new_notification = Notification.objects.create(
+                        sender_id=comment_data['user_id'],
+                        receiver_id=article.author_id,
+                        notification_type='comment',
+                        article_id=article.id,
+                        comment_id=comment_data['id'],
+                        content=f"{sender.first_name} {sender.last_name} updated their comment on your article",
+                    )
+                    print("------------------New Comment Notification created-----------------", new_notification)
 
         except Exception as e:
             print("------------------Error storing comment data-----------------", e)
@@ -281,18 +286,20 @@ def store_like_in_db(like_data):
 
             sender = User.objects.get(id=like_data['user_id'])
             article = Article.objects.get(id=like_data['article_id'])
+            notification_preference = NotificationPreference.objects.filter(user_id=article.author_id).first()
 
             if created:
-                notification = Notification.objects.create(
-                    sender_id=like_data['user_id'],
-                    receiver_id=article.author_id,
-                    notification_type='like',
-                    article_id=article.id,
-                    like_id=like_data['id'],
-                    content=f"{sender.first_name} {sender.last_name} liked your article",
-                )
+                if notification_preference.likes:
+                    notification = Notification.objects.create(
+                        sender_id=like_data['user_id'],
+                        receiver_id=article.author_id,
+                        notification_type='like',
+                        article_id=article.id,
+                        like_id=like_data['id'],
+                        content=f"{sender.first_name} {sender.last_name} liked your article",
+                    )
 
-                print("------------------Like Notification created-----------------", notification)
+                    print("------------------Like Notification created-----------------", notification)
             else:
                 # Find and delete the existing notification
                 notification = Notification.objects.filter(like_id=like_data['id']).first()
@@ -302,15 +309,16 @@ def store_like_in_db(like_data):
                     print("------------------Existing Like Notification deleted-----------------")
 
                 # Create a new notification after deletion
-                new_notification = Notification.objects.create(
-                    sender_id=like_data['user_id'],
-                    receiver_id=article.author_id,
-                    notification_type='like',
-                    article_id=article.id,
-                    like_id=like_data['id'],
-                    content=f"{sender.first_name} {sender.last_name} updated their like on your article",
-                )
-                print("------------------New Like Notification created-----------------", new_notification)
+                if notification_preference.likes:
+                    new_notification = Notification.objects.create(
+                        sender_id=like_data['user_id'],
+                        receiver_id=article.author_id,
+                        notification_type='like',
+                        article_id=article.id,
+                        like_id=like_data['id'],
+                        content=f"{sender.first_name} {sender.last_name} updated their like on your article",
+                    )
+                    print("------------------New Like Notification created-----------------", new_notification)
         except Exception as e:
             print(f"Error storing like data: {e}")
 

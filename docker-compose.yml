@@ -71,6 +71,17 @@ services:
     volumes:
       - ./backend/communication_service:/app
 
+  payment_service:
+    container_name: payment_service
+    build: ./backend/payment_service
+    ports:
+      - "8006:8006"
+    depends_on:
+      - payment_db
+      - kafka
+    volumes:
+      - ./backend/payment_service:/app
+
   user_db:
     container_name: user_db
     image: postgres
@@ -131,6 +142,18 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - communication_db_data:/var/lib/postgresql/data
+
+  payment_db:
+    container_name: payment_db
+    image: postgres
+    ports:
+      - "5437:5432"
+    environment:
+      POSTGRES_DB: payment_db
+      POSTGRES_USER: fauzu
+      POSTGRES_PASSWORD: password
+    volumes:
+      - payment_db_data:/var/lib/postgresql/data
   
   user_redis:
     container_name: user_redis
@@ -220,6 +243,7 @@ volumes:
   community_db_data:
   team_db_data:
   communication_db_data:
+  payment_db_data:
   user_redis_data:
   communication_redis_data:
   kafka_data:

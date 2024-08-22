@@ -112,3 +112,30 @@ class UploadFileView(APIView):
         
         response = httpx.post(service_url, files=request.data, headers=headers)
         return Response(response.json(), status=response.status_code)
+    
+class NotificationPreferenceView(APIView):
+    def get(self, request):
+        service_url = f"{COMMUNICATION_SERVICE_URL}/notification-preferences/"
+        
+        exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
+        
+        headers = {
+            k: v for k, v in request.headers.items() 
+            if k.lower() not in exclude_headers
+        }
+        
+        response = httpx.get(service_url, headers=headers)
+        return Response(response.json(), status=response.status_code)
+    
+    def put(self, request):
+        service_url = f"{COMMUNICATION_SERVICE_URL}/notification-preferences/"
+        
+        exclude_headers = ['content-length','host','user-agent','connection', 'accept-encoding',]
+        
+        headers = {
+            k: v for k, v in request.headers.items() 
+            if k.lower() not in exclude_headers
+        }
+        
+        response = httpx.put(service_url, json=request.data, headers=headers)
+        return Response(response.json(), status=response.status_code)

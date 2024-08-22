@@ -18,6 +18,8 @@
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.4",
     "@reduxjs/toolkit": "^2.2.5",
+    "@stripe/react-stripe-js": "^2.8.0",
+    "@stripe/stripe-js": "^4.3.0",
     "@tailwindcss/typography": "^0.5.13",
     "@tinymce/tinymce-react": "^5.1.1",
     "@zegocloud/zego-uikit-prebuilt": "^2.6.2",

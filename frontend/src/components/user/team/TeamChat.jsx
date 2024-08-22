@@ -181,7 +181,7 @@ const TeamChat = () => {
                     )}
     
                     {/* Message Content */}
-                    <div className={`max-w-xs p-2 rounded-lg shadow ${isSent ? 'bg-gradient-to-r from-teal-100 to-blue-100 dark:from-teal-800 dark:to-blue-900' : 'bg-gray-50 dark:bg-gray-700'}`}>
+                    <div className={`max-w-xs p-2 rounded-lg shadow ${isSent ? 'bg-gradient-to-r from-teal-100 to-blue-100 dark:from-teal-800 dark:to-blue-900' : 'bg-white dark:bg-gray-700'}`}>
                         {msg.file && (
                             <>
                                 {/* Image Handling */}

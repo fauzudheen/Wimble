@@ -1,7 +1,8 @@
 from django.db import models
-from chat.models import User, Team
+from chat.models import User, Team, NotificationPreference
 from .notification import send_notification
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Article(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='articles')
@@ -66,3 +67,5 @@ class Notification(models.Model):
         }
         print("------------------create_notification view called in communication service-----------------")
         send_notification(self.receiver.id, notification_data)
+
+

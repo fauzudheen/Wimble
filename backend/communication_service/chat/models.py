@@ -1,11 +1,21 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     tagline = models.CharField(max_length=225, null=True, blank=True)
-    profile = models.CharField(null=True, blank=True)
+    profile = models.CharField(null=True, blank=True) 
+
+class NotificationPreference(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    follows = models.BooleanField(default=True)
+    likes = models.BooleanField(default=True)
+    comments = models.BooleanField(default=True)
+    meetings = models.BooleanField(default=True)
+    system = models.BooleanField(default=True) 
 
 class Team(models.Model):
     STATUS_CHOICES = [
@@ -55,3 +65,12 @@ class Message(models.Model):
     class Meta:
         ordering = ['-created_at']  
 
+
+@receiver(post_save, sender=User)
+def create_or_update_notification_preference(sender, instance, created, **kwargs):
+    print(f"create_or_update_notification_preference called for user: {instance}")
+    if not NotificationPreference.objects.filter(user=instance).exists():
+        print(f"Creating notification preference for user: {instance}")
+        NotificationPreference.objects.create(user=instance)
+    else:
+        print(f"Notification preference already exists for user: {instance}")  

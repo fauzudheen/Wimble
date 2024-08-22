@@ -30,6 +30,13 @@ import TeamSettings from '../components/user/team/TeamSettings';
 import Meet from '../components/user/team/Meet';
 import Notifications from '../components/user/Notifications';
 import SelectInterests from '../pages/user/SelectInterests';
+import Pricing from '../pages/user/pricing/Pricing';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import PricingWrapper from '../pages/user/pricing/PricingWrapper';
+import PaymentSuccess from '../pages/user/pricing/PaymentSuccess';
+import PaymentCancelled from '../pages/user/pricing/PaymentCancelled';
+
 
 const UserRoutes = () => {
   return (
@@ -52,6 +59,9 @@ const UserRoutes = () => {
             
           <Route element={<UserProtectedRoutes />}>
               <Route path='/my-profile' element={<ProfilePage />} />
+              <Route path='/pricing' element={<PricingWrapper />} />
+              <Route path='/payment-success' element={<PaymentSuccess />} />
+              <Route path='/payment-cancelled' element={<PaymentCancelled />} />
               <Route path='/create-article' element={<CreateArticle />} />
               <Route path="/edit-article/:id" element={<EditArticle />} />
               <Route path="/notifications" element={<Notifications />} />

@@ -1,5 +1,5 @@
 from celery import shared_task
-from .models import Notification
+from .models import Notification, NotificationPreference
 from datetime import datetime, timedelta
 from .notification import send_group_notification
 
@@ -20,13 +20,15 @@ def send_meeting_notification(meeting_data):
         members = meeting_data['members']
         
         for member in members:
-            Notification.objects.create(
-                sender_id=meeting_data.get('sender_id'),
-                receiver_id=member,
-                notification_type='meeting',
-                team_id=meeting_data.get('team_id'),
-                content=content
-            )
+            notification_preference = NotificationPreference.objects.get(user_id=member)
+            if notification_preference.meetings:
+                Notification.objects.create(
+                    sender_id=meeting_data.get('sender_id'),
+                    receiver_id=member,
+                    notification_type='meeting',
+                    team_id=meeting_data.get('team_id'),
+                    content=content
+                )
         
         print(f"Meeting notifications sent to {len(members)} members")
         print(f"Meeting start time: {start_time}")

@@ -1,7 +1,6 @@
 from django.apps import AppConfig
 
 
-class NotificationConfig(AppConfig):
+class PaymentAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'notification'
-
+    name = 'payment_app'
