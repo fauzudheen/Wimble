@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 
                   'profile', 'date_joined', 'is_superuser', 'is_staff', 'is_active', 
                   'tagline', 'bio', 'followers_count', 'followings_count', 'account_tier',
-                  'skill_count']   
+                  'skill_count', 'stripe_customer_id', 'stripe_subscription_id', 'subscription_expiry']    
      
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)

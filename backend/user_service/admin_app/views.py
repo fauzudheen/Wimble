@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics  
-from .permissions import IsOwnerOrAdmin
+from .permissions import IsOwnerOrAdmin, ServiceTokenPermission 
 from rest_framework.pagination import PageNumberPagination
 
 class CustomPagination(PageNumberPagination):
@@ -19,11 +19,16 @@ class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = CustomPagination 
- 
+  
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer  
     permission_classes = [IsOwnerOrAdmin]
+
+class UserUpdateView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [ServiceTokenPermission] 
 
 class AdminLoginView(APIView):
     def post(self, request):

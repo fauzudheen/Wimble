@@ -12,5 +12,5 @@ class PaymentCreateCheckoutView(APIView):
 class PaymentWebhookView(APIView):
     def post(self, request):
         service_url = f"{PAYMENT_SERVICE_URL}/payments/webhook/"
-        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        response = requests.post(service_url, data=request.body, headers=request.headers)
         return Response(response.json(), status=response.status_code)

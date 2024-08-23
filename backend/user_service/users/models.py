@@ -11,6 +11,9 @@ class User(AbstractUser):
     account_tier = models.CharField(default="free", max_length=50)
     date_joined = models.DateField(default=datetime.date.today)
     is_active = models.BooleanField(default=True)
+    stripe_customer_id = models.CharField(max_length=255, null=True, blank=True)
+    stripe_subscription_id = models.CharField(max_length=255, null=True, blank=True)
+    subscription_expiry = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ['-id'] 
