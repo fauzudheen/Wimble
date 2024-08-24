@@ -34,6 +34,7 @@ services:
     depends_on:
       - article_db
       - kafka
+      - elasticsearch
     volumes:
       - ./backend/article_service:/app
 
@@ -81,6 +82,16 @@ services:
       - kafka
     volumes:
       - ./backend/payment_service:/app
+
+  search_service:
+    container_name: search_service
+    build: ./backend/search_service
+    ports:
+      - "8007:8007"
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./backend/search_service:/app
 
   user_db:
     container_name: user_db
@@ -215,6 +226,25 @@ services:
       - CELERY_RESULT_SERIALIZER=json
       - CELERY_TIMEZONE=Asia/Kolkata
 
+  stripe-cli:
+    container_name: stripe_cli_container
+    image: stripe/stripe-cli:latest
+    entrypoint: /bin/sh
+    command: -c "stripe listen --forward-to http://host.docker.internal:8000/api/payments/webhook/"
+    volumes:
+      - ./backend/payment_service:/app
+    tty: true  # Keep the terminal open
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
 
   # prometheus:
   #   image: prom/prometheus
@@ -248,5 +278,6 @@ volumes:
   communication_redis_data:
   kafka_data:
   zookeeper_data:
+  es_data:
   prometheus_data:
   grafana_data:

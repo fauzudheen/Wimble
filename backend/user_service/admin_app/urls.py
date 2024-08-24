@@ -9,5 +9,4 @@ urlpatterns = [
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view()),
     path('users-payment/<int:pk>/', UserUpdateView.as_view()), 
     path('ad/login/', AdminLoginView.as_view()),
-
 ] 

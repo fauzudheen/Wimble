@@ -1,16 +1,17 @@
-// Pricing.jsx
-
-import React from 'react';
-import { CheckIcon } from '@heroicons/react/24/outline';
+import React, { useEffect, useState } from 'react';
+import { CheckIcon, ShieldCheckIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { useStripe } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import createAxiosInstance from '../../../api/axiosInstance';
 import { useSelector } from 'react-redux';
 import { GatewayUrl } from '../../../components/const/urls';
+import { format, differenceInDays } from 'date-fns';
 
 const Pricing = () => {
   const stripe = useStripe();
   const token = useSelector((state) => state.auth.userAccess);
+  const userId = useSelector((state) => state.auth.userId);
+  const [user, setUser] = useState(null);
 
   const tiers = [
     {
@@ -22,7 +23,6 @@ const Pricing = () => {
         'User profile creation',
         'Community participation',
         'Basic team functionalities',
-        'Team joining (max 3 members)',
       ],
     },
     {
@@ -33,13 +33,24 @@ const Pricing = () => {
       features: [
         'All Free Tier features',
         'Advanced team functionalities',
-        'Expanded team membership (max 10 members)',
         'Meeting scheduling and management',
       ],
       cta: 'Upgrade Now',
-      priceId: 'price_1PqXI3H0epnuZaS4GwodNcFJ', // Replace with your actual Stripe Price ID
+      priceId: 'price_1PqXI3H0epnuZaS4GwodNcFJ',
     },
   ];
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get(`${GatewayUrl}api/users/${userId}/`);
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+    fetchUserDetails();
+  }, [userId]);
 
   const handleSubscribe = async (priceId) => {
     try {
@@ -62,21 +73,54 @@ const Pricing = () => {
     }
   };
 
+  const renderSubscriptionStatus = () => {
+    if (!user) return null;
+
+    const isPremium = user.account_tier === 'premium';
+    const daysRemaining = differenceInDays(new Date(user.subscription_expiry), new Date());
+
+    return (
+      <div className="flex w-full justify-center mt-6">
+        <div className="w-3/5"> 
+          <div className={`w-full text-center p-4 rounded-lg shadow-md ${isPremium ? 'bg-gradient-to-r from-teal-500 to-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100'}`}>
+            <div className="flex items-center justify-center mb-2">
+              {isPremium ? (
+                <ShieldCheckIcon className="h-6 w-6 mr-2" />
+              ) : (
+                <ClockIcon className="h-6 w-6 mr-2" />
+              )}
+              <h3 className="text-lg font-semibold">
+                {isPremium ? 'Premium Subscription Active' : 'Free Tier'}
+              </h3>
+            </div>
+            {isPremium && (
+              <>
+                <p className="text-base mb-1">Expires on: {format(new Date(user.subscription_expiry), 'MMMM d, yyyy')}</p>
+                <p className="text-base font-medium">{daysRemaining} days remaining</p>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+    
   return (
-    <div className="bg-gray-100 dark:bg-gray-900">
-      <div className="pt-4 sm:pt-8 lg:pt-12">
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
+      <div className="pt-2 sm:pt-6 lg:pt-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white sm:text-3xl lg:text-4xl">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl lg:text-4xl">
               Simple, Transparent Pricing
             </h2>
             <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
               Choose the plan that's right for you and your team
             </p>
           </div>
+          {renderSubscriptionStatus()}
         </div>
       </div>
-      <div className="mt-6 pb-12 sm:mt-8 sm:pb-16 lg:pb-20">
+      <div className="mt-4 pb-8 sm:mt-6 sm:pb-10 lg:pb-14">
         <div className="relative">
           <div className="absolute inset-0 h-1/2 bg-gray-100 dark:bg-gray-900"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -86,16 +130,16 @@ const Pricing = () => {
                   key={tier.name}
                   className={`flex-1 bg-white dark:bg-gray-800 px-4 py-6 lg:p-8 ${
                     tierIdx === 0 ? 'lg:rounded-l-lg' : 'lg:rounded-r-lg'
-                  }`}
+                  } ${user && user.account_tier === tier.name.toLowerCase() ? 'ring-2 ring-teal-500' : ''}`}
                 >
-                  <h3 className="text-xl font-extrabold text-gray-900 dark:text-white sm:text-2xl">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">
                     {tier.name}
                   </h3>
-                  <p className="mt-4 text-base text-gray-500 dark:text-gray-400">
+                  <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
                     {tier.description}
                   </p>
                   <p className="mt-6">
-                    <span className="text-3xl font-extrabold text-gray-900 dark:text-white">
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
                       {tier.price}
                     </span>{' '}
                     <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -108,7 +152,7 @@ const Pricing = () => {
                         <div className="flex-shrink-0">
                           <CheckIcon className="h-5 w-5 text-green-500" aria-hidden="true" />
                         </div>
-                        <p className="ml-2 text-base text-gray-700 dark:text-gray-300">
+                        <p className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                           {feature}
                         </p>
                       </li>
@@ -116,16 +160,17 @@ const Pricing = () => {
                   </ul>
                   {tier.cta && (
                     <div className="mt-6">
-                      <div className="rounded-lg shadow-md w-2/4 mx-auto">
-                        <button
-                          onClick={() => handleSubscribe(tier.priceId)}
-                          className="block w-full text-center rounded-lg border border-transparent px-4 py-2 text-sm font-medium 
-                          bg-gradient-to-r from-teal-500 to-blue-600 text-white hover:from-teal-600 hover:to-blue-700
-                          dark:bg-gradient-to-r dark:from-teal-600 dark:to-blue-700 dark:hover:from-teal-700 dark:hover:to-blue-800"
-                        >
-                          {tier.cta}
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => handleSubscribe(tier.priceId)}
+                        className={`w-full px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white 
+                        bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700
+                        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-300 ease-in-out
+                        transform hover:-translate-y-1 hover:shadow-xl
+                        ${user && user.account_tier === 'premium' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={user && user.account_tier === 'premium'}
+                      >
+                        {user && user.account_tier === 'premium' ? 'Current Plan' : tier.cta}
+                      </button>
                     </div>
                   )}
                 </div>

@@ -36,6 +36,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import PricingWrapper from '../pages/user/pricing/PricingWrapper';
 import PaymentSuccess from '../pages/user/pricing/PaymentSuccess';
 import PaymentCancelled from '../pages/user/pricing/PaymentCancelled';
+import PaymentResult from '../pages/user/pricing/PaymentResult';
 
 
 const UserRoutes = () => {
@@ -57,9 +58,10 @@ const UserRoutes = () => {
             <Route path="/communities/:id/settings" element={<CommunitySettings />} />
             <Route path='/user-profile/:id' element={<ProfilePage />} />
             
+            <Route path='/pricing' element={<PricingWrapper />} />
           <Route element={<UserProtectedRoutes />}>
               <Route path='/my-profile' element={<ProfilePage />} />
-              <Route path='/pricing' element={<PricingWrapper />} />
+              <Route path='/payment-result' element={<PaymentResult />} />
               <Route path='/payment-success' element={<PaymentSuccess />} />
               <Route path='/payment-cancelled' element={<PaymentCancelled />} />
               <Route path='/create-article' element={<CreateArticle />} />

@@ -8,7 +8,8 @@ from datetime import datetime, timedelta
 import jwt
 from rest_framework.permissions import IsAuthenticated
 import uuid
-
+from .models import PaymentStatus
+from .serializers import PaymentStatusSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 USER_SERVICE_URL = "http://host.docker.internal:8001"
@@ -30,7 +31,7 @@ class CreateCheckoutSessionView(APIView):
                     },
                 ],
                 mode='subscription',
-                success_url=settings.FRONTEND_URL + 'payment-success/',
+                success_url=settings.FRONTEND_URL + 'payment-result/',
                 cancel_url=settings.FRONTEND_URL + 'payment-cancelled/',   
                 metadata={
                     'user_id': request.user.id
@@ -70,7 +71,6 @@ class StripeWebhookView(APIView):
             
             customer_id = session['customer']
             subscription_id = session['subscription']
-            customer_email = session['customer_details']['email']
             payment_status = session['payment_status']
 
             print("Checkout Session Completed")
@@ -78,28 +78,28 @@ class StripeWebhookView(APIView):
             print("Subscription ID:", subscription_id)
 
             if payment_status == 'paid':
-                success = self.process_subscription(customer_email, customer_id, subscription_id, session['invoice'], request, event)
-                if not success:
-                    return Response({'error': 'Failed to process subscription'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                user_id = event['data']['object']['metadata']['user_id']
+                PaymentStatus.objects.create(user_id=user_id, status='pending')
+                self.process_subscription(customer_id, subscription_id, session['invoice'], event)
+                
+        return Response({'success': True}) 
 
-        return Response({'success': True})
-
-    def process_subscription(self, email, customer_id, subscription_id, invoice_id, request, event):
-        user_update_success = self.update_user_subscription(email, 'premium', customer_id, subscription_id, event)
+    def process_subscription(self, customer_id, subscription_id, invoice_id, event):
+        user_id = event['data']['object']['metadata']['user_id']
+        user_update_success = self.update_user_subscription('premium', customer_id, subscription_id, event)
         
         if user_update_success:
-            print("User subscription updated successfully")
+            PaymentStatus.objects.filter(user_id=user_id).update(status='success', message='User subscription updated successfully')
             return True
         else:
-            print("Failed to update user subscription. Initiating refund.")
             refund_success = self.initiate_refund(invoice_id)
             if refund_success:
-                print("Refund initiated successfully")
+                PaymentStatus.objects.filter(user_id=user_id).update(status='refunded', message='Payment was successful but the server failed to update user subscription. Refund initiated successfully. Sorry for the inconvenience.') 
             else:
-                print("Failed to initiate refund")
+                PaymentStatus.objects.filter(user_id=user_id).update(status='failed', message='Failed to update user subscription and initiate refund')
             return False
 
-    def update_user_subscription(self, email, new_tier, customer_id, subscription_id, event):
+    def update_user_subscription(self, new_tier, customer_id, subscription_id, event):
         user_id = event['data']['object']['metadata']['user_id']
         service_url = f"{USER_SERVICE_URL}/users-payment/{user_id}/"
 
@@ -129,9 +129,22 @@ class StripeWebhookView(APIView):
 
     def initiate_refund(self, invoice_id):
         try:
-            refund = stripe.Refund.create(invoice=invoice_id)
+            invoice = stripe.Invoice.retrieve(invoice_id)
+            charge_id = invoice.charge
+            print(f"Charging ID: {charge_id}") 
+            refund = stripe.Refund.create(charge=charge_id)
             print(f"Refund initiated: {refund.id}")
             return True
         except stripe.error.StripeError as e:
             print(f"Failed to initiate refund: {str(e)}")
             return False 
+
+class CheckPaymentStatusView(APIView):
+    def get(self, request):
+        user_id = request.user.id
+        try:
+            payment_status = PaymentStatus.objects.filter(user_id=user_id).latest()
+            serializer = PaymentStatusSerializer(payment_status)
+            return Response(serializer.data) 
+        except PaymentStatus.DoesNotExist:
+            return Response({'status': 'not_found', 'message': 'No payment status found'})

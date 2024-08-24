@@ -35,7 +35,7 @@ const Navbar = () => {
                         <input
                             type="text"
                             placeholder="Search..."
-                            className="w-full p-1 sm:p-2 text-xs sm:text-sm border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="max-w-lg block w-full p-1 sm:p-2 text-xs sm:text-sm border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         />
                     </div>
                     <div className="flex items-center space-x-2 sm:space-x-4">
