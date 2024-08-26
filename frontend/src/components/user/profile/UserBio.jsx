@@ -51,7 +51,7 @@ const UserBio = () => {
     <div className="mb-2 sm:mb-2 md:mb-4 lg:mb-4 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-md shadow-md"> {/* Adjusted padding for smaller screens */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Bio</h2>
-        {isMyProfile || userId==uid && (
+        {isMyProfile && (
           <button 
             onClick={toggleEdit} 
             className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200"

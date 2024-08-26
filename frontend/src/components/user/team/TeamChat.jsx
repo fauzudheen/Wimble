@@ -25,7 +25,7 @@ const TeamChat = () => {
     const [team, setTeam] = useState({});
     const [onlineUsers, setOnlineUsers] = useState(0);
 
-    const socketUrl = `ws://localhost:8005/ws/chat/team/${teamId}/?token=${token}`;
+    const socketUrl = `ws://localhost:8005/ws/chat/teams/${teamId}/?token=${token}`;
 
     const { sendMessage, lastMessage } = useWebSocket(socketUrl, {
         onOpen: () => console.log('WebSocket connected'),
@@ -64,7 +64,7 @@ const TeamChat = () => {
         setIsLoading(true);
         try {
             const axiosInstance = createAxiosInstance(token);
-            const response = await axiosInstance.get(`${GatewayUrl}api/chat/team/${teamId}/messages/?page=${pageNum}`);
+            const response = await axiosInstance.get(`${GatewayUrl}api/chat/teams/${teamId}/messages/?page=${pageNum}`);
             const newMessages = response.data.results;
             setMessages(prevMessages => [...prevMessages, ...newMessages]);
             console.log("new messages", newMessages);

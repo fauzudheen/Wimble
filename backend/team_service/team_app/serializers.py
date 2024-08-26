@@ -20,9 +20,10 @@ class TeamSerializer(serializers.ModelSerializer):
     
     def get_request_status(self, obj):
         request = self.context.get('request')
-        member = obj.members.filter(user_id=request.user.id).first()
-        if member:
-            return member.request_status
+        if request:
+            member = obj.members.filter(user_id=request.user.id).first()
+            if member:
+                return member.request_status
         return None
     
     def get_admin_data(self, obj):

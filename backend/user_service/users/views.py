@@ -9,12 +9,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
-from .utils import generate_otp, send_otp
+from .utils import send_otp
 from django.core.cache import cache
 from .producer import kafka_producer
+import random
+from django.db.models import Q
 
 class SignupView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny] 
 
     def post(self, request):
         try:
@@ -22,7 +24,7 @@ class SignupView(APIView):
             if serializer.is_valid():
                 user_data = serializer.validated_data
                 email = user_data['email']
-                otp = generate_otp()
+                otp = random.randint(100000, 999999)
                 send_otp(email, otp)
 
                 user_data['is_active'] = True
@@ -200,3 +202,21 @@ class FollowingsView(APIView):
         queryset = models.Relation.objects.filter(follower_id=pk)
         serializer = serializers.RelationSerializer(queryset, many=True)
         return Response(serializer.data)
+    
+class UserSearchView(APIView):
+    def get(self, request):
+        query = request.GET.get('query')
+        if not query:
+            return Response({"error": "No search query provided"}, status=status.HTTP_400_BAD_REQUEST)
+        users = models.User.objects.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query))
+        serializer = serializers.UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class InterestSearchView(APIView):
+    def get(self, request):
+        query = request.GET.get('query')
+        if not query:
+            return Response({"error": "No search query provided"}, status=status.HTTP_400_BAD_REQUEST)
+        interests = models.Interest.objects.filter(name__icontains=query)
+        serializer = serializers.InterestSerializer(interests, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -31,10 +31,10 @@ def store_user_in_db(user_data):
             User.objects.update_or_create(
                 id=user_data['id'],
                 defaults={
-                    'first_name': user_data.get('first_name', '')[:150],  # Truncate if necessary
-                    'last_name': user_data.get('last_name', '')[:150],    # Truncate if necessary
-                    'tagline': user_data.get('tagline', '')[:225],        # Truncate if necessary
-                    'profile': user_data.get('profile', '')[:100],        # Truncate if necessary
+                    'first_name': user_data.get('first_name', ''),
+                    'last_name': user_data.get('last_name', ''),   
+                    'tagline': user_data.get('tagline', ''),      
+                    'profile': user_data.get('profile', ''),   
                 }
             )
         except Exception as e:

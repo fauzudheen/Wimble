@@ -115,7 +115,7 @@ const ProfileHeader = () => {
               ) : (
                 <UserIcon className="w-20 h-20 md:w-24 md:h-24 bg-teal-100 text-gray-500 border-4 border-teal-100 dark:border-gray-700 rounded-full" />
               )}
-              {isMyProfile || userId==uid && (
+              {isMyProfile && (
                 <button 
                   onClick={handleEditProfilePicture} 
                   className="absolute bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-1 shadow-md"
@@ -125,7 +125,7 @@ const ProfileHeader = () => {
               )}
             </div>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{user.first_name} {user.last_name}</h1>
+          <h1 className="text-xl sm:text-2xl mt-4 font-bold text-gray-900 dark:text-white">{user.first_name} {user.last_name}</h1>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{user.tagline}</p>
           <div className="flex items-center justify-center space-x-2 mt-2">
             <EnvelopeIcon className="h-5 w-5 text-red-500" />

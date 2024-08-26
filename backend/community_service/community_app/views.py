@@ -95,3 +95,12 @@ class MemberAdminedCommunityListView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['pk']
         return models.Community.objects.filter(members__user_id=user_id, members__role='admin')
+
+class SearchView(APIView):
+    def get(self, request):
+        query = request.GET.get('query')
+        if not query:
+            return Response({"error": "No such search query provided"}, status=status.HTTP_400_BAD_REQUEST)
+        communities = models.Community.objects.filter(name__icontains=query)
+        serializer = serializers.CommunitySerializer(communities, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

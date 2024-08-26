@@ -15,4 +15,4 @@ COPY . /app/
 
 EXPOSE 8003
 
-CMD python manage.py runserver 0.0.0.0:8003 & python /app/community_app/consumer.py
+CMD python manage.py migrate & python manage.py runserver 0.0.0.0:8003 & python /app/community_app/consumer.py

@@ -103,7 +103,7 @@ class StripeWebhookView(APIView):
         user_id = event['data']['object']['metadata']['user_id']
         service_url = f"{USER_SERVICE_URL}/users-payment/{user_id}/"
 
-        expiry_date = (datetime.now() + timedelta(days=30)).date()
+        expiry_date = (datetime.now() + timedelta(days=30)).date() 
         
         data = {
             "account_tier": new_tier,

@@ -35,28 +35,28 @@ const Article = ({ article }) => {
 
   return (
     <article className="bg-white dark:bg-gray-800 p-2 sm:p-3 shadow-md rounded-lg mb-2 sm:mb-3 transition-all hover:shadow-md">
-      <header className="flex items-center mb-2">
+     <header className="flex items-center mb-3">
         {profile && (
-          <img
-            src={`${GatewayUrl}api${profile}`}
-            alt={author}
-            className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full mr-2 cursor-pointer object-cover"
-            onClick={handleProfileClick}
-          />
+            <img
+                src={`${GatewayUrl}api${profile}`}
+                alt={author}
+                className="h-8 w-8 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-full mr-3 cursor-pointer object-cover"
+                onClick={handleProfileClick}
+            />
         )}
         <div>
-          <h3
-            className="font-semibold text-gray-800 dark:text-white cursor-pointer text-xs sm:text-sm"
-            onClick={handleProfileClick}
-          >
-            {author}
-          </h3>
-          <p className="text-xs sm:text-xs text-gray-600 dark:text-gray-400">{tagline}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400">
-            {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
-          </p>
+            <h3
+                className="font-semibold text-gray-800 dark:text-white cursor-pointer text-sm sm:text-base"
+                onClick={handleProfileClick}
+            >
+                {author}
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{tagline}</p>
+            <p className="text-xs sm:text-xm text-gray-600 dark:text-gray-400">
+                {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
+            </p>
         </div>
-      </header>
+    </header>
       <Link to={`/article/${id}`} className="hover:text-blue-500">
         {thumbnail && (
           <img

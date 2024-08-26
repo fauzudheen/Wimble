@@ -174,31 +174,28 @@ const ReadArticle = () => {
         <header className="p-2 sm:p-3 md:p-4 border-b border-gray-200 dark:border-gray-700">
           <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-3">{article.title}</h1>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center mb-1 sm:mb-0">
-              <img 
-                src={`${GatewayUrl}api${article.profile}`} 
-                alt={article.author} 
-                className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full mr-1 sm:mr-3 cursor-pointer" 
+          <div className="flex items-center mb-2 sm:mb-1">
+            <img
+              src={`${GatewayUrl}api${article.profile}`}
+              alt={article.author}
+              className="h-8 w-8 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-full mr-2 sm:mr-3 cursor-pointer object-cover"
+              onClick={handleProfileClick}
+            />
+            <div>
+              <h3
+                className="text-sm sm:text-base md:text-lg font-semibold text-gray-900 dark:text-white cursor-pointer"
                 onClick={handleProfileClick}
-              />
-              <div>
-                <h3 className="text-xs sm:text-sm md:text-base font-medium text-gray-900 dark:text-white cursor-pointer" onClick={handleProfileClick}>
-                  {article.author}
-                </h3>
-                <div className="text-xs sm:text-xs text-gray-600 dark:text-gray-400 flex flex-wrap items-center">
-                  <span>Published on {new Date(article.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-                  <span className="mx-1 hidden sm:inline">•</span>
-                  <span>{Math.ceil(article.content.replace(/<[^>]+>/g, '').split(' ').length / 200)} min read</span>
-                </div>
+              >
+                {article.author}
+              </h3>
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex flex-wrap items-center">
+                <span>Published on {new Date(article.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                <span className="mx-1 hidden sm:inline">•</span>
+                <span>{Math.ceil(article.content.replace(/<[^>]+>/g, '').split(' ').length / 200)} min read</span>
               </div>
             </div>
+          </div>
             <div className="flex space-x-1 sm:space-x-3">
-              <button className={`${Colors.tealBlueGradientIcon}`} title="Share">
-                <ShareIcon className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
-              </button>
-              <button className={`${Colors.tealBlueGradientIcon}`} title="Save">
-                <BookmarkIcon className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
-              </button>
               {article.author_id !== userId && (
                 <>
                   <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsReportModalOpen(true)} title="Report">
@@ -245,7 +242,7 @@ const ReadArticle = () => {
         )}
   
         <div 
-          className="max-w-none p-2 sm:p-3 md:p-4 dark:text-gray-50 prose dark:prose-invert prose-xs sm:prose-sm md:prose-base prose-img:rounded-md prose-a:text-blue-600"
+          className="max-w-none p-4 sm:p-6 md:p-8 dark:text-gray-50 prose dark:prose-invert prose-xs sm:prose-sm md:prose-base prose-img:rounded-md prose-a:text-blue-600"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
   

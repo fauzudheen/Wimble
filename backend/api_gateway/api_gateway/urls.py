@@ -26,4 +26,5 @@ urlpatterns = [
     path('api/', include('communication.urls')),
     path('api/', include('media_gateway.urls')),
     path('api/', include('payment.urls')), 
+    path('api/', include('search.urls')),
 ]

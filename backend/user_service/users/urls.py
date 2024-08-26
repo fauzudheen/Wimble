@@ -23,4 +23,6 @@ urlpatterns = [
     path('relations/<int:pk>/', views.RelationView.as_view(), name='relation-toggle'),
     path('followers/<int:pk>/', views.FollowersView.as_view(), name='followers'),
     path('followings/<int:pk>/', views.FollowingsView.as_view(), name='followings'),
+    path('search/users/', views.UserSearchView.as_view()),
+    path('search/tags/', views.InterestSearchView.as_view()),
 ]

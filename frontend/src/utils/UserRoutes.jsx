@@ -37,6 +37,7 @@ import PricingWrapper from '../pages/user/pricing/PricingWrapper';
 import PaymentSuccess from '../pages/user/pricing/PaymentSuccess';
 import PaymentCancelled from '../pages/user/pricing/PaymentCancelled';
 import PaymentResult from '../pages/user/pricing/PaymentResult';
+import SearchResults from '../pages/user/search/SearchResults';
 
 
 const UserRoutes = () => {
@@ -53,11 +54,11 @@ const UserRoutes = () => {
             <Route path="/tags" element={<MainLayout><Tags /></MainLayout>} />
             <Route path="/articles-by-tag/:interestId" element={<MainLayout><ArticlesByTag /></MainLayout>} />
             <Route path="/communities" element={<MainLayout><CommunitiesLayout /></MainLayout>} />
+            <Route path='/search-results' element={<MainLayout><SearchResults /></MainLayout>} />
 
             <Route path="/communities/:id" element={<CommunityPage />} />
             <Route path="/communities/:id/settings" element={<CommunitySettings />} />
             <Route path='/user-profile/:id' element={<ProfilePage />} />
-            
             <Route path='/pricing' element={<PricingWrapper />} />
           <Route element={<UserProtectedRoutes />}>
               <Route path='/my-profile' element={<ProfilePage />} />

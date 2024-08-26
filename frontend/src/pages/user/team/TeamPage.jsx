@@ -91,7 +91,7 @@ const TeamPage = () => {
     { name: 'Overview', icon: HomeIcon, id: 'overview' },
     { name: 'Chat', icon: ChatBubbleLeftIcon, id: 'chat' },
     { name: 'Meetings', icon: CalendarIcon, id: 'meetings' },
-    { name: 'Projects', icon: FolderIcon, id: 'projects' },
+    // { name: 'Projects', icon: FolderIcon, id: 'projects' },
     { name: 'Members', icon: UserGroupIcon, id: 'members' },
   ];
   

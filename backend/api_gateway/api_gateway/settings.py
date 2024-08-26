@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'media_gateway', 
     'communication',
     'payment',
+    'search',
 ]
 
 MIDDLEWARE = [

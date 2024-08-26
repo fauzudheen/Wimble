@@ -15,5 +15,5 @@ COPY . /app/
 
 EXPOSE 8006
 
-CMD python manage.py runserver 0.0.0.0:8006 
+CMD python manage.py migrate & python manage.py runserver 0.0.0.0:8006 
 # & python /app/payment_app/consumer.py

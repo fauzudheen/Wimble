@@ -156,3 +156,12 @@ class ArticleByCommunityView(generics.ListAPIView):
     def get_queryset(self):
         community_id = self.kwargs['pk']
         return Article.objects.filter(community_id=community_id) 
+    
+class SearchView(APIView):
+    def get(self, request):
+        query = request.GET.get('query')
+        if not query:
+            return Response({"error": "No such search query provided"}, status=status.HTTP_400_BAD_REQUEST)
+        articles = Article.objects.filter(title__icontains=query)
+        serializer = serializers.ArticleSerializer(articles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

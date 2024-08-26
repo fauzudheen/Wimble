@@ -60,7 +60,7 @@ const TeamMeetings = () => {
   const fetchUserDetails = async () => {
     try {
       const response = await axios.get(`${GatewayUrl}api/users/${userId}/`);
-      if (response.data.account_tier === 'free' && response.data.request_status && response.data.request_status === 'accepted') {
+      if (response.data.account_tier === 'free') {
         setShowSubscribeDialog(true);
       }
     } catch (error) {

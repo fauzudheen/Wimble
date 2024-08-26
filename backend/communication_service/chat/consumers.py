@@ -5,7 +5,7 @@ from .models import ChatRoom, Message, User, Team, TeamMember
 from django.core.exceptions import PermissionDenied
 
 class BaseChatConsumer(AsyncWebsocketConsumer):
-    connected_users = set()
+    connected_users = {} 
     async def connect(self):
         if not self.scope["user"].is_authenticated:
             await self.close()
@@ -13,22 +13,30 @@ class BaseChatConsumer(AsyncWebsocketConsumer):
 
         self.user = self.scope["user"]
         
-        # Check if the user has permission to join this chat
         if not await self.user_can_access_chat():
             await self.close()
             return
+        
+        self.team_id = self.scope['url_route']['kwargs']['team_id']
+        print("--------------------------Team ID: ", self.team_id, "--------------------------")
 
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
 
-        self.connected_users.add(self.user.id)
+        if self.team_id not in self.connected_users:
+            self.connected_users[self.team_id] = set()
+        self.connected_users[self.team_id].add(self.user.id)
+
         await self.broadcast_user_count()
         await self.accept()
 
     async def disconnect(self, close_code):
-        self.connected_users.discard(self.user.id)
+        if self.team_id in self.connected_users:
+            self.connected_users[self.team_id].discard(self.user.id)
+            if not self.connected_users[self.team_id]:
+                del self.connected_users[self.team_id]
         await self.broadcast_user_count()
         await self.channel_layer.group_discard(
             self.room_group_name,
@@ -41,13 +49,10 @@ class BaseChatConsumer(AsyncWebsocketConsumer):
         file_name = data.get('file_name', None)
         file_type = data.get('file_type', None)
         
-        # Save the message to the database
         await self.save_message(self.user.id, message, file_name, file_type)
 
-        # Get sender data
         sender_data = await self.get_sender_data(self.user.id)
 
-        # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -71,7 +76,6 @@ class BaseChatConsumer(AsyncWebsocketConsumer):
         user_first_name = event.get('user_first_name')
         user_last_name = event.get('user_last_name')
 
-        # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
             'user_id': user_id,
@@ -109,11 +113,12 @@ class BaseChatConsumer(AsyncWebsocketConsumer):
         raise NotImplementedError("Subclasses must implement this method")
 
     async def broadcast_user_count(self):
+        count = len(self.connected_users.get(self.team_id, set()))
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'user_count',
-                'count': len(self.connected_users)
+                'count': count 
             }
         )
 

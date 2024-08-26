@@ -13,7 +13,7 @@ class UserView(APIView):
             service_url = f"{USER_SERVICE_URL}/users/{pk}/"
         else:
             page = request.query_params.get('page', 1)
-            service_url = f"{USER_SERVICE_URL}/users/?page={page}"
+            service_url = f"{USER_SERVICE_URL}/users/?page={page}" 
         
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
@@ -24,7 +24,7 @@ class UserView(APIView):
         return Response(response.json(), status=response.status_code)
 
     def patch(self, request, pk):
-        print("--------request.data--------", request.data)
+        print("--------request.data--------", request.data)   
         service_url = f"{USER_SERVICE_URL}/users/{pk}/"
         headers = dict(request.headers)
         headers.pop('Content-Type', None) 

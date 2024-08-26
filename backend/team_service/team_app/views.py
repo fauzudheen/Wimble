@@ -103,5 +103,11 @@ class TeamMeetingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView
         meeting_id = self.kwargs['meeting_id']
         return models.TeamMeeting.objects.get(id=meeting_id)  
         
-
-
+class SearchView(APIView):
+    def get(self, request):
+        query = request.GET.get('query')
+        if not query:
+            return Response([])
+        teams = models.Team.objects.filter(name__icontains=query)
+        serializer = serializers.TeamSerializer(teams, many=True)
+        return Response(serializer.data)
