@@ -19,7 +19,7 @@ const UserCard = ({ user }) => {
               
             />
           ) : (
-            <div className="h-16 w-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center mr-4">
+            <div className="h-16 w-16 p-4 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center mr-4">
               <UserIcon className="h-8 w-8 text-gray-400 dark:text-gray-300" />
             </div>
           )}

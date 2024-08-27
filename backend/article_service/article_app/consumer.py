@@ -12,7 +12,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'article_service.settings')
 django.setup()
 
 from django.db import transaction
-from article_app.models import User, Interest
+from article_app.models import User, Interest, UserInterest
 
 # Kafka configuration
 consumer = Consumer({
@@ -21,7 +21,7 @@ consumer = Consumer({
     'auto.offset.reset': 'earliest'
 })
 
-consumer.subscribe(['users', 'interests', 'users-deleted', 'interests-deleted'])
+consumer.subscribe(['users', 'interests', 'users-deleted', 'interests-deleted','user-interests', 'user-interests-deleted'])
 
 def store_user_in_db(user_data):
     with transaction.atomic():
@@ -67,6 +67,29 @@ def delete_interest_from_db(interest_data):
         except Exception as e:
             print(f"Error deleting interest data: {e}")
 
+def store_user_interest_in_db(user_interest_data):
+    with transaction.atomic():
+        try:
+            UserInterest.objects.update_or_create(
+                id=user_interest_data['id'],
+                defaults={
+                    'user_id': user_interest_data['user_id'],
+                    'interest_id': user_interest_data['interest_id'],
+                }
+            )
+            print(f"User interest {user_interest_data['id']} stored in database")
+        except Exception as e:
+            print(f"Error storing user interest data: {e}")
+
+def delete_user_interest_from_db(user_interest_data):
+    with transaction.atomic():
+        try:
+            user_interest_id = user_interest_data['id']
+            UserInterest.objects.filter(id=user_interest_id).delete()
+            print(f"User interest {user_interest_id} deleted from database")
+        except Exception as e:
+            print(f"Error deleting user interest data: {e}")
+
 def consume_messages():
     try:
         print("-----------------Article service Consuming messages...-----------------")
@@ -86,16 +109,16 @@ def consume_messages():
                 
                 if topic == 'users':
                     store_user_in_db(message_data)
-                    print(f"User {message_data['id']} data stored in database")
                 elif topic == 'interests':
                     store_interest_in_db(message_data)
-                    print(f"Interest {message_data['id']} data stored in database")
                 elif topic == 'users-deleted':
                     delete_user_from_db(message_data)
-                    print(f"User {message_data['id']} deleted from database")
                 elif topic == 'interests-deleted':
                     delete_interest_from_db(message_data)
-                    print(f"Interest {message_data['id']} deleted from database")
+                elif topic == 'user-interests':
+                    store_user_interest_in_db(message_data)
+                elif topic == 'user-interests-deleted':
+                    delete_user_interest_from_db(message_data)
 
     except Exception as e:
         print(f"Unexpected error: {e}")

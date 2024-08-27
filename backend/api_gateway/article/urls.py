@@ -8,6 +8,7 @@ from . import views
 urlpatterns = [
     path('articles/', views.ArticleView.as_view()),
     path('articles/<int:pk>/', views.ArticleView.as_view()),
+    path('feed/', views.FeedView.as_view()),
     path('articles/<int:pk>/tags/', views.TagView.as_view()),
     path('article-tags/<int:pk>/', views.TagView.as_view()),
     path('article-like/', views.LikeView.as_view()), 
@@ -17,5 +18,5 @@ urlpatterns = [
     path('articles/by-tag/<int:pk>/', views.ArticleByTagView.as_view()),
     path('articles/by-community/<int:pk>/', views.ArticleByCommunityView.as_view()),
     path('user-interactions/<int:pk>/', views.UserInteractionView.as_view()), 
-
+    path('article-view/<int:pk>/', views.ArticleViewView.as_view()),
 ]

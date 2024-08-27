@@ -60,7 +60,7 @@ const Article = ({ article }) => {
       <Link to={`/article/${id}`} className="hover:text-blue-500">
         {thumbnail && (
           <img
-            src={`${GatewayUrl}api/${thumbnail}`}
+            src={`${GatewayUrl}api${thumbnail.startsWith('/') ? thumbnail : `/${thumbnail}`}`}
             className="w-full h-36 sm:h-44 md:h-48 lg:h-56 object-cover rounded-lg mb-2 sm:mb-3"
             alt={title}
           />

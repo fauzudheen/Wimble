@@ -21,6 +21,7 @@ const SearchResults = () => {
         const response = await fetch(`${GatewayUrl}api/search/?query=${searchQuery}`);
         const data = await response.json();
         setResults(data);
+        console.log('Search results:', data);
       } catch (error) {
         console.error('Error fetching search results:', error);
       }
@@ -72,10 +73,10 @@ const SearchResults = () => {
                       <UserCard user={item} />
                     )}
                     {tab.name === 'Teams' && (
-                      <TeamCard key={item.id} team={item} />
+                      <TeamCard team={item} />
                     )}
                     {tab.name === 'Communities' && (
-                      <CommunityCard key={item.id} community={item} />
+                      <CommunityCard community={item} />
                     )}
                     {tab.name === 'Articles' && (
                       <div key={item.id}>

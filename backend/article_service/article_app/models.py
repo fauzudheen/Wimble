@@ -14,6 +14,7 @@ class Article(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     thumbnail = models.ImageField(upload_to='article_service/article_app/thumbnails/', max_length=200, null=True, blank=True)
     community_id = models.IntegerField(null=True, blank=True)
     
@@ -64,6 +65,10 @@ class Interest(models.Model):
             self.publish_interest_update()
         else:
             super().save(*args, **kwargs)
+
+class UserInterest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    interest = models.ForeignKey(Interest, on_delete=models.CASCADE)
 
 class Tag(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='tags')
@@ -151,4 +156,9 @@ class Report(models.Model):
     
     class Meta:
         ordering = ['-created_at']
+
+class ArticleView(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='article_views')
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='views')
+    created_at = models.DateTimeField(auto_now_add=True)
 

@@ -45,6 +45,7 @@ const Navbar = () => {
         try {
             const response = await axios.get(`${GatewayUrl}api/search/?query=${searchQuery}`);
             setSearchResults(response.data);
+            console.log('Search results:', response.data);
         } catch (error) {
             console.error('Error fetching search results:', error);
         }
@@ -52,6 +53,7 @@ const Navbar = () => {
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
+        setIsSearchFocused(false);
         navigate(`/search-results?query=${searchQuery}`);
     };
 
@@ -102,7 +104,7 @@ const Navbar = () => {
                                 </button>
                             </form>
                             {isSearchFocused && searchResults && (
-                                <div className="absolute z-10 mt-1 w-[70%] bg-white dark:bg-gray-800 shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                                <div className="absolute z-10 mt-1 w-[60%] bg-gray-50 dark:bg-gray-800 shadow-lg max-h-[70vh] rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                                     {Object.entries(searchResults).map(([category, items]) => (
                                         <div key={category} className="mb-2">
                                             <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide flex items-center">
@@ -116,7 +118,12 @@ const Navbar = () => {
                                             {items.map((item, index) => (
                                                 <Link
                                                     key={index}
-                                                    to={`/${categoryPaths[category]}/${item.id || item.slug}`}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        navigate(`/${categoryPaths[category]}/${item.id || item.slug}`);
+                                                        setIsSearchFocused(false);
+                                                        setSearchQuery('');
+                                                    }}
                                                     className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-150 ease-in-out"
                                                 >
                                                     {category === 'users' && (
@@ -169,6 +176,11 @@ const Navbar = () => {
                                                         {item.description && (
                                                             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                                                                 {item.description}
+                                                            </p>
+                                                        )}
+                                                        {item.tagline && (
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                                                {item.tagline}
                                                             </p>
                                                         )}
                                                     </div>

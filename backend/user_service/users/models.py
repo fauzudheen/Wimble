@@ -112,6 +112,29 @@ class UserInterest(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.interest.name}"
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.publish_user_interest_update()
+
+    def delete(self, *args, **kwargs):
+        self.publish_user_interest_delete()
+        super().delete(*args, **kwargs)
+
+    def publish_user_interest_update(self):
+        user_interest_data = { 
+            'id': self.id,
+            'user_id': self.user.id,
+            'interest_id': self.interest.id
+        }
+
+        kafka_producer.produce_message('user-interests', self.id, user_interest_data)
+
+    def publish_user_interest_delete(self):
+        user_interest_data = { 
+            'id': self.id
+        }
+        kafka_producer.produce_message('user-interests-deleted', self.id, user_interest_data)
 
 class Relation(models.Model):
     follower = models.ForeignKey(User, related_name='followings', on_delete=models.CASCADE)

@@ -12,7 +12,7 @@ const UserLikes = ({ likes }) => {
         return (
           <div key={like.id} className="dark:bg-gray-800 transition-transform duration-300">
             {like.article && <CompactArticle article={like.article} />}
-            <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
               {isValidDate ? `Liked ${formatDistanceToNow(createdAt, { addSuffix: true })}` : 'Invalid date'}
             </div>
             <hr className="my-4 border-gray-200 dark:border-gray-600" />

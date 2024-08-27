@@ -28,6 +28,15 @@ const ReadArticle = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isArticleDeleted, setIsArticleDeleted] = useState(false);
 
+  useEffect(() => {
+    const viewArticle = async () => {
+      const axiosInstance = createAxiosInstance(token);
+      const response = await axiosInstance.post(`${GatewayUrl}api/article-view/${articleId}/`, {});
+      console.log(response.data);
+    }
+    viewArticle();
+  }, [token, articleId]);
+
   const checkIfLiked = async () => {
     try {
       const axiosInstance = createAxiosInstance(token);
@@ -87,12 +96,14 @@ const ReadArticle = () => {
   useEffect(() => {
     const fetchArticle = async () => {
       const response = await axios.get(`${GatewayUrl}api/articles/${articleId}/`);
+      console.log("article", response.data);
       setArticle({
         articleId,
         author: `${response.data.user_data.first_name} ${response.data.user_data.last_name}`,
         title: response.data.title,
         content: response.data.content,
         created_at: response.data.created_at,
+        updated_at: response.data.updated_at,
         profile: response.data.user_data.profile,
         bio: response.data.user_data.bio,
         tagline: response.data.user_data.tagline,
@@ -171,10 +182,10 @@ const ReadArticle = () => {
   return (
     <div className='min-h-screen bg-gray-100 dark:bg-gray-800 p-1 sm:p-3 md:p-4 lg:p-6'>
       <article className="max-w-5xl mx-auto bg-white dark:bg-gray-900 shadow-md rounded-md overflow-hidden">
-        <header className="p-2 sm:p-3 md:p-4 border-b border-gray-200 dark:border-gray-700">
-          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-3">{article.title}</h1>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center mb-2 sm:mb-1">
+      <header className="p-2 sm:p-3 md:p-4 border-b border-gray-200 dark:border-gray-700">
+        <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-3">{article.title}</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center mb-2 sm:mb-0">
             <img
               src={`${GatewayUrl}api${article.profile}`}
               alt={article.author}
@@ -194,7 +205,11 @@ const ReadArticle = () => {
                 <span>{Math.ceil(article.content.replace(/<[^>]+>/g, '').split(' ').length / 200)} min read</span>
               </div>
             </div>
-          </div>
+          </div> 
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+            <span className='text-xs font-semibold text-gray-500 dark:text-gray-400'>
+              Updated {new Date(article.updated_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </span>
             <div className="flex space-x-1 sm:space-x-3">
               {article.author_id !== userId && (
                 <>
@@ -232,7 +247,8 @@ const ReadArticle = () => {
               )}
             </div>
           </div>
-        </header>
+        </div>
+      </header>
   
         {/* Thumbnail Section */}
         {article.thumbnail && (
@@ -289,7 +305,7 @@ const ReadArticle = () => {
                 <button
                   key={tag.id}
                   onClick={() => navigate(`/articles-by-tag/${tag.interest}`)}
-                  className="inline-flex items-center px-2 py-1 rounded-full text-xs sm:text-xs font-medium bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+                  className="inline-flex items-center px-2 py-1 rounded-full text-xs sm:text-sm font-medium bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
                 >
                   #{tag.interest_name}
                 </button>

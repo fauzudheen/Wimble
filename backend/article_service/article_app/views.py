@@ -10,6 +10,9 @@ from django.core.cache import cache
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
+from .recommendations import get_hybrid_recommendations
+from django.db.models import Case, When
+
 
 class CustomPagination(PageNumberPagination):
     page_size = 6
@@ -26,6 +29,23 @@ class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
     serializer_class = serializers.ArticleSerializer
     permission_classes = [IsOwnerOrAdminForArticle]  
+
+class FeedView(APIView):
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination
+    def get(self, request):
+        user_id = request.user.id
+        recommended_article_ids = get_hybrid_recommendations(user_id)
+
+        # Preserve the order of recommendations
+        preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(recommended_article_ids)])
+        recommended_articles = Article.objects.filter(id__in=recommended_article_ids).order_by(preserved_order)
+
+        paginator = self.pagination_class()
+        paginated_articles = paginator.paginate_queryset(recommended_articles, request)
+        serializer = serializers.ArticleSerializer(paginated_articles, many=True)
+        return paginator.get_paginated_response(serializer.data) 
+
 
 class TagListCreateView(generics.ListCreateAPIView):
     queryset = models.Tag.objects.all()
@@ -165,3 +185,15 @@ class SearchView(APIView):
         articles = Article.objects.filter(title__icontains=query)
         serializer = serializers.ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ArticleViewListCreateView(generics.ListCreateAPIView):
+    serializer_class = serializers.ArticleViewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        article_id = self.kwargs['pk']
+        return models.ArticleView.objects.filter(article_id=article_id, user_id=self.request.user.id) 
+    
+    def perform_create(self, serializer):
+        article_id = self.kwargs.get('pk')
+        serializer.save(user_id=self.request.user.id, article_id=article_id)

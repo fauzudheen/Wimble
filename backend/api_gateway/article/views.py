@@ -58,6 +58,13 @@ class ArticleView(APIView):
         response = requests.delete(service_url, headers=dict(request.headers))
         return Response(status=response.status_code)  
 
+class FeedView(APIView):
+    def get(self, request):
+        page = request.query_params.get('page', 1)
+        service_url = f"{ARTICLE_SERVICE_URL}/feed/?page={page}"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
 class TagView(APIView):
     def get(self, request, pk):
         service_url = f"{ARTICLE_SERVICE_URL}/articles/{pk}/tags/"
@@ -146,4 +153,15 @@ class UserInteractionView(APIView):
     def get(self, request, pk):
         service_url = f"{ARTICLE_SERVICE_URL}/user-interactions/{pk}/"
         response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+
+class ArticleViewView(APIView):
+    def get(self, request, pk):
+        service_url = f"{ARTICLE_SERVICE_URL}/article-view/{pk}/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def post(self, request, pk):
+        service_url = f"{ARTICLE_SERVICE_URL}/article-view/{pk}/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)

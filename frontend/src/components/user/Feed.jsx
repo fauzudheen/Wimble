@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Article from './Article';
 import axios from 'axios';
 import { GatewayUrl } from '../const/urls';
+import { useSelector } from 'react-redux';
 
 const Feed = () => {
   const [articles, setArticles] = useState([]);
@@ -9,6 +10,7 @@ const Feed = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef();
+  const token = useSelector(state => state.auth.userAccess);
 
   const lastArticleRef = useCallback(node => {
     if (loading) return;
@@ -21,23 +23,29 @@ const Feed = () => {
     if (node) observer.current.observe(node);
   }, [loading, hasMore]);
 
-  const fetchArticleDetails = async () => {
+  const fetchFeed = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${GatewayUrl}api/articles/?page=${page}`);
+      const url = token 
+        ? `${GatewayUrl}api/feed/?page=${page}`
+        : `${GatewayUrl}api/articles/?page=${page}`;
+      
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      
+      const response = await axios.get(url, { headers });
       console.log("response", response.data);
       const newArticles = response.data.results;
       setArticles(prevArticles => [...prevArticles, ...newArticles]);
       setHasMore(response.data.next !== null);
     } catch (error) {
-      console.error("Error fetching article details", error);
+      console.error("Error fetching feed", error);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchArticleDetails();
-  }, [page]);
+    fetchFeed();
+  }, [page, token]);
 
   return (
     <main className="flex-1 w-full mx-auto px-0 lg:px-4">

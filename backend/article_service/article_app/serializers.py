@@ -81,3 +81,9 @@ class ReportSerializer(serializers.ModelSerializer):
         model = models.Report 
         fields = '__all__'
         read_only_fields = ['id', 'user', 'article','created_at']
+
+class ArticleViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ArticleView
+        fields = '__all__'
+        read_only_fields = ['id', 'user', 'article','created_at']

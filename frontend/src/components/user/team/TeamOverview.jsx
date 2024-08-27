@@ -88,7 +88,7 @@ const TeamOverview = () => {
         </CardHeader>
         <CardContent>
           <div className="bg-white dark:bg-green-700 p-3 rounded-md shadow-sm">
-            <p className="text-green-800 dark:text-green-100 italic text-xs">
+            <p className="text-green-800 dark:text-green-100 italic text-sm">
               "{team.description || 'No description provided.'}"
             </p>
           </div>
