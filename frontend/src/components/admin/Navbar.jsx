@@ -1,26 +1,63 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { DocumentTextIcon, HashtagIcon, UserGroupIcon, UserIcon, UsersIcon } from '@heroicons/react/24/outline';
 import DarkModeToggle from '../user/DarkModeToggle';
+import { GatewayUrl } from '../const/urls';
+import { SearchIcon } from 'lucide-react';
+
+const categoryPaths = {
+  users: 'users',
+  teams: 'teams',
+  communities: 'communities',
+  articles: 'articles',
+  tags: 'tags',
+};
 
 const Navbar = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState({});
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setIsSearchFocused(false);
+    navigate(`/admin/search-results?query=${searchQuery}`);
+  };
+
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between p-4 bg-white dark:bg-gray-800 shadow-md rounded-md">
-      <input
-        type="text"
-        placeholder="Search (Ctrl+/)"
-        className="px-4 py-2 w-full sm:w-1/3 mb-2 sm:mb-0 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white"
-      />
-      <div className="flex items-center">
-        <DarkModeToggle />
-        <div className="flex items-center ml-4">
-          <img
-            src="https://via.placeholder.com/40"
-            alt="Profile"
-            className="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600"
-          />
+    <nav className="bg-white dark:bg-gray-800 shadow-md rounded-md">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 flex justify-between">
+        <div className="flex items-center justify-between h-16">
+          <div className="relative" ref={searchRef}>
+            <form onSubmit={handleSearchSubmit} className="flex items-center">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="px-4 py-2 w-[48vw] sm:w-[30vw]  rounded-l-lg bg-gray-100 dark:bg-gray-700 dark:text-white focus:outline-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+              />
+              <button
+                type="submit"
+                className="bg-gradient-to-r from-teal-400 to-blue-500 text-white px-4 py-2 rounded-r-lg hover:from-teal-500 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <SearchIcon className="h-5 w-5" />
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
-    </div>
+  
+        <div className="flex items-center space-x-4">
+            <DarkModeToggle />
+          </div>
+        </div>
+    </nav>
   );
-};
+}
+
 
 export default Navbar;

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { GatewayUrl } from '../const/urls';
 import createAxiosInstance from '../../api/axiosInstance';
 import { ChatBubbleLeftIcon, HandThumbUpIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
 
 const Articles = () => {
   const [articles, setArticles] = useState([]);
@@ -11,8 +12,8 @@ const Articles = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [nextPage, setNextPage] = useState(null);
   const [prevPage, setPrevPage] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const ARTICLES_PER_PAGE = 6;
+  const navigate = useNavigate();
 
 
     const fetchData = async () => {
@@ -41,36 +42,28 @@ useEffect(() => {
     }
   };
 
-  const filteredArticles = articles.filter(article => 
-    article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    article.user_data.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    article.user_data.last_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="container mx-auto py-2">
-      <h2 className="text-2xl font-bold leading-tight mb-6 text-gray-900 dark:text-white text-center">Articles</h2>
-      
-      <div className="mb-6">
-        <input 
-          type="text" 
-          placeholder="Search articles" 
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold leading-tight text-gray-900 dark:text-white text-center flex-grow">
+          Articles
+        </h2>
+        <button 
+        className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow ml-auto"
+        onClick={() => navigate('/admin/articles/reports')}>
+          Reports
+        </button>
       </div>
-      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {filteredArticles.map((article) => (
+      {articles.map((article) => (
           <div key={article.id} className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden">
             <div className="p-5">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{article.title}</h3>
               <div className="flex items-center mb-4">
                 <img 
-                  src={`${GatewayUrl}api/user_service/media/${article.user_data.profile.split('/media/media/')[1]}`} 
+                  src={`${GatewayUrl}api${article.user_data.profile}`} 
                   alt={`${article.user_data.first_name} ${article.user_data.last_name}`}
-                  className="w-10 h-10 rounded-full mr-3"
+                  className="w-10 h-10 rounded-full mr-3 object-cover"
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">{article.user_data.first_name} {article.user_data.last_name}</p>

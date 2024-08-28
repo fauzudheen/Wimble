@@ -33,6 +33,7 @@ def store_user_in_db(user_data):
                 'tagline': user_data.get('tagline', ''),
                 'profile': user_data.get('profile', ''),
                 'is_staff': user_data.get('is_staff', False),
+                'bio': user_data.get('bio', ''),
             }
         )
     print(f"Stored user with profile URL: {user_data.get('profile', '')}")

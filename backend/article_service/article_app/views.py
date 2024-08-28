@@ -20,7 +20,7 @@ class CustomPagination(PageNumberPagination):
     max_page_size = 100 
 
 class ArticleListCreateView(generics.ListCreateAPIView):
-    queryset = Article.objects.all()
+    queryset = Article.objects.filter(is_flagged=False)  
     serializer_class = serializers.ArticleSerializer
     parser_classes = (MultiPartParser, FormParser)
     pagination_class = CustomPagination
@@ -39,8 +39,8 @@ class FeedView(APIView):
 
         # Preserve the order of recommendations
         preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(recommended_article_ids)])
-        recommended_articles = Article.objects.filter(id__in=recommended_article_ids).order_by(preserved_order)
-
+        recommended_articles = Article.objects.filter(is_flagged=False, id__in=recommended_article_ids).order_by(preserved_order)
+ 
         paginator = self.pagination_class()
         paginated_articles = paginator.paginate_queryset(recommended_articles, request)
         serializer = serializers.ArticleSerializer(paginated_articles, many=True)
@@ -143,13 +143,32 @@ class ReportListCreateView(generics.ListCreateAPIView):
         article_id = self.kwargs.get('pk')
         serializer.save(user_id=self.request.user.id, article_id=article_id)
 
+class ReportListView(generics.ListAPIView):
+    serializer_class = serializers.ReportSerializer
+    permission_classes = [IsAdminUser] 
+    queryset = models.Report.objects.all()
+
+class ReportDestroyView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def delete(self, request, *args, **kwargs):
+        article_id = self.kwargs.get('pk')
+        reports = models.Report.objects.filter(article_id=article_id)
+        reports_count = reports.count()
+        
+        if reports_count == 0:
+            return Response({"message": "No reports found for this article."}, status=status.HTTP_404_NOT_FOUND)
+        
+        reports.delete()
+        return Response({"message": f"{reports_count} reports deleted."}, status=status.HTTP_204_NO_CONTENT)
+    
 class ArticleByTagView(generics.ListAPIView):
     serializer_class = serializers.ArticleSerializer
 
     def get_queryset(self):
         print("-----------------get_queryset---------------", self.kwargs)
         interest_id = self.kwargs['pk']
-        return Article.objects.filter(tags__interest_id=interest_id) 
+        return Article.objects.filter(tags__interest_id=interest_id, is_flagged=False) 
     
 class UserInteractionsView(APIView):
 
@@ -182,7 +201,7 @@ class SearchView(APIView):
         query = request.GET.get('query')
         if not query:
             return Response({"error": "No such search query provided"}, status=status.HTTP_400_BAD_REQUEST)
-        articles = Article.objects.filter(title__icontains=query)
+        articles = Article.objects.filter(title__icontains=query, is_flagged=False) 
         serializer = serializers.ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

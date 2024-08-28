@@ -8,6 +8,7 @@ class User(models.Model):
     tagline = models.CharField(max_length=225, null=True, blank=True)
     profile = models.CharField(null=True, blank=True)
     is_staff = models.BooleanField(default=False)
+    bio = models.TextField(null=True, blank=True)
 
 class Article(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='articles')
@@ -17,6 +18,7 @@ class Article(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     thumbnail = models.ImageField(upload_to='article_service/article_app/thumbnails/', max_length=200, null=True, blank=True)
     community_id = models.IntegerField(null=True, blank=True)
+    is_flagged = models.BooleanField(default=False)
     
 
     class Meta:

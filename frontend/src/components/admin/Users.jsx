@@ -8,7 +8,6 @@ const Users = () => {
   const token = useSelector((state) => state.auth.adminAccess);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchData = async (page) => {
@@ -39,7 +38,7 @@ const Users = () => {
       const axiosInstance = createAxiosInstance(token);
       const user = users.find((user) => user.id === id);
       const dataToSend = { is_active: !user.is_active };
-      const response = await axiosInstance.patch(`${GatewayUrl}api/users/${id}/`, dataToSend);
+      await axiosInstance.patch(`${GatewayUrl}api/users/${id}/`, dataToSend);
       setUsers((users) => 
         users.map((user) =>
           user.id === id ? { ...user, is_active: dataToSend.is_active } : user
@@ -50,33 +49,20 @@ const Users = () => {
     }
   };
 
-  const filteredUsers = users.filter(user => 
-    user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="container mx-auto px-4 py-2 ">
       <h2 className="text-2xl font-bold leading-tight mb-6 dark:text-white text-center">Users</h2>
-      
-      <div className="mb-6">
-        <input 
-          type="text" 
-          placeholder="Search users" 
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredUsers.map((user) => (
+        {users.map((user) => (
           <div key={user.id} className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden">
             <div className="p-5">
               <div className="flex items-center mb-4">
-                <img className="w-12 h-12 rounded-full mr-4" src={`https://ui-avatars.com/api/?name=${user.first_name}&background=random`} alt="" />
+                {user.profile ? (
+                  <img className="w-12 h-12 rounded-full mr-4 object-cover" src={`${GatewayUrl}api/${user.profile}`} alt="" />
+                ) : (
+                  <img className="w-12 h-12 rounded-full mr-4" src={`https://ui-avatars.com/api/?name=${user.first_name}&background=random`} alt="" />
+                )}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{user.first_name} {user.last_name}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>

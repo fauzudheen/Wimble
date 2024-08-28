@@ -77,6 +77,8 @@ class CommentSerializer(serializers.ModelSerializer):
         return ArticleSerializer(obj.article).data
     
 class ReportSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    article = ArticleSerializer(read_only=True)
     class Meta:
         model = models.Report 
         fields = '__all__'

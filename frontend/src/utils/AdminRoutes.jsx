@@ -10,6 +10,10 @@ import Teams from '../components/admin/Teams';
 import Communities from '../components/admin/Communities';
 import Articles from '../components/admin/Articles';
 import Pricing from '../components/admin/Pricing';
+import Search from '../components/admin/Search';
+import ReadArticle from '../components/admin/article/ReadArticle';
+import ArticleReports from '../components/admin/article/ArticleReports';
+import ArticleReportDetails from '../components/admin/article/ArticleReportDetails';
 
 const AdminRoutes = () => {
   return (
@@ -27,6 +31,10 @@ const AdminRoutes = () => {
         <Route path="admin/articles" element={<AdminLayout><Articles/></AdminLayout>} />
         <Route path="admin/skills-and-interests" element={<AdminLayout><SkillsAndInterests/></AdminLayout>} />
         <Route path="admin/pricing" element={<AdminLayout><Pricing/></AdminLayout>} />
+        <Route path="admin/search-results" element={<AdminLayout><Search/></AdminLayout>} />
+        <Route path="admin/articles/:id" element={<AdminLayout><ReadArticle/></AdminLayout>} />
+        <Route path="admin/articles/reports" element={<AdminLayout><ArticleReports/></AdminLayout>} />
+        <Route path="admin/articles/:id/reports" element={<AdminLayout><ArticleReportDetails/></AdminLayout>} />
       </Route>
 
     </Routes>

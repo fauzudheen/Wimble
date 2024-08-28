@@ -15,6 +15,8 @@ urlpatterns = [
     path('articles/<int:article_id>/comments/', views.CommentView.as_view()),
     path('article-comments/<int:pk>/', views.CommentView.as_view()),
     path('articles/<int:pk>/reports/', views.ReportView.as_view()), 
+    path('article-reports/', views.ReportView.as_view()),
+    path('article-reports/<int:pk>/', views.ReportView.as_view()),
     path('articles/by-tag/<int:pk>/', views.ArticleByTagView.as_view()),
     path('articles/by-community/<int:pk>/', views.ArticleByCommunityView.as_view()),
     path('user-interactions/<int:pk>/', views.UserInteractionView.as_view()), 
