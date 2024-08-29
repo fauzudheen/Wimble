@@ -25,4 +25,8 @@ urlpatterns = [
     path('followings/<int:pk>/', views.FollowingsView.as_view(), name='followings'),
     path('search/users/', views.UserSearchView.as_view()),
     path('search/tags/', views.InterestSearchView.as_view()),
+    path('users/<int:pk>/reports/', views.ReportListCreateView.as_view()),
+    path('user-reports/', views.ReportListView.as_view()), 
+    path('user-reports/<int:pk>/', views.ReportDestroyView.as_view()),  
+    path('fetchall-users/', views.FetchAllUsersView.as_view()),  
 ]

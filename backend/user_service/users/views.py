@@ -220,3 +220,42 @@ class InterestSearchView(APIView):
         interests = models.Interest.objects.filter(name__icontains=query)
         serializer = serializers.InterestSerializer(interests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class ReportListCreateView(generics.ListCreateAPIView):
+    serializer_class = serializers.ReportSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        reportee_id = self.kwargs['pk']
+        return models.Report.objects.filter(reportee_id=reportee_id)
+    
+    def perform_create(self, serializer):
+        reportee_id = self.kwargs['pk']
+        serializer.save(reportee_id=reportee_id, reporter_id=self.request.user.id) 
+
+class ReportListView(generics.ListAPIView):
+    serializer_class = serializers.ReportSerializer
+    permission_classes = [IsAdminUser] 
+    queryset = models.Report.objects.all() 
+
+class ReportDestroyView(APIView):
+    permission_classes = [IsAdminUser] 
+
+    def delete(self, request, *args, **kwargs):
+        reportee_id = self.kwargs['pk']
+        reports = models.Report.objects.filter(reportee_id=reportee_id)
+        reports_count = reports.count()
+        
+        if reports_count == 0:
+            return Response({"message": "No reports found for this article."}, status=status.HTTP_404_NOT_FOUND)
+        
+        reports.delete()
+        return Response({"message": f"{reports_count} reports deleted."}, status=status.HTTP_204_NO_CONTENT)
+    
+class FetchAllUsersView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        users = models.User.objects.all()
+        serializer = serializers.UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

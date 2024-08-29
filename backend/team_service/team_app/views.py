@@ -111,3 +111,10 @@ class SearchView(APIView):
         teams = models.Team.objects.filter(name__icontains=query)
         serializer = serializers.TeamSerializer(teams, many=True)
         return Response(serializer.data)
+    
+class FetchAllTeamsView(APIView):
+    permission_classes = [IsAdminUser]
+    def get(self, request):
+        teams = models.Team.objects.all()
+        serializer = serializers.TeamSerializer(teams, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

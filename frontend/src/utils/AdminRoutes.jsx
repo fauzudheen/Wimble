@@ -14,6 +14,8 @@ import Search from '../components/admin/Search';
 import ReadArticle from '../components/admin/article/ReadArticle';
 import ArticleReports from '../components/admin/article/ArticleReports';
 import ArticleReportDetails from '../components/admin/article/ArticleReportDetails';
+import UserReportDetails from '../components/admin/user/UserReportDetails';
+import UserReports from '../components/admin/user/UserReports';
 
 const AdminRoutes = () => {
   return (
@@ -35,6 +37,8 @@ const AdminRoutes = () => {
         <Route path="admin/articles/:id" element={<AdminLayout><ReadArticle/></AdminLayout>} />
         <Route path="admin/articles/reports" element={<AdminLayout><ArticleReports/></AdminLayout>} />
         <Route path="admin/articles/:id/reports" element={<AdminLayout><ArticleReportDetails/></AdminLayout>} />
+        <Route path="admin/users/reports" element={<AdminLayout><UserReports/></AdminLayout>} />
+        <Route path="admin/users/:id/reports" element={<AdminLayout><UserReportDetails/></AdminLayout>} />
       </Route>
 
     </Routes>

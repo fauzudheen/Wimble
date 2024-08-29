@@ -104,3 +104,11 @@ class SearchView(APIView):
         communities = models.Community.objects.filter(name__icontains=query)
         serializer = serializers.CommunitySerializer(communities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class FetchAllCommunitiesView(APIView):
+    permission_classes = [IsAdminUser]
+    
+    def get(self, request):
+        communities = models.Community.objects.all()
+        serializer = serializers.CommunitySerializer(communities, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -12,33 +12,52 @@ const Pricing = () => {
   const token = useSelector((state) => state.auth.userAccess);
   const userId = useSelector((state) => state.auth.userId);
   const [user, setUser] = useState(null);
+  const [tiers, setTiers] = useState([]);
 
-  const tiers = [
-    {
-      name: 'Free',
-      price: '₹0',
-      frequency: '/month',
-      description: 'Great for individuals and small teams getting started.',
-      features: [
-        'User profile creation',
-        'Community participation',
-        'Basic team functionalities',
-      ],
-    },
-    {
-      name: 'Premium',
-      price: '₹500',
-      frequency: '/month',
-      description: 'Perfect for growing teams and advanced functionalities.',
-      features: [
-        'All Free Tier features',
-        'Advanced team functionalities',
-        'Meeting scheduling and management',
-      ],
-      cta: 'Upgrade Now',
-      priceId: 'price_1PqXI3H0epnuZaS4GwodNcFJ',
-    },
-  ];
+  // const tiers = [
+  //   {
+  //     name: 'Free',
+  //     price: '₹0',
+  //     frequency: '/month',
+  //     description: 'Great for individuals and small teams getting started.',
+  //     features: [
+  //       'User profile creation',
+  //       'Community participation',
+  //       'Basic team functionalities',
+  //     ],
+  //   },
+  //   {
+  //     name: 'Premium',
+  //     price: '₹500',
+  //     frequency: '/month',
+  //     description: 'Perfect for growing teams and advanced functionalities.',
+  //     features: [
+  //       'All Free Tier features',
+  //       'Advanced team functionalities',
+  //       'Meeting scheduling and management',
+  //     ],
+  //     cta: 'Upgrade Now',
+  //     priceId: 'price_1PqXI3H0epnuZaS4GwodNcFJ',
+  //   },
+  // ];
+
+  useEffect(() => {
+    const fetchTiers = async () => {
+      try {
+        const axiosInstance = createAxiosInstance(token);
+        const response = await axiosInstance.get(`${GatewayUrl}api/pricing/`);
+        setTiers(response.data.map(tier => ({
+          ...tier,
+          features: tier.benefits.split('\n'),
+          cta: tier.tier.toLowerCase() !== 'free' ? 'Upgrade Now' : null,
+          priceId: tier.stripe_price_id
+        })));
+      } catch (error) {
+        console.error('Error fetching tiers:', error);
+      }
+    };
+    fetchTiers();
+  }, [token]);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -127,23 +146,23 @@ const Pricing = () => {
             <div className="max-w-lg mx-auto rounded-lg shadow-lg overflow-hidden lg:max-w-none lg:flex">
               {tiers.map((tier, tierIdx) => (
                 <div
-                  key={tier.name}
+                  key={tier.tier}
                   className={`flex-1 bg-white dark:bg-gray-800 px-4 py-6 lg:p-8 ${
                     tierIdx === 0 ? 'lg:rounded-l-lg' : 'lg:rounded-r-lg'
-                  } ${user && user.account_tier === tier.name.toLowerCase() ? 'ring-2 ring-teal-500' : ''}`}
+                  } ${user && user.account_tier === tier.tier.toLowerCase() ? 'ring-2 ring-teal-500' : ''}`}
                 >
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">
-                    {tier.name}
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl capitalize">
+                    {tier.tier}
                   </h3>
                   <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
                     {tier.description}
                   </p>
                   <p className="mt-6">
                     <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {tier.price}
+                      ₹{tier.price}
                     </span>{' '}
                     <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                      {tier.frequency}
+                      /month
                     </span>
                   </p>
                   <ul role="list" className="mt-6 space-y-2">

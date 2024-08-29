@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Tab } from '@headlessui/react';
-import { UserIcon, UsersIcon, UserGroupIcon, DocumentTextIcon, HashtagIcon } from '@heroicons/react/24/outline';
+import { UserIcon, UsersIcon, UserGroupIcon, DocumentTextIcon, HashtagIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { GatewayUrl } from '../const/urls';
 import createAxiosInstance from '../../api/axiosInstance';
 import { useSelector } from 'react-redux';
@@ -13,7 +13,7 @@ const SearchResults = () => {
   const [results, setResults] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const navigate = useNavigate();
-  const token = useSelector((state) => state.auth.token);
+  const token = useSelector((state) => state.auth.adminAccess);
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -62,7 +62,11 @@ const SearchResults = () => {
     <div key={user.id} className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden">
       <div className="p-5">
         <div className="flex items-center mb-4">
-          <img className="w-12 h-12 rounded-full mr-4" src={`https://ui-avatars.com/api/?name=${user.first_name}&background=random`} alt="" />
+          {user.profile ? (
+            <img src={`${GatewayUrl}api${user.profile}`} className='w-12 h-12 rounded-full mr-4 object-cover'/>
+          ) : (
+            <img className="w-12 h-12 rounded-full mr-4" src={`https://ui-avatars.com/api/?name=${user.first_name}&background=random`} alt="" />
+          )}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{user.first_name} {user.last_name}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
@@ -126,25 +130,47 @@ const SearchResults = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {results[tab.name.toLowerCase()].map((item) => (
                   <React.Fragment key={item.id}>
-                    {tab.name === 'Users' && renderUserCard(item)}
-                    {tab.name === 'Teams' && (
-                      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden p-5">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                  {tab.name === 'Users' && renderUserCard(item)}
+                  {tab.name === 'Teams' && (
+                    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden p-5">
+                      <div className="flex items-center mb-4">
+                        {item.profile_image ? (
+                          <img src={`${GatewayUrl}api${item.profile_image}`} className="w-16 h-16 rounded-full object-cover" alt={item.name} />
+                        ) : (
+                          <UsersIcon className="w-16 h-16 p-2 rounded-full text-blue-500" />
+                        )}
+                        <div className="ml-4">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                        </div>
                       </div>
-                    )}
-                    {tab.name === 'Communities' && (
-                      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden p-5">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                    </div>
+                  )}
+                  {tab.name === 'Communities' && (
+                    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden p-5">
+                      <div className="flex items-center mb-4">
+                        {item.profile_image ? (
+                          <img src={`${GatewayUrl}api${item.profile_image}`} className="w-16 h-16 rounded-full object-cover" alt={item.name} />
+                        ) : (
+                          <UserGroupIcon className="w-16 h-16 p-2 rounded-full text-blue-500" />
+                        )}
+                        <div className="ml-4">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                        </div>
                       </div>
-                    )}
-                    {tab.name === 'Articles' && (
+                      {item.cover_image && (
+                        <img src={`${GatewayUrl}api${item.cover_image}`} className="w-full h-32 object-cover mt-4 rounded" alt="Cover" />
+                      )}
+                    </div>
+                  )}
+                  {tab.name === 'Articles' && (
                     <CompactArticle article={item} />
                     )}
-                  </React.Fragment>
+                </React.Fragment>
                 ))}
               </div>
+              
               {tab.name === 'Tags' && (
                 <div className="flex flex-wrap gap-2">
                   {results[tab.name.toLowerCase()].map((item) => (

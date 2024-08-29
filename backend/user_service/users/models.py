@@ -160,3 +160,9 @@ class Relation(models.Model):
         }
 
         kafka_producer.produce_message('relations-deleted', self.id, relation_data)
+
+class Report(models.Model):
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reports')
+    reportee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reports_reported')    
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)

@@ -9,6 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics  
 from .permissions import IsOwnerOrAdmin, ServiceTokenPermission 
 from rest_framework.pagination import PageNumberPagination
+from . import models, serializers
 
 class CustomPagination(PageNumberPagination):
     page_size = 10
@@ -45,3 +46,14 @@ class AdminLoginView(APIView):
             print("-----------------Errors----------")
             print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class PricingListCreateView(generics.ListCreateAPIView):
+    queryset = models.Pricing.objects.all()
+    serializer_class = serializers.PricingSerializer
+    permission_classes = [IsAuthenticated]  
+
+class PricingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Pricing.objects.all()
+    serializer_class = serializers.PricingSerializer
+    permission_classes = [IsAdminUser]
+ 

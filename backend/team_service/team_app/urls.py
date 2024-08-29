@@ -10,4 +10,5 @@ urlpatterns = [
     path('teams/<int:pk>/meetings/', views.TeamMeetingListCreateView.as_view()),
     path('teams/<int:pk>/meetings/<int:meeting_id>/', views.TeamMeetingRetrieveUpdateDestroyView.as_view()),
     path('search/', views.SearchView.as_view()),
+    path('fetchall-teams/', views.FetchAllTeamsView.as_view()),
 ] 

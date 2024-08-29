@@ -9,4 +9,5 @@ urlpatterns = [
     path('members/<int:pk>/communities/', views.MemberCommunityListView.as_view()),
     path('members/<int:pk>/admined-communities/', views.MemberAdminedCommunityListView.as_view()),
     path('search/', views.SearchView.as_view()),
+    path('fetchall-communities/', views.FetchAllCommunitiesView.as_view()),  
 ]

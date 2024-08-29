@@ -118,3 +118,11 @@ class RelationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Relation
         fields = "__all__"
+
+class ReportSerializer(serializers.ModelSerializer):
+    reporter = UserSerializer(read_only=True)
+    reportee = UserSerializer(read_only=True)
+    class Meta:
+        model = models.Report 
+        fields = '__all__'
+        read_only_fields = ['id', 'reporter', 'reportee','created_at']

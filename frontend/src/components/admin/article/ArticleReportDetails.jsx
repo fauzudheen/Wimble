@@ -62,7 +62,7 @@ const ArticleReportDetails = () => {
                         <CardTitle>{article.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="mb-4">Author: {article.author}</p>
+                        <p className="mb-4">Author: {article.user_data.first_name} {article.user_data.last_name}</p>
                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                             <DialogTrigger asChild>
                                 <Button 

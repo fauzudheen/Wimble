@@ -133,7 +133,7 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class ReportListCreateView(generics.ListCreateAPIView):
     serializer_class = serializers.ReportSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         article_id = self.kwargs['pk']
@@ -216,3 +216,11 @@ class ArticleViewListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         article_id = self.kwargs.get('pk')
         serializer.save(user_id=self.request.user.id, article_id=article_id)
+
+class FetchAllArticlesView(APIView):
+    permission_classes = [IsAdminUser]
+    
+    def get(self, request):
+        articles = Article.objects.all()
+        serializer = serializers.ArticleSerializer(articles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

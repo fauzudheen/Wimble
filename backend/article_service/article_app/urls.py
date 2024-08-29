@@ -18,4 +18,6 @@ urlpatterns = [
     path('articles/by-community/<int:pk>/', views.ArticleByCommunityView.as_view()),
     path('search/', views.SearchView.as_view()),
     path('article-view/<int:pk>/', views.ArticleViewListCreateView.as_view()),
+    path('fetchall-articles/', views.FetchAllArticlesView.as_view()),  
+
 ]

@@ -213,7 +213,7 @@ const ReadArticle = () => {
             <div className="flex space-x-1 sm:space-x-3">
               {article.author_id !== userId && (
                 <>
-                  <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsReportModalOpen(true)} title="Report">
+                  <button className={`${Colors.tealBlueGradientIcon}`} onClick={() => setIsReportModalOpen(true)} title="Report Article">
                     <FlagIcon className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                   </button>
                   <FormModal

@@ -21,4 +21,9 @@ urlpatterns = [
     path('relations/<int:pk>/', views.RelationView.as_view()),
     path('followers/', views.FollowerView.as_view()),
     path('followings/', views.FollowingView.as_view()),
+    path('users/<int:pk>/reports/', views.ReportView.as_view()),
+    path('user-reports/', views.ReportView.as_view()),
+    path('user-reports/<int:pk>/', views.ReportView.as_view()),
+    path('pricing/', views.PricingView.as_view()),
+    path('pricing/<int:pk>/', views.PricingView.as_view()),
 ]

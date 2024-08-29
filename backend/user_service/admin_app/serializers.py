@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from users.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
+from .models import Pricing
             
 class AdminLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -19,3 +19,8 @@ class AdminLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Unable to log in with provided credentials.")
             
         return user
+    
+class PricingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pricing
+        fields = '__all__'

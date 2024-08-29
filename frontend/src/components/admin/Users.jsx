@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { GatewayUrl } from '../const/urls';
 import createAxiosInstance from '../../api/axiosInstance';
+import { useNavigate } from 'react-router-dom';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const token = useSelector((state) => state.auth.adminAccess);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async (page) => {
@@ -52,7 +54,16 @@ const Users = () => {
 
   return (
     <div className="container mx-auto px-4 py-2 ">
-      <h2 className="text-2xl font-bold leading-tight mb-6 dark:text-white text-center">Users</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold leading-tight text-gray-900 dark:text-white text-center flex-grow">
+          Users
+        </h2>
+        <button 
+        className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow ml-auto"
+        onClick={() => navigate('/admin/users/reports')}>
+          Reports
+        </button>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {users.map((user) => (
           <div key={user.id} className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden">

@@ -148,3 +148,9 @@ class CheckPaymentStatusView(APIView):
             return Response(serializer.data) 
         except PaymentStatus.DoesNotExist:
             return Response({'status': 'not_found', 'message': 'No payment status found'})
+        
+class FetchAllPaymentsView(APIView):
+    def get(self, request):
+        payment_status = PaymentStatus.objects.all()
+        serializer = PaymentStatusSerializer(payment_status, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK) 

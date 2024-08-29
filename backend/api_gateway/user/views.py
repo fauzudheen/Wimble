@@ -167,3 +167,65 @@ class FollowingView(APIView):
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
     
+class ReportView(APIView):
+    def get(self, request, pk=None):
+        if pk:
+            service_url = f"{USER_SERVICE_URL}/users/{pk}/reports/"
+        else:
+            service_url = f"{USER_SERVICE_URL}/user-reports/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def post(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/users/{pk}/reports/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code) 
+
+    def delete(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/user-reports/{pk}/"
+        response = requests.delete(service_url, headers=dict(request.headers))
+        return Response(status=response.status_code) 
+    
+class PricingView(APIView):
+    def get(self, request, pk=None):
+        if pk:
+            service_url = f"{USER_SERVICE_URL}/pricing/{pk}/"
+        else:
+            service_url = f"{USER_SERVICE_URL}/pricing/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def post(self, request): 
+        service_url = f"{USER_SERVICE_URL}/pricing/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def put(self, request, pk): 
+        service_url = f"{USER_SERVICE_URL}/pricing/{pk}/"
+        response = requests.patch(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
+    
+    def delete(self, request, pk):
+        service_url = f"{USER_SERVICE_URL}/pricing/{pk}/"
+        response = requests.delete(service_url, headers=dict(request.headers))
+        return Response(status=response.status_code) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
