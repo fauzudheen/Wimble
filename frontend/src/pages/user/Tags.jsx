@@ -84,7 +84,8 @@ const Tags = ({ token }) => {
         ) : (
           <button
             onClick={() => setShowInput(true)}
-            className={Buttons.tealBlueGradientButton + ' px-4 py-2 rounded-md flex items-center text-sm'}
+            className="flex items-center px-3 py-1 rounded-full text-sm font-medium 
+            bg-gradient-to-r from-teal-400 to-blue-500 text-white dark:bg-gradient-to-r dark:from-teal-400 dark:to-blue-500 hover:bg-gradient-to-r hover:from-teal-500 hover:to-blue-600 transition-colors duration-200"
           >
             <PlusIcon className="h-4 w-4 mr-1" />
             Add New Tag

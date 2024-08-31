@@ -142,12 +142,13 @@ const Dashboard = () => {
 
       {activeTab === 'overview' && (
         <>
+        {/* Stat cards trend data is dummy */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
-            <StatCard title="Total Users" value={userCount} icon={Users} trend={5} />
-            <StatCard title="Total Articles" value={articleCount} icon={FileText} trend={-2} />
-            <StatCard title="Communities" value={communityCount} icon={Users2} trend={10} />
-            <StatCard title="Teams" value={teamCount} icon={Building2} trend={3} />
-            <StatCard title="Payments" value={paymentCount} icon={CreditCard} trend={8} />
+            <StatCard title="Total Users" value={userCount} icon={Users} />
+            <StatCard title="Total Articles" value={articleCount} icon={FileText} />
+            <StatCard title="Communities" value={communityCount} icon={Users2}/>
+            <StatCard title="Teams" value={teamCount} icon={Building2} />
+            <StatCard title="Payments" value={paymentCount} icon={CreditCard} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">

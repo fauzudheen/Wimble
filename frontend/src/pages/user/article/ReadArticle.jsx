@@ -112,6 +112,8 @@ const ReadArticle = () => {
         commentsCount: response.data.comments_count,
         author_id: response.data.user_data.id,
         tags: response.data.tags,
+        is_toxic: response.data.is_toxic,
+        toxicity_score: response.data.toxicity_score,
       });
     };
 
@@ -183,7 +185,16 @@ const ReadArticle = () => {
     <div className='min-h-screen bg-gray-100 dark:bg-gray-800 p-1 sm:p-3 md:p-4 lg:p-6'>
       <article className="max-w-5xl mx-auto bg-white dark:bg-gray-900 shadow-md rounded-md overflow-hidden">
       <header className="p-2 sm:p-3 md:p-4 border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-3">{article.title}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-3">
+          {article.title}
+        </h1>
+        {article.is_toxic && (
+          <p className='text-xs text-center bg-red-300 dark:bg-red-500 dark:text-white p-1 px-2 rounded max-w-fit'>
+            Toxic ({(article.toxicity_score * 100).toFixed(2)}%)
+          </p>
+        )}
+      </div>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center mb-2 sm:mb-0">
             <img

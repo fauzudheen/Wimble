@@ -1,5 +1,6 @@
 from django.db import models
 from .producer import kafka_producer
+from . import toxicity_analyzer
 
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -19,6 +20,8 @@ class Article(models.Model):
     thumbnail = models.ImageField(upload_to='article_service/article_app/thumbnails/', max_length=200, null=True, blank=True)
     community_id = models.IntegerField(null=True, blank=True)
     is_flagged = models.BooleanField(default=False)
+    is_toxic = models.BooleanField(default=False)
+    toxicity_score = models.FloatField(default=0.0)
     
 
     class Meta:
@@ -26,11 +29,23 @@ class Article(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.publish_article_update()
+        self.analyze_article_toxicity()
 
     def delete(self, *args, **kwargs):
         self.publish_article_delete()
         super().delete(*args, **kwargs)
+
+    def analyze_article_toxicity(self):
+        text_to_analyze = f"{self.title} {self.content}"
+        toxicity_score = toxicity_analyzer.analyze(text_to_analyze)
+        is_toxic = toxicity_score > 0.7
+
+        Article.objects.filter(id=self.id).update(
+            toxicity_score=toxicity_score,
+            is_toxic=is_toxic
+        )
+
+        self.publish_article_update() 
 
     def publish_article_update(self):
         article_data = {
@@ -52,21 +67,7 @@ class Interest(models.Model):
     name = models.CharField(max_length=50, unique=True) 
 
     def __str__(self):
-        return self.name
-    
-    def publish_interest_update(self):
-        interest_data = {
-            'id': self.id,
-            'name': self.name
-        }
-        kafka_producer.produce_message('article_interests', self.id, interest_data)
-
-    def save(self, *args, **kwargs):
-        if not self.pk:  # Only publish if this is a new record
-            super().save(*args, **kwargs)
-            self.publish_interest_update()
-        else:
-            super().save(*args, **kwargs)
+        return self.name 
 
 class UserInterest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

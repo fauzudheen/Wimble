@@ -14,6 +14,7 @@ from django.core.cache import cache
 from .producer import kafka_producer
 import random
 from django.db.models import Q
+from .suggestions import get_users_to_follow_suggestions
 
 class SignupView(APIView):
     permission_classes = [AllowAny] 
@@ -257,5 +258,13 @@ class FetchAllUsersView(APIView):
 
     def get(self, request):
         users = models.User.objects.all()
+        serializer = serializers.UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class UsersToFollowSuggestionsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        users = get_users_to_follow_suggestions(request.user.id)
         serializer = serializers.UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

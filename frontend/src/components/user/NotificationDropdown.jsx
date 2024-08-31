@@ -150,7 +150,7 @@ const NotificationDropdown = () => {
         onClick={toggleDropdown}
       >
         <div className="relative">
-          <BellIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+          <BellIcon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600 dark:text-gray-300" />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-gradient-to-r from-teal-400 to-blue-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
               {unreadCount}

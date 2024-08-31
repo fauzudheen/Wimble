@@ -26,4 +26,5 @@ urlpatterns = [
     path('user-reports/<int:pk>/', views.ReportView.as_view()),
     path('pricing/', views.PricingView.as_view()),
     path('pricing/<int:pk>/', views.PricingView.as_view()),
+    path('users-to-follow-suggestions/', views.UsersToFollowSuggestionsView.as_view()),
 ]

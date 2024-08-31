@@ -21,24 +21,14 @@ consumer = Consumer({
     'auto.offset.reset': 'earliest'
 })
 
-consumer.subscribe(['article_interests'])
-
-
-def store_interest_in_db(interest_data):
-    with transaction.atomic():
-        Interest.objects.update_or_create(
-            id=interest_data['id'],
-            defaults={
-                'name': interest_data['name'],
-            }
-        )
+consumer.subscribe([])
 
 def consume_messages():
     try:
         print("-----------------User service Consuming messages...-----------------")
         while True:
             msg = consumer.poll(1.0)
-            if msg is None:
+            if msg is None: 
                 continue
 
             if msg.error():
@@ -49,10 +39,7 @@ def consume_messages():
             else:
                 topic = msg.topic()
                 message_data = json.loads(msg.value().decode('utf-8'))
-                
-                if topic == 'article_interests':
-                    store_interest_in_db(message_data)
-                    print(f"Interest {message_data['id']} data stored in database")
+                print(f"Received message on topic {topic}: {message_data}")
 
     except Exception as e:
         print(f"Unexpected error: {e}")

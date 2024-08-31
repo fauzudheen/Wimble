@@ -21,4 +21,5 @@ urlpatterns = [
     path('articles/by-community/<int:pk>/', views.ArticleByCommunityView.as_view()),
     path('user-interactions/<int:pk>/', views.UserInteractionView.as_view()), 
     path('article-view/<int:pk>/', views.ArticleViewView.as_view()),
+    path('trending-tags/', views.TrendingTagsView.as_view()),
 ]

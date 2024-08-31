@@ -173,3 +173,9 @@ class ArticleViewView(APIView):
         service_url = f"{ARTICLE_SERVICE_URL}/article-view/{pk}/"
         response = requests.post(service_url, json=request.data, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
+    
+class TrendingTagsView(APIView):
+    def get(self, request):
+        service_url = f"{ARTICLE_SERVICE_URL}/trending-tags/"
+        response = requests.get(service_url, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)

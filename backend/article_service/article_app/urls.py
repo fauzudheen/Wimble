@@ -19,5 +19,6 @@ urlpatterns = [
     path('search/', views.SearchView.as_view()),
     path('article-view/<int:pk>/', views.ArticleViewListCreateView.as_view()),
     path('fetchall-articles/', views.FetchAllArticlesView.as_view()),  
+    path('trending-tags/', views.TrendingTagsView.as_view()),
 
 ]

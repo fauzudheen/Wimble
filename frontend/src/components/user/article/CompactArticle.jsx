@@ -11,6 +11,8 @@ const CompactArticle = ({ article }) => {
     comments_count,
     created_at,
     is_flagged,
+    is_toxic,
+    toxicity_score
   } = article;
 
   const createdAtDate = new Date(created_at);
@@ -21,6 +23,9 @@ const CompactArticle = ({ article }) => {
       <article className="bg-gray-50 dark:bg-gray-900 p-3 sm:p-4 shadow-md rounded-lg mb-4 hover:scale-101 transition-transform duration-200">
         {is_flagged && (
           <p className='text-xs bg-orange-300 dark:bg-orange-500 dark:text-white p-1 px-2 rounded max-w-fit'>Flagged</p>
+        )}
+        {is_toxic && (
+          <p className='text-xs bg-red-300 dark:bg-red-500 dark:text-white p-1 px-2 rounded max-w-fit'>Toxic ({toxicity_score.toFixed(2) * 100}%)</p>
         )}
         <h2 className="text-md sm:text-lg font-bold mb-1 text-gray-900 dark:text-white hover:text-blue-500 transition-colors duration-200">
           {title}

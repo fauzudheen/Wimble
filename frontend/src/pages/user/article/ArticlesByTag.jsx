@@ -36,8 +36,8 @@ const ArticlesByTag = () => {
 
   return (
     <div className="lg:ml-4 bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-4 md:p-6">
-      <h2 className={`text-lg sm:text-2xl font-bold ${Colors.tealBlueGradientText} mb-4`}>
-        Articles tagged with "#{tagName}"
+      <h2 className={`text-lg sm:text-2xl font-bold text-gray-900 dark:text-white mb-4`}>
+        Articles tagged with <span className="bg-gradient-to-r from-cyan-500 to-blue-500 text-transparent bg-clip-text">#{tagName}</span>
       </h2>
       {articles.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-auto">

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { GatewayUrl } from '../const/urls';
 import createAxiosInstance from '../../api/axiosInstance';
 import { ChatBubbleLeftIcon, HandThumbUpIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Articles = () => {
   const [articles, setArticles] = useState([]);
@@ -56,7 +56,9 @@ useEffect(() => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {articles.map((article) => (
-          <div key={article.id} className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden">
+        <>
+        <Link to={`/admin/articles/${article.id}`}>
+          <div key={article.id} className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden hover:scale-101 transition duration-300">
             <div className="p-5">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{article.title}</h3>
               <div className="flex items-center mb-4">
@@ -94,6 +96,8 @@ useEffect(() => {
               </div>
             </div>
           </div>
+          </Link>
+          </>
         ))}
       </div>
 

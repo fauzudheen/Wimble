@@ -105,7 +105,8 @@ class Interest(models.Model):
 class UserInterest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     interest = models.ForeignKey(Interest, on_delete=models.CASCADE)
-
+    # The UserInterest model doesn't have an explicit related name, which means Django will 
+    # create a default one. In the suggestion algorithm, we're using user.userinterest_set to access a user's interests.
     class Meta:
         unique_together = ('user', 'interest')
         ordering = ['interest__name']

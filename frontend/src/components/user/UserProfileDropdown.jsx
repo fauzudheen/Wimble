@@ -41,50 +41,50 @@ const UserProfileDropdown = () => {
         onClick={toggleDropdown}
       >
         {/* Placeholder for profile avatar */}
-        <div className="w-10 h-10 rounded-full bg-gray-300">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-300 overflow-hidden">
           {isAuthenticated && userProfile && (
-              <img 
-                className="w-full h-full object-cover rounded-full" 
-                src={`${GatewayUrl}api/user_service/media/${userProfile.split('/media/')[1]}`} />
-            )}
+            <img 
+              className="w-full h-full object-cover rounded-full" 
+              src={`${GatewayUrl}api/user_service/media/${userProfile.split('/media/')[1]}`}
+              alt="User profile"
+            />
+          )}
         </div>
       </button>
 
       {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-md shadow-lg py-1">
-            {isAuthenticated ? (
-              <>
-          <Link
-            to="/my-profile"
-            className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
-            onClick={() => setIsOpen(false)}
-          >
-            <UserCircleIcon className="h-5 w-5 mr-2 text-gray-500" />
-            My Profile
-          </Link>
-          <Link
-            to="/settings"
-            className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
-            onClick={() => setIsOpen(false)}
-          >
-            <CogIcon className="h-5 w-5 mr-2 text-gray-500" />
-            Settings
-          </Link>
-          </>
-            ) : null}
+        <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-md shadow-lg py-1">
           {isAuthenticated ? (
-          <button
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
-            onClick={handleLogout}
-          >
-            <ArrowRightStartOnRectangleIcon className="h-5 w-5 mr-2 text-gray-500" />
-            Logout
-          </button>
+            <>
+              <Link
+                to="/my-profile"
+                className="block px-4 py-2 text-sm sm:text-base text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
+                onClick={() => setIsOpen(false)}
+              >
+                <UserCircleIcon className="h-5 w-5 mr-2 text-gray-500" />
+                My Profile
+              </Link>
+              <Link
+                to="/settings"
+                className="block px-4 py-2 text-sm sm:text-base text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
+                onClick={() => setIsOpen(false)}
+              >
+                <CogIcon className="h-5 w-5 mr-2 text-gray-500" />
+                Settings
+              </Link>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm sm:text-base text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
+                onClick={handleLogout}
+              >
+                <ArrowRightStartOnRectangleIcon className="h-5 w-5 mr-2 text-gray-500" />
+                Logout
+              </button>
+            </>
           ) : null}
           <div className="flex items-center justify-between px-4 py-2">
-            <span className="text-sm text-gray-700 dark:text-white">Dark Mode</span>
-            <DarkModeToggle /> {/* Render DarkModeToggle component */}
+            <span className="text-sm sm:text-base text-gray-700 dark:text-white">Dark Mode</span>
+            <DarkModeToggle />
           </div>
         </div>
       )}

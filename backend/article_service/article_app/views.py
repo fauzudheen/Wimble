@@ -12,6 +12,9 @@ from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from .recommendations import get_hybrid_recommendations
 from django.db.models import Case, When
+from django.db.models import Count
+from django.utils import timezone
+from datetime import timedelta
 
 
 class CustomPagination(PageNumberPagination):
@@ -20,7 +23,7 @@ class CustomPagination(PageNumberPagination):
     max_page_size = 100 
 
 class ArticleListCreateView(generics.ListCreateAPIView):
-    queryset = Article.objects.filter(is_flagged=False)  
+    queryset = Article.objects.filter(is_flagged=False, is_toxic=False)  
     serializer_class = serializers.ArticleSerializer
     parser_classes = (MultiPartParser, FormParser)
     pagination_class = CustomPagination
@@ -39,8 +42,8 @@ class FeedView(APIView):
 
         # Preserve the order of recommendations
         preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(recommended_article_ids)])
-        recommended_articles = Article.objects.filter(is_flagged=False, id__in=recommended_article_ids).order_by(preserved_order)
- 
+        recommended_articles = Article.objects.filter(is_flagged=False, is_toxic=False, id__in=recommended_article_ids).order_by(preserved_order)
+  
         paginator = self.pagination_class()
         paginated_articles = paginator.paginate_queryset(recommended_articles, request)
         serializer = serializers.ArticleSerializer(paginated_articles, many=True)
@@ -63,7 +66,7 @@ class TagListCreateView(generics.ListCreateAPIView):
             tags.append(tag)
         
         serializer = self.get_serializer(tags, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)  
+        return Response(serializer.data, status=status.HTTP_201_CREATED)   
     
 class TagDestroyView(generics.DestroyAPIView):
     queryset = models.Tag.objects.all()
@@ -168,7 +171,7 @@ class ArticleByTagView(generics.ListAPIView):
     def get_queryset(self):
         print("-----------------get_queryset---------------", self.kwargs)
         interest_id = self.kwargs['pk']
-        return Article.objects.filter(tags__interest_id=interest_id, is_flagged=False) 
+        return Article.objects.filter(tags__interest_id=interest_id, is_flagged=False, is_toxic=False)
     
 class UserInteractionsView(APIView):
 
@@ -224,3 +227,17 @@ class FetchAllArticlesView(APIView):
         articles = Article.objects.all()
         serializer = serializers.ArticleSerializer(articles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class TrendingTagsView(APIView):
+    def get(self, request):
+        one_week_ago = timezone.now() - timedelta(days=7)
+
+        trending_interests = models.Interest.objects.filter(
+            tagged_articles__article__created_at__gte=one_week_ago
+        ).annotate(
+            count=Count('tagged_articles')
+        ).order_by('-count')[:5]
+
+        serializer = serializers.InterestSerializer(trending_interests, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK) 
+    

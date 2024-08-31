@@ -19,6 +19,12 @@ class TagSerializer(serializers.ModelSerializer):
         return obj.interest.name
     
     
+class InterestSerializer(serializers.ModelSerializer):
+    count = serializers.IntegerField()
+
+    class Meta:
+        model = models.Interest
+        fields = ['id', 'name', 'count']
 
 class ArticleSerializer(serializers.ModelSerializer):
     user_data = serializers.SerializerMethodField()
