@@ -222,8 +222,23 @@ class ChangePasswordView(APIView):
         response = requests.post(service_url, json=request.data, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
 
+class ForgotPasswordView(APIView):
+    def post(self, request):
+        service_url = f"{USER_SERVICE_URL}/forgot-password/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
 
+class ResetPasswordVerifyOTPView(APIView):
+    def post(self, request):
+        service_url = f"{USER_SERVICE_URL}/reset-password/verify-otp/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
 
+class ResetPasswordView(APIView):
+    def post(self, request):
+        service_url = f"{USER_SERVICE_URL}/reset-password/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
 
 
 

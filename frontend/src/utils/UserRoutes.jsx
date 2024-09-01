@@ -39,6 +39,7 @@ import PaymentCancelled from '../pages/user/pricing/PaymentCancelled';
 import PaymentResult from '../pages/user/pricing/PaymentResult';
 import SearchResults from '../pages/user/search/SearchResults';
 import About from '../pages/user/About';
+import ForgotPassword from '../pages/user/ForgotPassword';
 
 
 const UserRoutes = () => {
@@ -47,6 +48,7 @@ const UserRoutes = () => {
         <Route element={<UserPublicRoutes />}>
             <Route path='/login' element={<UserLogin />} />
             <Route path='/signup' element={<UserSignup />} />
+            <Route path='/forgot-password' element={<ForgotPassword />} />
         </Route>
         
         <Route element={<NavbarLayout />}>

@@ -299,3 +299,55 @@ class ChangePasswordView(APIView):
         user.save()
 
         return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
+    
+class ForgotPasswordView(APIView):
+    def post(self, request):
+        try:
+            email = request.data.get('email')
+            otp = random.randint(100000, 999999)
+            send_otp(email, otp)
+
+            cache.set(f"otp_{email}", otp, timeout=300)
+
+            return Response({
+                'message': 'OTP sent to your email. Please verify.',
+                'email': email
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class ResetPasswordVerifyOTPView(APIView):
+    def post(self, request):
+        try:
+            email = request.data.get('email')
+            otp = request.data.get('otp')
+
+            stored_otp = cache.get(f"otp_{email}")
+            
+            if stored_otp and int(stored_otp) == int(otp):
+                return Response({
+                    'message': 'OTP verified successfully',
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class ResetPasswordView(APIView):
+    def post(self, request):
+        try:
+            email = request.data.get('email')
+            password = request.data.get('password')
+
+            user = models.User.objects.get(email=email)
+
+            user.set_password(password)
+            user.save()
+
+            return Response({
+                'message': 'Password reset successfully',
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)

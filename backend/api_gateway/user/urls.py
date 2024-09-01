@@ -28,4 +28,7 @@ urlpatterns = [
     path('pricing/<int:pk>/', views.PricingView.as_view()),
     path('users-to-follow-suggestions/', views.UsersToFollowSuggestionsView.as_view()),
     path('change-password/', views.ChangePasswordView.as_view()),
+    path('forgot-password/', views.ForgotPasswordView.as_view()),
+    path('reset-password/verify-otp/', views.ResetPasswordVerifyOTPView.as_view()),
+    path('reset-password/', views.ResetPasswordView.as_view()),
 ]

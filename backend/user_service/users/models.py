@@ -6,6 +6,7 @@ from .producer import kafka_producer
 
 class User(AbstractUser):
     tagline = models.CharField(max_length=225, null=True, blank=True)
+    email = models.EmailField(max_length=255, unique=True)
     bio = models.TextField(max_length=1000, null=True, blank=True)
     profile = models.ImageField(upload_to='user_service/users/profiles/', null=True, blank=True)
     account_tier = models.CharField(default="free", max_length=50)
