@@ -27,4 +27,5 @@ urlpatterns = [
     path('pricing/', views.PricingView.as_view()),
     path('pricing/<int:pk>/', views.PricingView.as_view()),
     path('users-to-follow-suggestions/', views.UsersToFollowSuggestionsView.as_view()),
+    path('change-password/', views.ChangePasswordView.as_view()),
 ]

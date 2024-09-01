@@ -38,6 +38,7 @@ import PaymentSuccess from '../pages/user/pricing/PaymentSuccess';
 import PaymentCancelled from '../pages/user/pricing/PaymentCancelled';
 import PaymentResult from '../pages/user/pricing/PaymentResult';
 import SearchResults from '../pages/user/search/SearchResults';
+import About from '../pages/user/About';
 
 
 const UserRoutes = () => {
@@ -55,6 +56,8 @@ const UserRoutes = () => {
             <Route path="/articles-by-tag/:interestId" element={<MainLayout><ArticlesByTag /></MainLayout>} />
             <Route path="/communities" element={<MainLayout><CommunitiesLayout /></MainLayout>} />
             <Route path='/search-results' element={<MainLayout><SearchResults /></MainLayout>} />
+            <Route path='/about' element={<MainLayout><About /></MainLayout>} />
+            <Route path='/landing-page' element={<About />} />
 
             <Route path="/communities/:id" element={<CommunityPage />} />
             <Route path="/communities/:id/settings" element={<CommunitySettings />} />

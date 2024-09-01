@@ -4,16 +4,26 @@ import {
   UserGroupIcon,
   MagnifyingGlassIcon,
   PlusIcon,
-  UserIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
 import MyCommunities from './MyCommunities';
 import FindCommunity from './FindCommunity';
 import CreateCommunity from './CreateCommunity';
 import JoinedCommunities from './JoinedCommunities';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Modal from '../../../components/user/Modal';
 
 const CommunitiesLayout = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const isAuthenticated = useSelector((state) => state.auth.isUserAuthenticated);
+
+  const handleCreateCommunityClick = () => {
+    if (!isAuthenticated) {
+      setIsLoginModalOpen(true);
+    }
+  };
 
   const tabs = [
     { name: 'My Communities', icon: UsersIcon, component: MyCommunities },
@@ -27,7 +37,7 @@ const CommunitiesLayout = () => {
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
           <Tab.List className="flex flex-wrap justify-between space-y-2 sm:space-y-0 rounded-xl bg-white dark:bg-gray-800 p-2 shadow-md">
-            {tabs.map((tab, index) => (
+            {tabs.map((tab) => (
               <Tab
                 key={tab.name}
                 className={({ selected }) =>
@@ -37,6 +47,7 @@ const CommunitiesLayout = () => {
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`
                 }
+                onClick={tab.name === 'Create Community' ? handleCreateCommunityClick : undefined}
               >
                 <tab.icon className="w-4 h-4 mr-1 sm:w-5 sm:h-5" />
                 {tab.name}
@@ -46,7 +57,19 @@ const CommunitiesLayout = () => {
           <Tab.Panels className="mt-6">
             {tabs.map((tab, index) => (
               <Tab.Panel key={tab.name}>
-                <tab.component />
+                {index === 3 && !isAuthenticated ? (
+                  <Modal
+                    isOpen={isLoginModalOpen}
+                    onClose={() => setIsLoginModalOpen(false)}
+                    title="Authentication Required"
+                    message="Please log in to create a community."
+                    primaryButtonText="Log In"
+                    primaryButtonUrl="/login"
+                    secondaryButtonText="Cancel"
+                  />
+                ) : (
+                  <tab.component />
+                )}
               </Tab.Panel>
             ))}
           </Tab.Panels>

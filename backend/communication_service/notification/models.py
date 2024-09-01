@@ -61,11 +61,12 @@ class Notification(models.Model):
             'notification_type': self.notification_type,
             'team': self.team.id if self.team else None,
             'article': self.article.id if self.article else None,
+            'comment': self.comment.id if self.comment else None,
             'content': self.content,
             'created_at': self.created_at.isoformat(),
             'is_read': self.is_read
         }
         print("------------------create_notification view called in communication service-----------------")
-        send_notification(self.receiver.id, notification_data)
+        send_notification(self.receiver.id, notification_data) 
 
 

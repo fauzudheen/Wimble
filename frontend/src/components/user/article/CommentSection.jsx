@@ -150,7 +150,7 @@ const CommentSection = ({ articleId, token }) => {
       <textarea
         name="comment"
         placeholder={placeholder}
-        className="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ease-in-out dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm "
+        className="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ease-in-out dark:bg-gray-800 dark:text-white dark:border-gray-600 text-sm "
         rows="3"
         ref={inputRef}
       ></textarea>

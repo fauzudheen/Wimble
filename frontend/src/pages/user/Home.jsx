@@ -11,13 +11,13 @@ const Home = () => {
       <div className="w-full md:w-3/4">
         <div className="md:hidden flex justify-around mb-4">
           <button
-            className={`w-1/2 text-sm p-2 ${activeTab === 'feed' ? 'font-bold border-b-2 border-blue-500' : ''}`}
+            className={`w-1/2 text-sm dark:text-gray-100 p-2 ${activeTab === 'feed' ? 'font-bold border-b-2 border-blue-500' : ''}`}
             onClick={() => setActiveTab('feed')}
           >
             Feeds
           </button>
           <button
-            className={`w-1/2 text-sm p-2 ${activeTab === 'discussions' ? 'font-bold border-b-2 border-blue-500' : ''}`}
+            className={`w-1/2 text-sm dark:text-gray-100 p-2 ${activeTab === 'discussions' ? 'font-bold border-b-2 border-blue-500' : ''}`}
             onClick={() => setActiveTab('discussions')}
           >
             Suggestions

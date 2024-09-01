@@ -216,6 +216,11 @@ class UsersToFollowSuggestionsView(APIView):
         response = requests.get(service_url, headers=dict(request.headers))
         return Response(response.json(), status=response.status_code)
 
+class ChangePasswordView(APIView):
+    def post(self, request):
+        service_url = f"{USER_SERVICE_URL}/change-password/"
+        response = requests.post(service_url, json=request.data, headers=dict(request.headers))
+        return Response(response.json(), status=response.status_code)
 
 
 

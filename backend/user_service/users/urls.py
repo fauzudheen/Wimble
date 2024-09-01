@@ -30,4 +30,5 @@ urlpatterns = [
     path('user-reports/<int:pk>/', views.ReportDestroyView.as_view()),  
     path('fetchall-users/', views.FetchAllUsersView.as_view()),  
     path('users-to-follow-suggestions/', views.UsersToFollowSuggestionsView.as_view()),
+    path('change-password/', views.ChangePasswordView.as_view()),
 ]

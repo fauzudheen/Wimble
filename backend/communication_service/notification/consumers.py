@@ -2,6 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from chat.models import User, Team
+from . models import Article, Comment
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -37,19 +38,23 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         sender_data = await self.get_sender_data(notification_data['sender']) if notification_data['sender'] else None
         team_data = await self.get_team_data(notification_data['team']) if notification_data['team'] else None
+        article_data = await self.get_article_data(notification_data['article']) if notification_data['article'] else None
+        comment_data = await self.get_comment_data(notification_data['comment']) if notification_data['comment'] else None
  
         notification_data['sender_data'] = sender_data
         notification_data['team_data'] = team_data
+        notification_data['article_data'] = article_data
+        notification_data['comment'] = comment_data
 
         notification_json = json.dumps(notification_data)
 
         print(f"Received notification in consumer for user {self.user_id}: {notification_json}")
         await self.send(text_data=notification_json)
-        print(f"Sent notification to WebSocket for user {self.user_id}")
+        print(f"Sent notification to WebSocket for user {self.user_id}") 
 
     @database_sync_to_async
     def get_sender_data(self, user_id):
-        user = User.objects.get(id=user_id)
+        user = User.objects.get(id=user_id)  
         return {
             'profile': user.profile,
             'first_name': user.first_name,
@@ -62,4 +67,19 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         return {
             'name': team.name,
             'profile_image': team.profile_image
+        }
+    
+    @database_sync_to_async
+    def get_article_data(self, article_id):
+        article = Article.objects.get(id=article_id)
+        return {
+            'title': article.title,
+            'thumbnail': article.thumbnail,
+        }
+    
+    @database_sync_to_async
+    def get_comment_data(self, comment_id):
+        comment = Comment.objects.get(id=comment_id)
+        return {
+            'text': comment.text
         }

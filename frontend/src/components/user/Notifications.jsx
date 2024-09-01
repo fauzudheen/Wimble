@@ -79,8 +79,9 @@ const Notifications = () => {
       navigate(`/user-profile/${notification.sender.id}`);
     } else if (notification.notification_type === 'meeting') {
       navigate(`/teams/${notification.team.id}/meetings/`);
+    } else if (notification.notification_type === 'like' || notification.notification_type === 'comment') {
+      navigate(`/article/${notification.article.id}`);
     }
-    // Add more navigation logic for other notification types if needed
   };
 
   const tabs = [
@@ -168,7 +169,7 @@ const Notifications = () => {
             <div
               key={notification.id}
               className={`flex items-start p-4 border-b dark:border-gray-700 ${
-                !notification.is_read ? 'bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-900 dark:to-blue-900' : ''
+                !notification.is_read ? 'bg-gradient-to-l from-teal-50 to-blue-50 dark:from-gray-800 dark:to-gray-700' : ''
               } hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out`}
             >
               <div className="flex items-center justify-center mr-4 h-10">
@@ -199,7 +200,7 @@ const Notifications = () => {
               <div className="flex-grow cursor-pointer" onClick={() => handleNotificationClick(notification)}>
                 <p className="text-base text-gray-800 dark:text-gray-200 font-semibold">{notification.content}</p>
                 {notification.notification_type === 'comment' && notification.comment && (
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 italic">"{notification.comment.text}"</p>
+                  <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mt-1 italic">"{notification.comment.text}"</p>
                 )}
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {format(new Date(notification.created_at), 'MMM d, yyyy HH:mm')}

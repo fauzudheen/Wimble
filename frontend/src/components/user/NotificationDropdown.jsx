@@ -42,6 +42,7 @@ const NotificationDropdown = () => {
           ...newNotification,
           sender: newNotification.sender_data ? newNotification.sender_data : null,
           team: newNotification.team_data ? newNotification.team_data : null,
+          article: newNotification.article_data ? newNotification.article_data : null,
         };
   
         setNotifications(prev => [updatedNotification, ...prev]);
@@ -98,8 +99,9 @@ const NotificationDropdown = () => {
       navigate(`/user-profile/${notification.sender.id}`);
     } else if (notification.notification_type === 'meeting') {
       navigate(`/teams/${notification.team.id}/meetings/`);
+    } else if (notification.notification_type === 'like' || notification.notification_type === 'comment') {
+      navigate(`/article/${notification.article.id}`);
     }
-    // Add more navigation logic for other notification types if needed
   };
 
   const getNotificationIcon = (type, sender=null, team=null) => {

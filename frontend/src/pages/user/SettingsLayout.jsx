@@ -20,8 +20,8 @@ const SettingsLayout = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-2">
-        <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+      <div className="max-w-7xl mx-auto py-6 px-4 lg:px-2">
+        <div className="bg-white dark:bg-gray-800 shadow overflow-hidden rounded-lg">
           <div className="px-4 py-5 sm:px-6">
             <h1 className={`text-3xl font-bold text-gray-700 dark:text-gray-100`}>Settings</h1>
             <p className="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">

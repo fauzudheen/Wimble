@@ -15,6 +15,9 @@ from .producer import kafka_producer
 import random
 from django.db.models import Q
 from .suggestions import get_users_to_follow_suggestions
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
 
 class SignupView(APIView):
     permission_classes = [AllowAny] 
@@ -268,3 +271,31 @@ class UsersToFollowSuggestionsView(APIView):
         users = get_users_to_follow_suggestions(request.user.id)
         serializer = serializers.UserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+
+        if not old_password or not new_password:
+            return Response({"message": "Both old and new passwords are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not user.check_password(old_password):
+            return Response({"message": "Current password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if old_password == new_password:
+            return Response({"message": "New password must be different from the current password."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            validate_password(new_password, user)
+        except ValidationError as e:
+            return Response({"message": list(e.messages)}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)

@@ -209,11 +209,11 @@ const Navbar = () => {
                             </>
                         ) : (
                             <>
-                                <Link to='/login' className="text-teal-500 dark:text-teal-300 hidden sm:block">
+                                <Link to='/login' className="text-teal-500 dark:text-teal-300 text-xs sm:text-sm md:text-base">
                                     Login
                                 </Link>
                                 <Link to='/signup'>
-                                    <button className={`${Colors.tealBlueGradientButton} text-white px-2 sm:px-3 py-1 sm:py-2 rounded-md`}>
+                                    <button className={`${Colors.tealBlueGradientButton} text-white text-xs sm:text-sm md:text-base px-2 sm:px-3 py-1 sm:py-2 rounded-md`}>
                                         Signup
                                     </button>
                                 </Link>

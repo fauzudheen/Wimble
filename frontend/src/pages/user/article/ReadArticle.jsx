@@ -182,7 +182,7 @@ const ReadArticle = () => {
 
 
   return (
-    <div className='min-h-screen bg-gray-100 dark:bg-gray-800 p-1 sm:p-3 md:p-4 lg:p-6'>
+    <div className='min-h-screen bg-gray-100 dark:bg-black p-1 sm:p-3 md:p-4 lg:p-6'>
       <article className="max-w-5xl mx-auto bg-white dark:bg-gray-900 shadow-md rounded-md overflow-hidden">
       <header className="p-2 sm:p-3 md:p-4 border-b border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between">

@@ -120,7 +120,7 @@ const CreateArticle = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 lg:p-8'>
+    <div className='min-h-screen bg-gray-100 dark:bg-black p-4 sm:p-6 lg:p-8'>
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden">
         <div className="p-6">
           <h2 className={`text-3xl font-bold mb-6 ${Colors.tealBlueGradientText}`}>Create New Article</h2>

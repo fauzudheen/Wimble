@@ -12,7 +12,7 @@ from . import serializers, models
 
 class NotificationListView(generics.ListAPIView):
     serializer_class = serializers.NotificationSerializer
-    
+     
     def get_queryset(self):
         return models.Notification.objects.filter(receiver_id=self.request.user.id)
     
