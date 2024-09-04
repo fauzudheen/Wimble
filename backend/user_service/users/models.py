@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 import datetime
 import json
 from .producer import kafka_producer
+from django_prometheus.models import ExportModelOperationsMixin
 
 class User(AbstractUser):
     tagline = models.CharField(max_length=225, null=True, blank=True)
@@ -60,7 +61,7 @@ class Skill(models.Model):
     class Meta:
         ordering = ['name']
 
-class UserSkill(models.Model):
+class UserSkill(ExportModelOperationsMixin('UserSkill'), models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="skills")
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="users")
 

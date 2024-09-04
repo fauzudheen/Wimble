@@ -77,7 +77,7 @@ const TeamOverview = () => {
   return (
     <div className="space-y-4 p-4 ">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{team.name} Overview</h2>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Overview</h2>
       </div>
       <Card className="mt-4 bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900 dark:to-green-800 shadow-md">
         <CardHeader>

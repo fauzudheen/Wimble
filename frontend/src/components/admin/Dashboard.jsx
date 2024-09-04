@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-import { Users, FileText, Users2, Building2, CreditCard, TrendingUp, Activity, Search, ChevronDown } from 'lucide-react';
+import { Users, FileText, Users2, Building2, CreditCard, TrendingUp, Activity } from 'lucide-react';
 import createAxiosInstance from '../../api/axiosInstance';
 import { GatewayUrl } from '../const/urls';
 
@@ -11,8 +11,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -90,28 +88,8 @@ const Dashboard = () => {
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
-  const sortedArticles = [...data.articles].sort((a, b) => {
-    if (sortConfig.key) {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
-      if (aValue < bValue) return sortConfig.direction === 'ascending' ? -1 : 1;
-      if (aValue > bValue) return sortConfig.direction === 'ascending' ? 1 : -1;
-    }
-    return 0;
-  });
 
-  const filteredArticles = sortedArticles.filter(article =>
-    article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    article.user_data.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    article.user_data.last_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
-  const handleSort = (key) => {
-    setSortConfig(prevConfig => ({
-      key,
-      direction: prevConfig.key === key && prevConfig.direction === 'ascending' ? 'descending' : 'ascending',
-    }));
-  };
 
   return (
     <div className="min-h-screen p-8">
@@ -124,12 +102,6 @@ const Dashboard = () => {
             onClick={() => setActiveTab('overview')}
           >
             Overview
-          </button>
-          <button
-            className={`px-4 py-2 font-semibold rounded ${activeTab === 'articles' ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-            onClick={() => setActiveTab('articles')}
-          >
-            Articles
           </button>
           <button
             className={`px-4 py-2 font-semibold rounded ${activeTab === 'revenue' ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
@@ -193,64 +165,6 @@ const Dashboard = () => {
           </div>
         </>
       )}
-
-      {activeTab === 'articles' && (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Articles</h2>
-          <div className="mb-4 flex items-center">
-            <Search className="h-5 w-5 text-gray-400 mr-2" />
-            <input
-              type="text"
-              placeholder="Search articles..."
-              className="w-full p-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
-                <tr>
-                  {['Title', 'Author', 'Likes', 'Comments', 'Created At'].map(header => (
-                    <th
-                      key={header}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                      onClick={() => handleSort(header.toLowerCase().replace(' ', '_'))}
-                    >
-                      <div className="flex items-center">
-                        {header}
-                        <ChevronDown className="h-4 w-4 ml-1" />
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {filteredArticles.map((article, index) => (
-                  <tr key={index}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                    {article.title.length > 30 ? `${article.title.slice(0, 30)}...` : article.title}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {`${article.user_data.first_name} ${article.user_data.last_name}`}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {article.likes_count}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {article.comments_count}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {new Date(article.created_at).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
       {activeTab === 'revenue' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">

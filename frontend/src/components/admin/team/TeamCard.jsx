@@ -32,23 +32,16 @@ const TeamCard = ({ team }) => {
             <span>Rejected</span>
           </div>
         );
-      default:
-        return isPublic ? (
-          <div className="flex items-center ml-4 text-blue-500">
-            <PlusCircleIcon className="w-4 h-4 mr-1" strokeWidth={3} />
-            <span>Join</span>
-          </div>
-        ) : null;
     }
   };
 
   return (
-    <div 
+    <div
       className={`bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden transition-all duration-200 mb-6 p-4 
         ${(isPublic || team.request_status === 'accepted') ? 'hover:scale-101 cursor-pointer' : ''}`}
     >
-      <div className="flex items-center">
-        <div className="flex-shrink-0">
+      <div className="flex flex-col sm:flex-row items-center">
+        <div className="flex-shrink-0 mb-4 sm:mb-0">
           {team.profile_image ? (
             <img
               src={`${GatewayUrl}api${team.profile_image.startsWith('/') ? '' : '/'}${team.profile_image}`}
@@ -61,21 +54,21 @@ const TeamCard = ({ team }) => {
             </div>
           )}
         </div>
-        <div className="ml-4 flex-grow">
+        <div className="ml-0 sm:ml-4 flex-grow">
           <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200">{team.name}</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{team.description}</p>
-          <div className="flex items-center text-sm text-gray-700 dark:text-gray-300 mt-2">
-            <div className="flex items-center">
+          <div className="flex flex-col sm:flex-row items-center text-sm text-gray-700 dark:text-gray-300 mt-2">
+            <div className="flex items-center mb-2 sm:mb-0 sm:mr-4">
               <UserGroupIcon className="w-4 h-4 mr-1" />
               <span>{team.member_count} / {team.maximum_members} members</span>
             </div>
             {team.status && (
-              <div className="flex items-center ml-4">
+              <div className="flex items-center mb-2 sm:mb-0 sm:ml-4">
                 <div className={`w-2 h-2 rounded-full mr-1 ${team.status === 'active' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
                 <span className="capitalize">{team.status}</span>
               </div>
             )}
-            <div className={`flex items-center ml-4 ${isPublic ? 'text-blue-500' : 'text-yellow-500'}`}>
+            <div className={`flex items-center mb-2 sm:mb-0 sm:ml-4 ${isPublic ? 'text-blue-500' : 'text-yellow-500'}`}>
               {isPublic ? (
                 <LockOpenIcon className="w-4 h-4 mr-1" />
               ) : (
@@ -86,11 +79,6 @@ const TeamCard = ({ team }) => {
             {renderStatusIcon()}
           </div>
         </div>
-        {(!isPublic && team.request_status !== 'accepted') && (
-          <div className="flex items-center ml-4">
-            <LockClosedIcon className="w-6 h-6 text-yellow-500 stroke-2" />
-          </div>
-        )}
       </div>
     </div>
   );

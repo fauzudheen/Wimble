@@ -186,7 +186,7 @@ const CreateArticle = () => {
               />
             </div>
 
-            <div>
+            <div className="mb-6">
               <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Tags
               </label>
@@ -194,7 +194,7 @@ const CreateArticle = () => {
                 isMulti
                 name="tags"
                 options={availableTags}
-                className="basic-multi-select"
+                className="basic-multi-select mb-[20vh] dark:bg-gray-700 dark:text-gray-300"
                 classNamePrefix="select"
                 onChange={setTags}
                 value={tags}
@@ -207,6 +207,10 @@ const CreateArticle = () => {
                   menu: (baseStyles) => ({
                     ...baseStyles,
                     backgroundColor: isDarkMode ? '#374151' : 'white',
+                  }),
+                  menuList: (baseStyles) => ({
+                    ...baseStyles,
+                    maxHeight: '200px',
                   }),
                   option: (baseStyles, state) => ({
                     ...baseStyles,

@@ -97,7 +97,7 @@ const Meet = () => {
       {showJoinDialog && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 max-w-sm w-full mx-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Unautherized</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Unauthorized</h2>
             <p className="text-sm text-gray-800 dark:text-gray-300 mt-3">
               You are not a member of this team and cannot join the meeting. Please contact your team administrator to be added as a member.
             </p>

@@ -142,7 +142,7 @@ const CommunitySettings = () => {
   );
 
   return (
-    <div className='bg-gray-100 dark:bg-gray-700 py-4'>
+    <div className='bg-gray-100 dark:bg-gray-700 p-4'>
       <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800  p-8 rounded-lg shadow-lg">
         <h2 className={`text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100`}>
           Community Settings
@@ -196,7 +196,7 @@ const CommunitySettings = () => {
             </div>
           </div>
 
-          <div className="col-span-1 space-y-6">
+          <div className="col-span-2 md:col-span-1 space-y-6">
             <ImageUpload 
               id="profile_image" 
               label="Profile Image" 

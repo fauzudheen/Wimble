@@ -25,4 +25,6 @@ urlpatterns = [
     path('', include('users.urls')),
     path('', include('admin_app.urls')),
 
+    path("", include("django_prometheus.urls"), name="django-prometheus"),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

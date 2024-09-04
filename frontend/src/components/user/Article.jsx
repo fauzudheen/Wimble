@@ -34,7 +34,7 @@ const Article = ({ article }) => {
   };
 
   return (
-    <article className="bg-white dark:bg-gray-800 p-2 sm:p-3 shadow-md rounded-lg mb-2 sm:mb-3 transition-all hover:shadow-md">
+    <article className="bg-white dark:bg-gray-800 p-2 sm:p-3 shadow-sm rounded-lg mb-2 sm:mb-3 transition-all hover:shadow-md">
      <header className="flex items-center mb-3">
         {profile && (
             <img
@@ -52,7 +52,7 @@ const Article = ({ article }) => {
                 {author}
             </h3>
             <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{tagline}</p>
-            <p className="text-xs sm:text-xm text-gray-600 dark:text-gray-400">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
                 {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
             </p>
         </div>

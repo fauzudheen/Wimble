@@ -99,29 +99,40 @@ const Pricing = () => {
     const daysRemaining = differenceInDays(new Date(user.subscription_expiry), new Date());
 
     return (
-      <div className="flex w-full justify-center mt-6">
-        <div className="w-3/5"> 
-          <div className={`w-full text-center p-4 rounded-lg shadow-md ${isPremium ? 'bg-gradient-to-r from-teal-500 to-blue-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100'}`}>
+      <div className="flex justify-center mt-6 sm:mt-8 lg:mt-10 w-full">
+        <div className="w-full sm:w-4/5 md:w-3/5 lg:w-2/5">
+          <div
+            className={`w-full text-center p-4 sm:p-6 rounded-lg shadow-md ${
+              isPremium
+                ? 'bg-gradient-to-r from-teal-500 to-blue-600 text-white'
+                : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+            }`}
+          >
             <div className="flex items-center justify-center mb-2">
               {isPremium ? (
                 <ShieldCheckIcon className="h-6 w-6 mr-2" />
               ) : (
                 <ClockIcon className="h-6 w-6 mr-2" />
               )}
-              <h3 className="text-lg font-semibold">
+              <h3 className="text-lg sm:text-xl font-semibold">
                 {isPremium ? 'Premium Subscription Active' : 'Free Tier'}
               </h3>
             </div>
             {isPremium && (
               <>
-                <p className="text-base mb-1">Expires on: {format(new Date(user.subscription_expiry), 'MMMM d, yyyy')}</p>
-                <p className="text-base font-medium">{daysRemaining} days remaining</p>
+                <p className="text-sm sm:text-base mb-1">
+                  Expires on: {format(new Date(user.subscription_expiry), 'MMMM d, yyyy')}
+                </p>
+                <p className="text-sm sm:text-base font-medium">
+                  {daysRemaining} days remaining
+                </p>
               </>
             )}
           </div>
         </div>
       </div>
     );
+    
   };
     
   return (

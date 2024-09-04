@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useOutletContext } from 'react-router-dom';
@@ -293,111 +294,117 @@ const TeamChat = () => {
     
     
     return (
-        <div className="fixed flex flex-col h-[90vh] w-[81vw] bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg">
-            {/* Fixed top bar */}
-            <div className="sticky top-0 bg-white dark:bg-gray-800 shadow">
-                <div className="flex items-center p-3">
-                    <div className="flex items-center flex-1">
-                        {team.profile_image ? (
-                            <img className="w-10 h-10 rounded-full mr-3 border-2 border-white dark:border-gray-200 object-cover" src={team.profile_image.replace('8000', '8004')} alt={team.name} />
-                        ) : (
-                            <div className="h-10 w-10 rounded-full mr-3 border-2 border-white dark:border-gray-200 shadow-lg flex items-center justify-center bg-white bg-opacity-20">
-                                <UserGroupIcon className="h-6 w-6 text-white" />
-                            </div>
-                        )}
-                        <div>
-                            <h1 className="font-semibold text-gray-900 dark:text-gray-100">{team.name}</h1>
-                            <p className="text-sm text-green-600 dark:text-green-400">{onlineUsers} online</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center">
-                        <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
-                            <Search size={20} />
-                        </button>
-                        <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
-                            <MoreVertical size={20} />
-                        </button>
-                    </div>
-                </div>
-            </div>
-    
-            {/* Scrollable chat area */}
-            <div className="flex-1 overflow-y-auto min-h-0">
-                <div className="p-4" ref={messageListRef}>
-                    {hasMore && (
-                        <button 
-                        onClick={() => setPage(prevPage => prevPage + 1)} 
-                        className="mb-4 mx-auto text-sm block bg-gradient-to-r from-teal-400 to-blue-500 dark:from-teal-500 dark:to-blue-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
-                    >
-                        Load More Messages
-                    </button>
-                    )}
-                    {renderedMessages}
-                </div>
-            </div>
-    
-            {/* Fixed bottom input section */}
-            <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-800 shadow border-t border-gray-200 dark:border-gray-700 p-2">
-                {error && <div className="text-red-500 mb-2">{error}</div>}
-                {file && (
-                    <div className="flex items-center mb-2 p-2 bg-gray-100 dark:bg-gray-700 rounded">
-                        <span className="text-sm truncate flex-1 text-gray-900 dark:text-gray-100">{file.name}</span>
-                        <button onClick={removeFile} className="ml-2 text-red-500 hover:text-red-600 transition-colors">
-                            <X size={16} />
-                        </button>
-                    </div>
+        <div className="fixed flex flex-col h-[90vh] w-full lg:w-[81vw] bg-gray-100 dark:bg-gray-900 rounded-lg shadow-lg">
+          {/* Fixed top bar */}
+          <div className="sticky top-0 bg-white dark:bg-gray-800 shadow">
+            <div className="flex items-center p-3">
+              <div className="flex items-center flex-1">
+                {team.profile_image ? (
+                  <img
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 border-2 border-white dark:border-gray-200 object-cover"
+                    src={team.profile_image.replace('8000', '8004')}
+                    alt={team.name}
+                  />
+                ) : (
+                  <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full mr-2 sm:mr-3 border-2 border-white dark:border-gray-200 shadow-lg flex items-center justify-center bg-white bg-opacity-20">
+                    <UserGroupIcon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                  </div>
                 )}
-                <div className="flex items-stretch">
-                    <input
-                        type="text"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Type your message here..."
-                        className="flex-1 p-2 border rounded-l-lg focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 h-10"
-                        onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                    />
-                    <label className="flex items-center justify-center w-10 h-10 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors border-t border-b border-gray-300 dark:border-gray-600">
-                        <input
-                            type="file"
-                            onChange={handleFileChange}
-                            className="hidden"
-                        />
-                        <Paperclip size={20} className="text-gray-500 dark:text-gray-400" />
-                    </label>
-                    <button 
-                        onClick={handleSendMessage}
-                        className="w-10 h-10 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-r-lg hover:from-teal-500 hover:to-blue-600 focus:outline-none transition-colors flex items-center justify-center"
-                    >
-                        <Send size={20} />
-                    </button>
+                <div>
+                  <h1 className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
+                    {team.name}
+                  </h1>
+                  <p className="text-xs sm:text-sm text-green-600 dark:text-green-400">
+                    {onlineUsers} online
+                  </p>
                 </div>
+              </div>
             </div>
-    
-            <ImageModal 
-                isOpen={isModalOpen} 
-                imageUrl={selectedImageUrl} 
-                onClose={closeImageModal} 
-            />
-    
-            {showJoinDialog && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 max-w-sm w-full mx-4">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Unauthorized</h2>
-                        <p className="text-sm text-gray-800 dark:text-gray-300 mt-3">
-                            You are not a member of this team and cannot access this resource. Please contact your team administrator to be added as a member.
-                        </p>
-                        <div className="flex justify-end mt-3">
-                            <Link to={`/teams/${teamId}/overview`}>
-                                <button className="rounded-md px-3 py-2 text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600">
-                                    Go Back to Overview
-                                </button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
+          </div>
+      
+          {/* Scrollable chat area */}
+          <div className="flex-1 overflow-y-auto min-h-0">
+            <div className="p-2 sm:p-4" ref={messageListRef}>
+              {hasMore && (
+                <button
+                  onClick={() => setPage((prevPage) => prevPage + 1)}
+                  className="mb-4 mx-auto text-xs sm:text-sm block bg-gradient-to-r from-teal-400 to-blue-500 dark:from-teal-500 dark:to-blue-600 text-white font-semibold py-2 px-3 sm:py-2 sm:px-4 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
+                >
+                  Load More Messages
+                </button>
+              )}
+              {renderedMessages}
+            </div>
+          </div>
+      
+          {/* Fixed bottom input section */}
+          <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-800 shadow border-t border-gray-200 dark:border-gray-700 p-2">
+            {error && <div className="text-xs sm:text-sm text-red-500 mb-2">{error}</div>}
+            {file && (
+              <div className="flex items-center mb-2 p-2 bg-gray-100 dark:bg-gray-700 rounded">
+                <span className="text-xs sm:text-sm truncate flex-1 text-gray-900 dark:text-gray-100">
+                  {file.name}
+                </span>
+                <button
+                  onClick={removeFile}
+                  className="ml-2 text-red-500 hover:text-red-600 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
             )}
+            <div className="flex items-stretch">
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Type your message here..."
+                className="flex-1 p-1 sm:p-2 border rounded-l-lg focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 h-8 sm:h-10"
+                onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+              />
+              <label className="flex items-center justify-center w-8 sm:w-10 h-8 sm:h-10 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors border-t border-b border-gray-300 dark:border-gray-600">
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <Paperclip size={18} className="text-gray-500 dark:text-gray-400" />
+              </label>
+              <button
+                onClick={handleSendMessage}
+                className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-r-lg hover:from-teal-500 hover:to-blue-600 focus:outline-none transition-colors flex items-center justify-center"
+              >
+                <Send size={18} className="" />
+              </button>
+            </div>
+          </div>
+      
+          <ImageModal
+            isOpen={isModalOpen}
+            imageUrl={selectedImageUrl}
+            onClose={closeImageModal}
+          />
+      
+          {showJoinDialog && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 max-w-xs sm:max-w-sm w-full">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">Unauthorized</h2>
+                <p className="text-xs sm:text-sm text-gray-800 dark:text-gray-300 mt-2 sm:mt-3">
+                  You are not a member of this team and cannot access this resource. Please contact your team administrator to be added as a member.
+                </p>
+                <div className="flex justify-end mt-2 sm:mt-3">
+                  <Link to={`/teams/${teamId}/overview`}>
+                    <button className="rounded-md px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600">
+                      Go Back to Overview
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-    );
+      );
+      
     
 };
 

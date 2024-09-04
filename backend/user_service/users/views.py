@@ -17,7 +17,7 @@ from django.db.models import Q
 from .suggestions import get_users_to_follow_suggestions
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-
+from utils.metrics_common import Metrics
 
 class SignupView(APIView):
     permission_classes = [AllowAny] 
@@ -114,6 +114,7 @@ class UserSkillListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         skill_id = self.request.data['skill']
         serializer.save(user_id=self.request.user.id, skill_id=skill_id) 
+        Metrics.upload_urls_created.inc()
 
     def get_queryset(self):
         user_id = self.kwargs['pk']

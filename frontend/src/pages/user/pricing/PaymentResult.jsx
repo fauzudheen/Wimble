@@ -76,12 +76,6 @@ const PaymentResult = () => {
           >
             Back to Home
           </Link>
-          <Link
-            to="/support"
-            className="inline-flex items-center justify-center px-5 py-2 border border-transparent text-base font-medium rounded-md text-teal-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition duration-150 ease-in-out dark:text-teal-400 dark:bg-gray-900 dark:hover:bg-gray-700 dark:hover:text-teal-300"
-          >
-            Need help? Contact support
-          </Link>
         </div>
       </div>
     );

@@ -158,10 +158,10 @@ const TeamMeetings = () => {
         </div>
       )}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Team Meetings</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Team Meetings</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600"
+          className="flex items-center space-x-2 px-4 py-2 rounded-md text-xs sm:text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-500 text-white hover:from-teal-600 hover:to-blue-600"
         >
           {showForm ? <X size={16} /> : <Plus size={16} />}
           <span>{showForm ? 'Cancel' : 'Create Meeting'}</span>

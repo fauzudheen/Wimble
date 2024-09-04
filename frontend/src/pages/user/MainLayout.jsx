@@ -11,9 +11,9 @@ const MainLayout = ({children}) => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-black flex">
       <div className="hidden lg:block max-h-svh w-1/5 h-screen overflow-y-auto fixed m-4">
-        {!isAuthenticated && <CommunityPromotion />}
+      {!isAuthenticated && <CommunityPromotion />}
         <HomeSidebar />
-        <PlusPromotion />
+        {isAuthenticated && <PlusPromotion />}
       </div>
       <div className="w-full lg:w-4/5 lg:ml-[20%] p-4">
         {children}

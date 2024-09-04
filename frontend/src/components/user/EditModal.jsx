@@ -54,7 +54,7 @@ const EditModal = ({ onClose, endpoint, initialData, title, onSave }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md mx-4">
         {loading ? (
           <div>Loading...</div>
         ) : (

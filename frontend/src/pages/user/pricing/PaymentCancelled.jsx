@@ -24,14 +24,6 @@ const PaymentCancelled = () => {
               Back to Pricing
             </Link>
           </div>
-          <div className="text-center">
-            <Link
-              to="/support"
-              className="font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300"
-            >
-              Need help? Contact support
-            </Link>
-          </div>
         </div>
       </div>
     </div>

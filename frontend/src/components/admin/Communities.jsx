@@ -59,7 +59,7 @@ const Communities = () => {
                 <div className="flex items-center mb-4">
                   {community.profile_image ? (
                     <img 
-                      className="w-12 h-12 rounded-full mr-4" 
+                      className="w-12 h-12 rounded-full mr-4 object-cover" 
                       src={community.profile_image.replace('8000', '8003')} 
                       alt={`${community.name} profile`} 
                     />
