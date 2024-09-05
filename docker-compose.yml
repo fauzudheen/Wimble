@@ -1,7 +1,7 @@
 services:
   api_gateway:
     container_name: api_gateway
-    build: ./backend/api_gateway
+    build: ./server/api_gateway
     ports:
       - "8000:8000"
     depends_on:
@@ -11,12 +11,12 @@ services:
       - team_service
       - communication_service
     volumes:
-      - ./backend/api_gateway:/app
+      - ./server/api_gateway:/app
 
 
   user_service:
     container_name: user_service
-    build: ./backend/user_service
+    build: ./server/user_service
     ports:
       - "8001:8001"
     depends_on:
@@ -24,44 +24,44 @@ services:
       - user_redis
       - kafka
     volumes:
-      - ./backend/user_service:/app
+      - ./server/user_service:/app
 
   article_service:
     container_name: article_service
-    build: ./backend/article_service
+    build: ./server/article_service
     ports:
       - "8002:8002"
     depends_on:
       - article_db
       - kafka
     volumes:
-      - ./backend/article_service:/app
+      - ./server/article_service:/app
 
   community_service:
     container_name: community_service
-    build: ./backend/community_service
+    build: ./server/community_service
     ports:
       - "8003:8003"
     depends_on:
       - community_db
       - kafka
     volumes:
-      - ./backend/community_service:/app
+      - ./server/community_service:/app
 
   team_service:
     container_name: team_service
-    build: ./backend/team_service
+    build: ./server/team_service
     ports:
       - "8004:8004"
     depends_on:
       - team_db
       - kafka
     volumes:
-      - ./backend/team_service:/app
+      - ./server/team_service:/app
 
   communication_service:
     container_name: communication_service
-    build: ./backend/communication_service
+    build: ./server/communication_service
     ports:
       - "8005:8005"
     depends_on:
@@ -69,18 +69,18 @@ services:
       - communication_redis
       - kafka
     volumes:
-      - ./backend/communication_service:/app
+      - ./server/communication_service:/app
 
   payment_service:
     container_name: payment_service
-    build: ./backend/payment_service
+    build: ./server/payment_service
     ports:
       - "8006:8006"
     depends_on:
       - payment_db
       - kafka
     volumes:
-      - ./backend/payment_service:/app
+      - ./server/payment_service:/app
 
   user_db:
     container_name: user_db
@@ -198,14 +198,14 @@ services:
 
   celery-worker:
     container_name: celery_worker
-    build: ./backend/communication_service 
+    build: ./server/communication_service 
     command: celery -A communication_service worker -l info
     depends_on:
       - communication_db
       - communication_redis
       - kafka
     volumes:
-      - ./backend/communication_service:/app
+      - ./server/communication_service:/app
     environment:
       - CELERY_BROKER_URL=kafka://host.docker.internal:9092
       - CELERY_RESULT_BACKEND=django-db
@@ -221,7 +221,7 @@ services:
     entrypoint: /bin/sh
     command: -c "stripe listen --forward-to http://host.docker.internal:8000/api/payments/webhook/"
     volumes:
-      - ./backend/payment_service:/app
+      - ./server/payment_service:/app
     tty: true  # Keep the terminal open
 
   prometheus:
