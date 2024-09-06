@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: api-gateway-configmap
-  namespace: wimble  
-data:
-  SECRET_KEY: "django-insecure-^)8d2u@p#r*7pn9i!4050inqhvjkd1$6h@heybrs!#dc)^rt8="
-  EMAIL_HOST_PASSWORD: "baed avmg gedy dndi"

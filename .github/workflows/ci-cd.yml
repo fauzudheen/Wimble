@@ -27,7 +27,6 @@ jobs:
 
     - name: Build and Push Services
       run: |
-        # Build and push all services
         docker buildx build --push --tag fauzu/wimble-api_gateway:latest ./server/api_gateway
         docker buildx build --push --tag fauzu/wimble-user_service:latest ./server/user_service
         docker buildx build --push --tag fauzu/wimble-article_service:latest ./server/article_service

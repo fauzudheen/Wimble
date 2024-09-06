@@ -4,14 +4,15 @@ metadata:
   name: wimble-ingress
   namespace: wimble
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
-    - host: local 
+    - host: wimble.local
       http:
         paths:
           - pathType: Prefix
-            path: /api
+            path: /
             backend:
               service:
                 name: api-gateway

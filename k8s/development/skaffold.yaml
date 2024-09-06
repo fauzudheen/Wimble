@@ -1,0 +1,23 @@
+apiVersion: skaffold/v2beta28
+kind: Config
+build:
+  artifacts:
+  - image: fauzu/wimble-api_gateway
+    context: ../../server/api_gateway
+    sync:
+      manual:
+      - src: '**/*.py'
+        dest: .
+deploy:
+  kubectl:
+    manifests:
+    - app.yaml
+profiles:
+  - name: dev
+    activation:
+      - kubeContext: minikube
+    patches:
+      - op: replace
+        path: /deploy/kubectl/manifests
+        value:
+          - app.yaml

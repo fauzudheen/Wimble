@@ -1,0 +1,436 @@
+# user-db
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: user-db
+  namespace: wimble
+spec:
+  serviceName: "user-db"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-db
+  template:
+    metadata:
+      labels:
+        app: user-db
+    spec:
+      containers:
+        - name: user-db
+          image: postgres
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: user-db-secrets
+          volumeMounts:
+            - name: user-db-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: user-db-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-db
+  namespace: wimble
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: user-db
+  clusterIP: None
+---
+
+# article-db
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: article-db
+  namespace: wimble
+spec:
+  serviceName: "article-db"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: article-db
+  template:
+    metadata:
+      labels:
+        app: article-db
+    spec: 
+      containers:
+        - name: article-db
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: PGPORT
+              value: "5433"
+          envFrom:
+            - secretRef:
+                name: article-db-secrets
+          volumeMounts:
+            - name: article-db-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: article-db-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: article-db
+  namespace: wimble
+spec:
+  ports:
+    - port: 5433
+      targetPort: 5432
+  selector:
+    app: article-db
+  clusterIP: None
+---
+
+# community-db
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: community-db
+  namespace: wimble
+spec:
+  serviceName: "community-db"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: community-db
+  template:
+    metadata:
+      labels:
+        app: community-db
+    spec: 
+      containers:
+        - name: community-db
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: PGPORT
+              value: "5434"
+          envFrom:
+            - secretRef:
+                name: community-db-secrets
+          volumeMounts:
+            - name: community-db-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: community-db-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: hostpath
+        resources:
+          requests:
+            storage: 1Gi
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: community-db
+  namespace: wimble
+spec:
+  ports:
+    - port: 5434
+      targetPort: 5432
+  selector:
+    app: community-db
+  clusterIP: None
+
+---
+
+# team-db
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: team-db
+  namespace: wimble
+spec:
+  serviceName: "team-db"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: team-db
+  template:
+    metadata:
+      labels:
+        app: team-db
+    spec:
+      containers:
+        - name: team-db
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: PGPORT
+              value: "5435"
+          envFrom:
+            - secretRef:
+                name: team-db-secrets
+          volumeMounts:
+            - name: team-db-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: team-db-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: team-db
+  namespace: wimble
+spec:
+  ports:
+    - port: 5435
+      targetPort: 5432
+  selector:
+    app: team-db
+  clusterIP: None
+---
+
+# communication-db
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: communication-db
+  namespace: wimble
+spec:
+  serviceName: "communication-db"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: communication-db
+  template:
+    metadata:
+      labels:
+        app: communication-db
+    spec:
+      containers:
+        - name: communication-db
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: PGPORT
+              value: "5436"
+          envFrom:
+            - secretRef:
+                name: communication-db-secrets
+          volumeMounts:
+            - name: communication-db-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: communication-db-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: communication-db
+  namespace: wimble
+spec:
+  ports:
+    - port: 5436
+      targetPort: 5432
+  selector:
+    app: communication-db
+  clusterIP: None
+---
+
+# payment-db
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: payment-db
+  namespace: wimble
+spec:
+  serviceName: "payment-db"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-db
+  template:
+    metadata:
+      labels:
+        app: payment-db
+    spec:
+      containers:
+        - name: payment-db
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: PGPORT
+              value: "5437"
+          envFrom:
+            - secretRef:
+                name: payment-db-secrets
+          volumeMounts:
+            - name: payment-db-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: payment-db-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-db
+  namespace: wimble
+spec:
+  ports:
+    - port: 5437
+      targetPort: 5432
+  selector:
+    app: payment-db
+  clusterIP: None
+---
+
+# user-redis
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: user-redis
+  namespace: wimble
+spec:
+  serviceName: "user-redis"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-redis
+  template:
+    metadata:
+      labels:
+        app: user-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: user-redis-data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: user-redis-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-redis
+  namespace: wimble
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  clusterIP: None
+  selector:
+    app: user-redis
+---
+
+# communication-redis
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: communication-redis
+  namespace: wimble
+spec:
+  serviceName: "communication-redis"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: communication-redis
+  template:
+    metadata:
+      labels:
+        app: communication-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: communication-redis-data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: communication-redis-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: communication-redis
+  namespace: wimble
+spec:
+  ports:
+  - port: 6380
+    targetPort: 6379
+  clusterIP: None
+  selector:
+    app: communication-redis
+
+
+
+
+
+
+
+
+
+
+
+

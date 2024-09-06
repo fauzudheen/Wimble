@@ -1,0 +1,637 @@
+# api-gateway
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+      - name: api-gateway
+        image: fauzu/wimble-api_gateway:latest
+        ports:
+          - containerPort: 8000
+        envFrom:
+          - secretRef:
+              name: user-service-secrets
+        volumeMounts:
+        - name: api-gateway-code
+          mountPath: /app
+      volumes:
+      - name: api-gateway-code
+        hostPath:
+          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/api_gateway
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: wimble
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app: api-gateway
+  type: ClusterIP
+---
+
+# user-service
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: fauzu/wimble-user_service:latest
+        ports:
+          - containerPort: 8001
+        envFrom:
+          - secretRef:
+              name: user-service-secrets
+        volumeMounts:
+        - name: user-service-code
+          mountPath: /app
+      volumes:
+      - name: user-service-code
+        hostPath:
+          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/user_service
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: wimble
+spec:
+  ports:
+  - port: 8001
+    targetPort: 8001
+  selector:
+    app: user-service
+  type: ClusterIP
+---
+
+# article-service
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: article-service
+  namespace: wimble 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: article-service
+  template:
+    metadata:
+      labels:
+        app: article-service
+    spec:
+      containers:
+      - name: article-service
+        image: fauzu/wimble-article_service:latest
+        ports:
+          - containerPort: 8002
+        envFrom:
+          - secretRef:
+              name: article-service-secrets
+        volumeMounts:
+        - name: article-service-code
+          mountPath: /app
+      volumes:
+      - name: article-service-code
+        hostPath:
+          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/article_service
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: article-service
+  namespace: wimble
+spec:
+  ports:
+  - port: 8002
+    targetPort: 8002
+  selector:
+    app: article-service
+  type: ClusterIP
+---
+
+# community-service
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: community-service
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: community-service
+  template:
+    metadata:
+      labels:
+        app: community-service
+    spec:
+      containers:
+      - name: community-service
+        image: fauzu/wimble-community_service:latest
+        ports:
+          - containerPort: 8003
+        envFrom:
+          - secretRef:
+              name: community-service-secrets
+        volumeMounts:
+        - name: community-service-code
+          mountPath: /app
+      volumes:
+      - name: community-service-code
+        hostPath:
+          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/community_service
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: community-service
+  namespace: wimble
+spec:
+  ports:
+  - port: 8003
+    targetPort: 8003
+  selector:
+    app: community-service
+  type: ClusterIP
+---
+
+# team-service
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: team-service
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: team-service
+  template:
+    metadata:
+      labels:
+        app: team-service
+    spec:
+      containers:
+      - name: team-service
+        image: fauzu/wimble-team_service:latest
+        ports:
+          - containerPort: 8004
+        envFrom:
+          - secretRef:
+              name: team-service-secrets
+        volumeMounts:
+        - name: team-service-code
+          mountPath: /app
+      volumes:
+      - name: team-service-code
+        hostPath:
+          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/team_service
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: team-service
+  namespace: wimble
+spec:
+  ports:
+  - port: 8004
+    targetPort: 8004
+  selector:
+    app: team-service
+  type: ClusterIP
+---
+
+# communication-service
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: communication-service
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: communication-service
+  template:
+    metadata:
+      labels:
+        app: communication-service
+    spec:
+      containers:
+      - name: communication-service
+        image: fauzu/wimble-communication_service:latest
+        ports:
+          - containerPort: 8005
+        envFrom:
+          - secretRef:
+              name: communication-service-secrets
+        volumeMounts:
+        - name: communication-service-code
+          mountPath: /app
+      volumes:
+      - name: communication-service-code
+        hostPath:
+          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/communication_service
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: communication-service
+  namespace: wimble
+spec:
+  ports:
+  - port: 8005
+    targetPort: 8005
+  selector:
+    app: communication-service
+  type: ClusterIP
+---
+
+# payment-service
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+      - name: payment-service
+        image: fauzu/wimble-payment_service:latest
+        ports:
+          - containerPort: 8006
+        envFrom:
+          - secretRef:
+              name: payment-service-secrets
+        volumeMounts:
+        - name: payment-service-code
+          mountPath: /app
+      volumes:
+      - name: payment-service-code
+        hostPath:
+          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/payment_service
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: wimble
+spec:
+  ports:
+  - port: 8006
+    targetPort: 8006
+  selector:
+    app: payment-service
+  type: ClusterIP
+---
+
+# zookeeper
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+      - name: zookeeper
+        image: bitnami/zookeeper:latest
+        ports:
+        - containerPort: 2181
+        env:
+        - name: ALLOW_ANONYMOUS_LOGIN
+          value: "yes"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+  namespace: wimble
+spec:
+  ports:
+  - port: 2181
+    targetPort: 2181
+  selector:
+    app: zookeeper
+  type: ClusterIP
+---
+
+# kafka
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+      - name: kafka
+        image: bitnami/kafka:latest
+        ports:
+        - containerPort: 9092
+        env:
+        - name: KAFKA_BROKER_ID
+          value: "1"
+        - name: KAFKA_LISTENERS
+          value: "PLAINTEXT://:9092"
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: "PLAINTEXT://kafka:9092"
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: zookeeper:2181
+        - name: ALLOW_PLAINTEXT_LISTENER
+          value: "yes"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  namespace: wimble
+spec:
+  ports:
+  - port: 9092
+    targetPort: 9092
+  selector:
+    app: kafka
+  type: ClusterIP
+---
+
+# celery-worker
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-worker
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-worker
+  template:
+    metadata:
+      labels:
+        app: celery-worker
+    spec:
+      containers:
+      - name: celery-worker
+        image: fauzu/wimble-communication_service:latest
+        command: ["celery", "-A", "communication_service", "worker", "-l", "info"]
+        env:
+        - name: CELERY_BROKER_URL
+          value: "kafka://kafka:9092"
+        - name: CELERY_RESULT_BACKEND
+          value: "django-db"
+        - name: CELERY_CACHE_BACKEND
+          value: "django-cache"
+        - name: CELERY_ACCEPT_CONTENT
+          value: "json"
+        - name: CELERY_TASK_SERIALIZER
+          value: "json"
+        - name: CELERY_RESULT_SERIALIZER
+          value: "json"
+        - name: CELERY_TIMEZONE
+          value: "Asia/Kolkata"
+      volumes:
+      - name: communication-service-volume
+        persistentVolumeClaim:
+          claimName: communication-service-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: celery-worker
+  namespace: wimble
+spec:
+  ports:
+  - port: 5555
+    targetPort: 5555
+  selector:
+    app: celery-worker
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: communication-service-pvc
+  namespace: wimble
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+
+# stripe-cli
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stripe-cli
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stripe-cli
+  template:
+    metadata:
+      labels:
+        app: stripe-cli
+    spec:
+      containers:
+      - name: stripe-cli
+        image: stripe/stripe-cli:latest
+        command: ["/bin/sh", "-c", "stripe listen --forward-to http://host.docker.internal:8000/api/payments/webhook/"]
+        tty: true
+---
+
+# prometheus
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: prom/prometheus
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - name: prometheus-config-volume
+          mountPath: /etc/prometheus
+        - name: prometheus-data
+          mountPath: /prometheus
+      volumes:
+      - name: prometheus-config-volume
+        configMap:
+          name: prometheus-config
+      - name: prometheus-data
+        persistentVolumeClaim:
+          claimName: prometheus-pvc
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: wimble
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    scrape_configs:
+      - job_name: 'kubernetes-apiservers'
+        static_configs:
+          - targets: ['localhost:9090']
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-pvc
+  namespace: wimble
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: wimble
+spec:
+  ports:
+  - port: 9090
+    targetPort: 9090
+  selector:
+    app: prometheus
+  type: ClusterIP
+
+---
+
+# grafana
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: wimble
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: grafana/grafana:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: admin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: wimble
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+  selector:
+    app: grafana
+  type: ClusterIP
+
+
+
+
+
+
+

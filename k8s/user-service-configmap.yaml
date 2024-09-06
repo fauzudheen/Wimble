@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: user-service-configmap
-  namespace: wimble  
-data:
-  DATABASE_URL: "postgres://fauzu:password@user_db:5432/user_db"
-  SECRET_KEY: "django-insecure-)sst95sws&owr%n#1@b=lb4z7=6w2@vt)c*j%9g(i0ejid%f8@"
-  EMAIL_HOST_PASSWORD: "baed avmg gedy dndi"
