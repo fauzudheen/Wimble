@@ -22,7 +22,7 @@ spec:
           - containerPort: 8000
         envFrom:
           - secretRef:
-              name: user-service-secrets
+              name: api-gateway-secrets
         volumeMounts:
         - name: api-gateway-code
           mountPath: /app
