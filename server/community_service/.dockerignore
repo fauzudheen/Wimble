@@ -5,6 +5,7 @@
 
 venv/
 community_env/
+.env
 
 # Ignore Django migrations
 # */migrations/*

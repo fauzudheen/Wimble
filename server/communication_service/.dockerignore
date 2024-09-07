@@ -5,7 +5,7 @@
 
 venv/
 communication_env/
-
+.env
 
 .git
 .gitignore

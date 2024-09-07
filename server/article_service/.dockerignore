@@ -5,7 +5,7 @@
 
 venv/
 article_env/
-
+.env
 # Ignore Django migrations
 # */migrations/*
 # !*/migrations/__init__.py

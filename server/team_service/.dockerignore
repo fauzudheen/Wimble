@@ -5,6 +5,7 @@
 
 venv/
 team_env/
+.env
 
 # Ignore Django migrations
 # */migrations/*

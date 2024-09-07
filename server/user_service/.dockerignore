@@ -5,6 +5,7 @@
 
 venv/
 user_env/
+.env
 
 # Ignore Django migrations
 # */migrations/*

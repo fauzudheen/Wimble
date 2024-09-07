@@ -5,6 +5,7 @@
 
 venv/
 payment_env/
+.env
 
 # Ignore Django migrations
 # */migrations/*
