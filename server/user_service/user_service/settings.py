@@ -29,7 +29,17 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['host.docker.internal', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+                'host.docker.internal', 
+                 'localhost', 
+                 '127.0.0.1', 
+                 'user-service',
+                 'article-service',
+                 'communication-service',
+                 'team-service',
+                 'community-service', 
+                 'payment-service'
+                 ] 
 
 
 # Application definition
@@ -198,15 +208,12 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-] 
-CORS_ALLOW_CREDENTIALS = True
+
 
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://host.docker.internal:6379/1', 
+        'LOCATION': 'redis://user-redis:6379/1',  
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }

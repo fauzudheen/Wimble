@@ -2,9 +2,10 @@ import jwt
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
-import requests
+import requests 
+import os
 
-USER_SERVICE_URL = "http://host.docker.internal:8001"
+USER_SERVICE_URL = os.getenv('USER_SERVICE_URL')  
 
 class CustomUser:
     def __init__(self, user_info):

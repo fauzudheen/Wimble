@@ -139,9 +139,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # Add your frontend URL here
-]
-CORS_ALLOW_CREDENTIALS = True
+    'http://localhost:3000',
+    'https://wimble.vercel.app', 
+] 
 
 SESSION_COOKIE_SECURE = True
 
