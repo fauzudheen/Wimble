@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { Send, Paperclip, X, AudioLinesIcon, File, FileTextIcon, PlayIcon, Search, MoreVertical } from 'lucide-react';
 import ImageModal from './ImageModal';
 import { UserGroupIcon } from '@heroicons/react/24/solid';
+import { ingressDomain } from '../../const/config';
 
 const TeamChat = () => {
     const { id: teamId } = useOutletContext();
@@ -26,7 +27,8 @@ const TeamChat = () => {
     const [team, setTeam] = useState({});
     const [onlineUsers, setOnlineUsers] = useState(0);
 
-    const socketUrl = `ws://localhost:8005/ws/chat/teams/${teamId}/?token=${token}`;
+    
+    const socketUrl = `ws://${ingressDomain}/ws/chat/teams/${teamId}/?token=${token}`;
 
     const { sendMessage, lastMessage } = useWebSocket(socketUrl, {
         onOpen: () => console.log('WebSocket connected'),

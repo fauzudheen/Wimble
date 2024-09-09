@@ -3,8 +3,6 @@ kind: Ingress
 metadata:
   name: wimble-ingress
   namespace: wimble
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
@@ -12,9 +10,16 @@ spec:
       http:
         paths:
           - pathType: Prefix
-            path: /
+            path: /api
             backend:
               service:
                 name: api-gateway
                 port:
                   number: 8000
+          - pathType: Prefix
+            path: /grafana
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000

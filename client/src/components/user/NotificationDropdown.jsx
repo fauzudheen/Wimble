@@ -5,6 +5,7 @@ import { BellIcon, ChatBubbleLeftIcon, CheckCircleIcon, ClockIcon, HeartIcon, Us
 import createAxiosInstance from '../../api/axiosInstance';
 import { GatewayUrl } from '../const/urls';
 import { format, parseISO } from 'date-fns';
+import { ingressDomain } from '../const/config';
 
 const NotificationDropdown = () => {
   const [notifications, setNotifications] = useState([]);
@@ -30,7 +31,7 @@ const NotificationDropdown = () => {
   }, [token]);
 
   useEffect(() => {
-    const socket = new WebSocket(`ws://localhost:8005/ws/notification/?token=${token}`);
+    const socket = new WebSocket(`ws://${ingressDomain}/ws/notification/?token=${token}`);
 
     socket.onopen = () => console.log("WebSocket connection established");
 

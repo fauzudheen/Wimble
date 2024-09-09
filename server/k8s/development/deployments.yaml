@@ -421,7 +421,7 @@ spec:
       containers:
       - name: stripe-cli
         image: stripe/stripe-cli:latest
-        command: ["/bin/sh", "-c", "stripe listen --forward-to http://host.docker.internal:8000/api/payments/webhook/"]
+        command: ["/bin/sh", "-c", "stripe listen --forward-to http://api-gateway:8000/api/payments/webhook/"]
         tty: true
 ---
 
@@ -450,6 +450,10 @@ spec:
         env:
         - name: GF_SECURITY_ADMIN_PASSWORD
           value: admin
+        - name: GF_SERVER_ROOT_URL
+          value: "%(protocol)s://%(domain)s/grafana/"
+        - name: GF_SERVER_SERVE_FROM_SUB_PATH
+          value: "true"
 ---
 apiVersion: v1
 kind: Service

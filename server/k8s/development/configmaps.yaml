@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: wimble
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['prometheus:9090']
+
+      - job_name: 'user_service'
+        static_configs:
+          - targets: ['user-service:8001']
+
+      # - job_name: 'article_service'
+      #   static_configs:
+      #     - targets: ['article-service:8002']
+
+      # - job_name: 'community_service'
+      #   static_configs:
+      #     - targets: ['community-service:8003']
+
+      # - job_name: 'team_service'
+      #   static_configs:
+      #     - targets: ['team-service:8004']
+
+      # - job_name: 'communication_service'
+      #   static_configs:
+      #     - targets: ['communication-service:8005']
+
+      - job_name: 'kafka'
+        static_configs:
+          - targets: ['kafka:9092']
