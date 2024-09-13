@@ -1,1 +1,2 @@
 k8s/development/secrets.yaml
+k8s/production/secrets.yaml

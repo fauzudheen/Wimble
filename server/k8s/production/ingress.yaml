@@ -4,11 +4,16 @@ metadata:
   name: wimble-ingress
   namespace: wimble
   annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/websocket-services: "communication-service"
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - your-domain.com
+    secretName: wimble-tls
   rules:
-    - host: localhost 
+    - host: your-domain.com
       http:
         paths:
           - pathType: Prefix

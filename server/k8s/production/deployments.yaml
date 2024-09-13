@@ -23,14 +23,6 @@ spec:
         envFrom:
           - secretRef:
               name: api-gateway-secrets
-        volumeMounts:
-        - name: api-gateway-code
-          mountPath: /app
-      volumes:
-      - name: api-gateway-code
-        hostPath:
-          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/api_gateway
-          type: Directory
 ---
 apiVersion: v1
 kind: Service
@@ -71,14 +63,6 @@ spec:
         envFrom:
           - secretRef:
               name: user-service-secrets
-        volumeMounts:
-        - name: user-service-code
-          mountPath: /app
-      volumes:
-      - name: user-service-code
-        hostPath:
-          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/user_service
-          type: Directory
 ---
 apiVersion: v1
 kind: Service
@@ -119,14 +103,6 @@ spec:
         envFrom:
           - secretRef:
               name: article-service-secrets
-        volumeMounts:
-        - name: article-service-code
-          mountPath: /app
-      volumes:
-      - name: article-service-code
-        hostPath:
-          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/article_service
-          type: Directory
 ---
 apiVersion: v1
 kind: Service
@@ -167,14 +143,6 @@ spec:
         envFrom:
           - secretRef:
               name: community-service-secrets
-        volumeMounts:
-        - name: community-service-code
-          mountPath: /app
-      volumes:
-      - name: community-service-code
-        hostPath:
-          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/community_service
-          type: Directory
 ---
 apiVersion: v1
 kind: Service
@@ -215,14 +183,6 @@ spec:
         envFrom:
           - secretRef:
               name: team-service-secrets
-        volumeMounts:
-        - name: team-service-code
-          mountPath: /app
-      volumes:
-      - name: team-service-code
-        hostPath:
-          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/team_service
-          type: Directory
 ---
 apiVersion: v1
 kind: Service
@@ -263,14 +223,6 @@ spec:
         envFrom:
           - secretRef:
               name: communication-service-secrets
-        volumeMounts:
-        - name: communication-service-code
-          mountPath: /app
-      volumes:
-      - name: communication-service-code
-        hostPath:
-          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/communication_service
-          type: Directory
 ---
 apiVersion: v1
 kind: Service
@@ -311,14 +263,6 @@ spec:
         envFrom:
           - secretRef:
               name: payment-service-secrets
-        volumeMounts:
-        - name: payment-service-code
-          mountPath: /app
-      volumes:
-      - name: payment-service-code
-        hostPath:
-          path: /run/desktop/mnt/host/e/Brototype/Second Project/Wimble 2/server/payment_service
-          type: Directory
 ---
 apiVersion: v1
 kind: Service
@@ -370,10 +314,7 @@ spec:
           value: "json"
         - name: CELERY_TIMEZONE
           value: "Asia/Kolkata"
-      volumes:
-      - name: communication-service-volume
-        persistentVolumeClaim:
-          claimName: communication-service-pvc
+
 ---
 apiVersion: v1
 kind: Service
@@ -387,42 +328,6 @@ spec:
   selector:
     app: celery-worker
   type: ClusterIP
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: communication-service-pvc
-  namespace: wimble
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
-
-# stripe-cli
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: stripe-cli
-  namespace: wimble
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: stripe-cli
-  template:
-    metadata:
-      labels:
-        app: stripe-cli
-    spec:
-      containers:
-      - name: stripe-cli
-        image: stripe/stripe-cli:latest
-        command: ["/bin/sh", "-c", "stripe listen --forward-to http://localhost:80/api/payments/webhook/"]
-        tty: true
 ---
 
 # grafana
