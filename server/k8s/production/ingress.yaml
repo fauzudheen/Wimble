@@ -10,10 +10,10 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - your-domain.com
+    - backend.wimble.fauzudheen.online
     secretName: wimble-tls
   rules:
-    - host: your-domain.com
+    - host: backend.wimble.fauzudheen.online
       http:
         paths:
           - pathType: Prefix
