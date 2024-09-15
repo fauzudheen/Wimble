@@ -13,8 +13,6 @@ RUN pip install -r requirements.txt
 
 COPY . /app/
 
-RUN python manage.py collectstatic --noinput
-
 EXPOSE 8002
 
-CMD python manage.py migrate & python manage.py runserver 0.0.0.0:8002 & python /app/article_app/consumer.py
+CMD python manage.py migrate & python manage.py collectstatic --noinput & python manage.py runserver 0.0.0.0:8002 & python /app/article_app/consumer.py
