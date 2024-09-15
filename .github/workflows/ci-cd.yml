@@ -25,15 +25,15 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and Push Services
-      run: |
-        docker buildx build --push --tag fauzu/wimble-api_gateway:latest ./server/api_gateway
-        docker buildx build --push --tag fauzu/wimble-user_service:latest ./server/user_service
-        docker buildx build --push --tag fauzu/wimble-article_service:latest ./server/article_service
-        docker buildx build --push --tag fauzu/wimble-community_service:latest ./server/community_service
-        docker buildx build --push --tag fauzu/wimble-team_service:latest ./server/team_service
-        docker buildx build --push --tag fauzu/wimble-communication_service:latest ./server/communication_service
-        docker buildx build --push --tag fauzu/wimble-payment_service:latest ./server/payment_service
+    # - name: Build and Push Services
+    #   run: |
+    #     docker buildx build --push --tag fauzu/wimble-api_gateway:latest ./server/api_gateway
+    #     docker buildx build --push --tag fauzu/wimble-user_service:latest ./server/user_service
+    #     docker buildx build --push --tag fauzu/wimble-article_service:latest ./server/article_service
+    #     docker buildx build --push --tag fauzu/wimble-community_service:latest ./server/community_service
+    #     docker buildx build --push --tag fauzu/wimble-team_service:latest ./server/team_service
+    #     docker buildx build --push --tag fauzu/wimble-communication_service:latest ./server/communication_service
+    #     docker buildx build --push --tag fauzu/wimble-payment_service:latest ./server/payment_service
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -52,7 +52,7 @@ jobs:
         aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
 
     - name: Deploy to EKS
-      run: | # Update Kubernetes deployment files with new image tags (only necessary if you're using versioned tags instead of latest)
+      run: | # Update Kubernetes deployment files with new image tags (only necessary if you're using versioned tags instead of latest tag)
         sed -i 's|image: fauzu/wimble-api_gateway:.*|image: fauzu/wimble-api_gateway:latest|' server/k8s/production/deployments.yaml
         sed -i 's|image: fauzu/wimble-user_service:.*|image: fauzu/wimble-user_service:latest|' server/k8s/production/deployments.yaml
         sed -i 's|image: fauzu/wimble-article_service:.*|image: fauzu/wimble-article_service:latest|' server/k8s/production/deployments.yaml
@@ -69,6 +69,6 @@ jobs:
         kubectl get services
 
     - name: Cleanup
-      run: |
+      run: | 
         docker logout
         kubectl config unset current-context
