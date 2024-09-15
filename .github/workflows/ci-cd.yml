@@ -57,7 +57,7 @@ jobs:
         sed -i 's|image: fauzu/wimble-user_service:.*|image: fauzu/wimble-user_service:latest|' server/k8s/production/deployments.yaml
         sed -i 's|image: fauzu/wimble-article_service:.*|image: fauzu/wimble-article_service:latest|' server/k8s/production/deployments.yaml
         sed -i 's|image: fauzu/wimble-community_service:.*|image: fauzu/wimble-community_service:latest|' server/k8s/production/deployments.yaml
-        sed -i 's|image: fauzu/wimble-team_service:.*|image: fauzu/wimble-team_service:latest|' k8s/team_service-deployment.yaml
+        sed -i 's|image: fauzu/wimble-team_service:.*|image: fauzu/wimble-team_service:latest|' server/k8s/production/deployments.yaml
         sed -i 's|image: fauzu/wimble-communication_service:.*|image: fauzu/wimble-communication_service:latest|' server/k8s/production/deployments.yaml
         sed -i 's|image: fauzu/wimble-payment_service:.*|image: fauzu/wimble-payment_service:latest|' server/k8s/production/deployments.yaml
 
