@@ -324,6 +324,9 @@ spec:
           value: "json"
         - name: CELERY_TIMEZONE
           value: "Asia/Kolkata"
+        envFrom:
+          - secretRef:
+              name: communication-service-secrets
 
 ---
 apiVersion: v1

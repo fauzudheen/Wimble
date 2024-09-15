@@ -31,7 +31,7 @@ const NotificationDropdown = () => {
   }, [token]);
 
   useEffect(() => {
-    const socket = new WebSocket(`ws://${ingressDomain}/ws/notification/?token=${token}`);
+    const socket = new WebSocket(`wss://${ingressDomain}/ws/notification/?token=${token}`);
 
     socket.onopen = () => console.log("WebSocket connection established");
 

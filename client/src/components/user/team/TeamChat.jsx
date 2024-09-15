@@ -28,7 +28,7 @@ const TeamChat = () => {
     const [onlineUsers, setOnlineUsers] = useState(0);
 
     
-    const socketUrl = `ws://${ingressDomain}/ws/chat/teams/${teamId}/?token=${token}`;
+    const socketUrl = `wss://${ingressDomain}/ws/chat/teams/${teamId}/?token=${token}`;
 
     const { sendMessage, lastMessage } = useWebSocket(socketUrl, {
         onOpen: () => console.log('WebSocket connected'),
