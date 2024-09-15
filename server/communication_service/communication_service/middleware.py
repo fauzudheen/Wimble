@@ -5,8 +5,9 @@ import jwt
 from django.conf import settings
 import requests
 from urllib.parse import parse_qs
+import os
 
-USER_SERVICE_URL = "http://host.docker.internal:8001"
+USER_SERVICE_URL = os.getenv('USER_SERVICE_URL') 
 
 class CustomUser:
     def __init__(self, user_info):

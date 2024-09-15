@@ -13,6 +13,8 @@ RUN pip install -r requirements.txt
 
 COPY . /app/
 
+RUN python manage.py collectstatic --noinput
+
 EXPOSE 8005
 
 CMD python manage.py migrate & python manage.py runserver 0.0.0.0:8005 & python /app/kafka_consumer.py

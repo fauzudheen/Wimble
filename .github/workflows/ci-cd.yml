@@ -1,12 +1,12 @@
 name: CI/CD Pipeline
 
-# on:
-#   push:
-#     branches:
-#       - main  
-#   pull_request:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main  
+  pull_request:
+    branches:
+      - main
 
 jobs: 
   build:
@@ -45,7 +45,7 @@ jobs:
     - name: Install kubectl
       uses: azure/setup-kubectl@v4
       with:
-        version: 'v1.30.0' # Use the version compatible with your AWS EKS cluster
+        version: 'v1.30.0' # Use the version compatible with your EKS cluster
 
     - name: Update kubeconfig
       run: |
