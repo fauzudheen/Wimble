@@ -18,6 +18,8 @@ spec:
       containers:
       - name: api-gateway
         image: fauzu/wimble-api_gateway:latest
+        imagePullPolicy: Always
+        imagePullPolicy: Always
         ports:
           - containerPort: 8000
         envFrom:
@@ -58,6 +60,8 @@ spec:
       containers:
       - name: user-service
         image: fauzu/wimble-user_service:latest
+        imagePullPolicy: Always
+        imagePullPolicy: Always
         ports:
           - containerPort: 8001
         envFrom:
@@ -98,6 +102,7 @@ spec:
       containers:
       - name: article-service
         image: fauzu/wimble-article_service:latest
+        imagePullPolicy: Always
         ports:
           - containerPort: 8002
         envFrom:
@@ -138,6 +143,7 @@ spec:
       containers:
       - name: community-service
         image: fauzu/wimble-community_service:latest
+        imagePullPolicy: Always
         ports:
           - containerPort: 8003
         envFrom:
@@ -178,6 +184,7 @@ spec:
       containers:
       - name: team-service
         image: fauzu/wimble-team_service:latest
+        imagePullPolicy: Always
         ports:
           - containerPort: 8004
         envFrom:
@@ -218,6 +225,7 @@ spec:
       containers:
       - name: communication-service
         image: fauzu/wimble-communication_service:latest
+        imagePullPolicy: Always
         ports:
           - containerPort: 8005
         envFrom:
@@ -258,6 +266,7 @@ spec:
       containers:
       - name: payment-service
         image: fauzu/wimble-payment_service:latest
+        imagePullPolicy: Always
         ports:
           - containerPort: 8006
         envFrom:
@@ -298,6 +307,7 @@ spec:
       containers:
       - name: celery-worker
         image: fauzu/wimble-communication_service:latest
+        imagePullPolicy: Always
         command: ["celery", "-A", "communication_service", "worker", "-l", "info"]
         env:
         - name: CELERY_BROKER_URL

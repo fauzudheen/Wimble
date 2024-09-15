@@ -27,9 +27,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['host.docker.internal', '127.0.0.1', 'localhost', 'backend.wimble.fauzudheen.online']  
+# ALLOWED_HOSTS = ['host.docker.internal', '127.0.0.1', 'localhost', 'backend.wimble.fauzudheen.online']  
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 # Application definition
 

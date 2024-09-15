@@ -27,19 +27,21 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = [
-                'host.docker.internal', 
-                 'localhost', 
-                 '127.0.0.1', 
-                 'user-service',
-                 'article-service',
-                 'communication-service',
-                 'team-service',
-                 'community-service', 
-                 'payment-service'
-                 ] 
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',') 
+
+# ALLOWED_HOSTS = [
+#                 'host.docker.internal', 
+#                  'localhost', 
+#                  '127.0.0.1', 
+#                  'user-service',
+#                  'article-service',
+#                  'communication-service',
+#                  'team-service',
+#                  'community-service', 
+#                  'payment-service'
+#                  ] 
 
 
 # Application definition

@@ -1,14 +1,14 @@
 name: CI/CD Pipeline
 
-# on:
-#   push:
-#     branches:
-#       - main  
-#   pull_request:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main  
+  pull_request:
+    branches:
+      - main
 
-jobs:
+jobs: 
   build:
     runs-on: ubuntu-latest
 
@@ -35,5 +35,40 @@ jobs:
         docker buildx build --push --tag fauzu/wimble-communication_service:latest ./server/communication_service
         docker buildx build --push --tag fauzu/wimble-payment_service:latest ./server/payment_service
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v4
+      with:
+        version: 'v1.30.0' # Use the version compatible with your EKS cluster
+
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+    - name: Deploy to EKS
+      run: | # Update Kubernetes deployment files with new image tags (only necessary if you're using versioned tags instead of latest)
+        sed -i 's|image: fauzu/wimble-api_gateway:.*|image: fauzu/wimble-api_gateway:latest|' server/k8s/production/deployments.yaml
+        sed -i 's|image: fauzu/wimble-user_service:.*|image: fauzu/wimble-user_service:latest|' server/k8s/production/deployments.yaml
+        sed -i 's|image: fauzu/wimble-article_service:.*|image: fauzu/wimble-article_service:latest|' server/k8s/production/deployments.yaml
+        sed -i 's|image: fauzu/wimble-community_service:.*|image: fauzu/wimble-community_service:latest|' server/k8s/production/deployments.yaml
+        sed -i 's|image: fauzu/wimble-team_service:.*|image: fauzu/wimble-team_service:latest|' k8s/team_service-deployment.yaml
+        sed -i 's|image: fauzu/wimble-communication_service:.*|image: fauzu/wimble-communication_service:latest|' server/k8s/production/deployments.yaml
+        sed -i 's|image: fauzu/wimble-payment_service:.*|image: fauzu/wimble-payment_service:latest|' server/k8s/production/deployments.yaml
+
+        kubectl apply -f server/k8s/production/deployments.yaml
+
+    - name: Verify deployment
+      run: |
+        kubectl get pods
+        kubectl get services
+
     - name: Cleanup
-      run: docker logout
+      run: |
+        docker logout
+        kubectl config unset current-context
