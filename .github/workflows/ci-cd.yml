@@ -63,10 +63,12 @@ jobs:
 
         kubectl apply -f server/k8s/production/deployments.yaml
 
+        kubectl rollout restart deployment -n wimble 
+
     - name: Verify deployment
       run: |
-        kubectl get pods
-        kubectl get services
+        kubectl get pods -n wimble
+        kubectl get services -n wimble
 
     - name: Cleanup
       run: | 

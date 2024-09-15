@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+load_dotenv()
+from distutils.util import strtobool
 
 # Load environment variables from .env file (optional)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,29 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+
+DEBUG = bool(strtobool(os.getenv('DEBUG', 'False')))
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',') 
-
-# ALLOWED_HOSTS = [
-#                 'host.docker.internal', 
-#                  'localhost', 
-#                  '127.0.0.1', 
-#                  'user-service',
-#                  'article-service',
-#                  'communication-service',
-#                  'team-service',
-#                  'community-service', 
-#                  'payment-service'
-#                  ] 
-
 
 # Application definition
 
