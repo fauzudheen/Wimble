@@ -114,7 +114,7 @@ const CommunityPage = () => {
             <div className="absolute left-4 sm:left-6 bottom-0 transform translate-y-1/2">
               {community.profile_image ? (
                 <img
-                  src={`${GatewayUrl}api/${community.profile_image}`}
+                  src={community.profile_image}
                   alt={`${community.name} profile`}
                   className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-4 border-white dark:border-gray-800 shadow-lg object-cover"
                 />
