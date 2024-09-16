@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Feed from '../../components/user/Feed';
-import Discussions from '../../components/user/Discussions';
 import Suggestions from '../../components/user/Suggestions';
 
 const Home = () => {
