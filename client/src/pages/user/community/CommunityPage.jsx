@@ -31,6 +31,7 @@ const CommunityPage = () => {
   const fetchCommunity = async () => {
     try {
       const response = await axios.get(`${GatewayUrl}api/communities/${id}/`);
+      console.log("Community:", response.data); 
       setCommunity(response.data);
       setMemberCount(response.data.member_count);
     } catch (error) {
