@@ -70,7 +70,7 @@ const Users = () => {
             <div className="p-5">
               <div className="flex items-center mb-4">
                 {user.profile ? (
-                  <img className="w-12 h-12 rounded-full mr-4 object-cover" src={`${GatewayUrl}api/${user.profile}`} alt="" />
+                  <img className="w-12 h-12 rounded-full mr-4 object-cover" src={user.profile} alt="" />
                 ) : (
                   <img className="w-12 h-12 rounded-full mr-4" src={`https://ui-avatars.com/api/?name=${user.first_name}&background=random`} alt="" />
                 )}

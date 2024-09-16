@@ -61,7 +61,7 @@ const Suggestions = () => {
                 <Link to={`/user-profile/${user.id}`} className="flex-shrink-0 mr-2 sm:mr-4">
                   {user.profile ? (
                     <img 
-                      src={`${GatewayUrl}api${user.profile}`} 
+                      src={user.profile} 
                       alt={`${user.first_name} ${user.last_name}`} 
                       className="h-8 w-8 sm:h-12 sm:w-12 rounded-full object-cover transition-all duration-300 group-hover:scale-105"
                     />

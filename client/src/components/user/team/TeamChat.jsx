@@ -177,7 +177,7 @@ const TeamChat = () => {
                     {/* Profile Picture */}
                     {!isSent && msg.sender?.profile && (
                         <img 
-                            src={`${GatewayUrl}api${msg.sender.profile}`} 
+                            src={msg.sender.profile} 
                             alt={`${msg.sender.first_name} ${msg.sender.last_name}`} 
                             className="w-8 h-8 rounded-full object-cover mr-2" 
                         />
@@ -304,7 +304,7 @@ const TeamChat = () => {
                 {team.profile_image ? (
                   <img
                     className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 border-2 border-white dark:border-gray-200 object-cover"
-                    src={team.profile_image.replace('8000', '8004')}
+                    src={team.profile_image}
                     alt={team.name}
                   />
                 ) : (

@@ -63,7 +63,7 @@ const SearchResults = () => {
       <div className="p-5">
         <div className="flex items-center mb-4">
           {user.profile ? (
-            <img src={`${GatewayUrl}api${user.profile}`} className='w-12 h-12 rounded-full mr-4 object-cover'/>
+            <img src={user.profile} className='w-12 h-12 rounded-full mr-4 object-cover'/>
           ) : (
             <img className="w-12 h-12 rounded-full mr-4" src={`https://ui-avatars.com/api/?name=${user.first_name}&background=random`} alt="" />
           )}
@@ -135,7 +135,7 @@ const SearchResults = () => {
                     <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden p-5">
                       <div className="flex items-center mb-4">
                         {item.profile_image ? (
-                          <img src={`${GatewayUrl}api${item.profile_image}`} className="w-16 h-16 rounded-full object-cover" alt={item.name} />
+                          <img src={item.profile_image} className="w-16 h-16 rounded-full object-cover" alt={item.name} />
                         ) : (
                           <UsersIcon className="w-16 h-16 p-2 rounded-full text-blue-500" />
                         )}
@@ -150,7 +150,7 @@ const SearchResults = () => {
                     <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden p-5">
                       <div className="flex items-center mb-4">
                         {item.profile_image ? (
-                          <img src={`${GatewayUrl}api${item.profile_image}`} className="w-16 h-16 rounded-full object-cover" alt={item.name} />
+                          <img src={item.profile_image} className="w-16 h-16 rounded-full object-cover" alt={item.name} />
                         ) : (
                           <UserGroupIcon className="w-16 h-16 p-2 rounded-full text-blue-500" />
                         )}
@@ -160,7 +160,7 @@ const SearchResults = () => {
                         </div>
                       </div>
                       {item.cover_image && (
-                        <img src={`${GatewayUrl}api${item.cover_image}`} className="w-full h-32 object-cover mt-4 rounded" alt="Cover" />
+                        <img src={item.cover_image} className="w-full h-32 object-cover mt-4 rounded" alt="Cover" />
                       )}
                     </div>
                   )}

@@ -65,7 +65,7 @@ const TeamMembers = () => {
     >
       <div className="flex items-center space-x-3">
         <img 
-          src={`${GatewayUrl}api${member.user_data.profile}`}
+          src={member.user_data.profile}
           alt={`${member.user_data.first_name} ${member.user_data.last_name}`}
           className="w-10 h-10 rounded-full object-cover"
         />
@@ -81,7 +81,7 @@ const TeamMembers = () => {
     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm flex items-center justify-between">
       <div className="flex items-center space-x-3">
         <img 
-          src={`${GatewayUrl}api${request.user_data.profile}`}
+          src={request.user_data.profile}
           alt={`${request.user_data.first_name} ${request.user_data.last_name}`}
           className="w-10 h-10 rounded-full object-cover"
         />

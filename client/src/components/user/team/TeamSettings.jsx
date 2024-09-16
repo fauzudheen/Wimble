@@ -158,7 +158,7 @@ const TeamSettings = () => {
                 {profileImage || team.profile_image ? (
                   <div className="relative">
                     <img 
-                      src={profileImage ? URL.createObjectURL(profileImage) : `${GatewayUrl}api/${team.profile_image}`} 
+                      src={profileImage ? URL.createObjectURL(profileImage) : `${team.profile_image}`} 
                       alt="Profile" 
                       className="w-24 h-24 object-cover rounded-full" 
                     />

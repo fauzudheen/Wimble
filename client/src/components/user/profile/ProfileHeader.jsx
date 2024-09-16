@@ -137,7 +137,7 @@ const ProfileHeader = () => {
             <div className="relative">
               {user.profile ? (
                 <img
-                  src={`${GatewayUrl}api/${user.profile}`} 
+                  src={user.profile} 
                   alt={user.first_name}
                   className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-teal-500 dark:border-gray-700 object-cover" 
                 />

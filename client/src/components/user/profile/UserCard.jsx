@@ -13,7 +13,7 @@ const UserCard = ({ user }) => {
         <div className="flex items-center mb-4">
           {user.profile ? (
             <img 
-              src={`${GatewayUrl}api${user.profile}`} 
+              src={user.profile} 
               alt={`${user.first_name} ${user.last_name}`} 
               className="h-16 w-16 rounded-full object-cover mr-4"
               

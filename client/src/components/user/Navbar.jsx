@@ -130,7 +130,7 @@ const Navbar = () => {
                                                     {category === 'users' && (
                                                         item.profile ? (
                                                             <img
-                                                                src={`${GatewayUrl}api${item.profile}`}
+                                                                src={item.profile}
                                                                 alt={item.first_name}
                                                                 className="h-8 w-8 md:h-10 md:w-10 object-cover rounded-full border-2 border-teal-500 dark:border-gray-700 mr-3"
                                                             />
@@ -141,7 +141,7 @@ const Navbar = () => {
                                                     {category === 'teams' && (
                                                         item.profile_image ? (
                                                             <img
-                                                                src={`${GatewayUrl}api${item.profile_image}`}
+                                                                src={item.profile_image}
                                                                 alt={item.name}
                                                                 className="h-8 w-8 md:h-10 md:w-10 object-cover rounded-full border-2 border-blue-500 dark:border-gray-700 mr-3"
                                                             />
@@ -152,7 +152,7 @@ const Navbar = () => {
                                                     {category === 'communities' && (
                                                         item.profile_image ? (
                                                             <img
-                                                                src={`${GatewayUrl}api${item.profile_image}`}
+                                                                src={item.profile_image}
                                                                 alt={item.name}
                                                                 className="h-8 w-8 md:h-10 md:w-10 object-cover rounded-full border-2 border-purple-500 dark:border-gray-700 mr-3"
                                                             />
@@ -162,7 +162,7 @@ const Navbar = () => {
                                                     )}
                                                     {category === 'articles' && (
                                                         item.thumbnail ? (
-                                                        <img  src={`${GatewayUrl}api${item.thumbnail}`} alt={item.title} className="h-8 w-8 md:h-10 md:w-10 object-cover rounded-md border-2 border-red-500 dark:border-gray-700 mr-3" /> 
+                                                        <img  src={item.thumbnail} alt={item.title} className="h-8 w-8 md:h-10 md:w-10 object-cover rounded-md border-2 border-red-500 dark:border-gray-700 mr-3" /> 
                                                         ) : (
                                                         <DocumentTextIcon className="h-8 w-8 md:h-10 md:w-10 p-1 bg-gray-100 text-red-500 border-2 border-red-100 dark:border-gray-700 rounded-full mr-3" />
                                                     )

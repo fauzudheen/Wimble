@@ -44,7 +44,7 @@ const Communities = () => {
               <div className="relative h-48 overflow-hidden">
                 {community.cover_image ? (
                   <img 
-                    src={`${GatewayUrl}api${community.cover_image.startsWith('/') ? '' : '/'}${community.cover_image}`} 
+                    src={community.cover_image} 
                     alt={`${community.name} cover`} 
                     className="w-full h-full object-cover"
                   />
@@ -60,7 +60,7 @@ const Communities = () => {
                   {community.profile_image ? (
                     <img 
                       className="w-12 h-12 rounded-full mr-4 object-cover" 
-                      src={`${GatewayUrl}api${community.profile_image.startsWith('/') ? '' : '/'}${community.profile_image}`} 
+                      src={community.profile_image} 
                       alt={`${community.name} profile`} 
                     />
                   ) : (

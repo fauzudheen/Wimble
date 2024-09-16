@@ -63,7 +63,7 @@ useEffect(() => {
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{article.title}</h3>
               <div className="flex items-center mb-4">
                 <img 
-                  src={`${GatewayUrl}api${article.user_data.profile}`} 
+                  src={article.user_data.profile} 
                   alt={`${article.user_data.first_name} ${article.user_data.last_name}`}
                   className="w-10 h-10 rounded-full mr-3 object-cover"
                 />

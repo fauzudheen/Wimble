@@ -58,7 +58,7 @@ const TeamCard = ({ team }) => {
         <div className="flex-shrink-0 mb-4 sm:mb-0">
           {team.profile_image ? (
             <img
-              src={`${GatewayUrl}api${team.profile_image.startsWith('/') ? '' : '/'}${team.profile_image}`}
+              src={team.profile_image}
               alt={team.name}
               className="w-20 h-20 rounded-full border-4 border-white dark:border-gray-900 object-cover"
             />

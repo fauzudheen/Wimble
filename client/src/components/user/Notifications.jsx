@@ -47,25 +47,25 @@ const Notifications = () => {
     switch (type) {
       case 'follow':
         if (sender && sender.profile) {
-          return <img src={`${GatewayUrl}api${sender.profile}`} className="h-10 w-10 object-cover rounded-full" alt={sender.username} />;
+          return <img src={sender.profile} className="h-10 w-10 object-cover rounded-full" alt={sender.username} />;
         } else {
           return <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" className="h-10 w-10 object-cover rounded-full" alt="Default profile" />;
         }
       case 'like':
        if (sender && sender.profile) {
-          return <img src={`${GatewayUrl}api${sender.profile}`} className="h-6 w-6 object-cover rounded-full" alt={sender.username} />;
+          return <img src={sender.profile} className="h-6 w-6 object-cover rounded-full" alt={sender.username} />;
         } else {
           return <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" className="h-6 w-6 object-cover rounded-full" alt="Default profile" />;
         }
       case 'comment':
         if (sender && sender.profile) {
-          return <img src={`${GatewayUrl}api${sender.profile}`} className="h-6 w-6 object-cover rounded-full" alt={sender.username} />;
+          return <img src={sender.profile} className="h-6 w-6 object-cover rounded-full" alt={sender.username} />;
         } else {
           return <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" className="h-6 w-6 object-cover rounded-full" alt="Default profile" />;
         }
       case 'meeting':
         if (team && team.profile_image) {
-          return <img src={`${GatewayUrl}api${team.profile_image}`} className="h-10 w-10 object-cover rounded-full" />;
+          return <img src={team.profile_image} className="h-10 w-10 object-cover rounded-full" />;
         } else {
           return <ClockIcon className="h-5 w-5 text-purple-500" />;
         }
@@ -184,7 +184,7 @@ const Notifications = () => {
                 {notification.article ? (
                 <div className="flex-shrink-0 mr-4 relative">
                     <img 
-                      src={`${GatewayUrl}api${notification.article.thumbnail}`} 
+                      src={notification.article.thumbnail} 
                       alt={notification.article.title}
                       className="w-10 h-10 object-cover rounded-md"
                     />

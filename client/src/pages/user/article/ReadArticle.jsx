@@ -198,7 +198,7 @@ const ReadArticle = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center mb-2 sm:mb-0">
             <img
-              src={`${GatewayUrl}api${article.profile}`}
+              src={article.profile}
               alt={article.author}
               className="h-8 w-8 sm:h-10 sm:w-10 md:h-11 md:w-11 rounded-full mr-2 sm:mr-3 cursor-pointer object-cover"
               onClick={handleProfileClick}
@@ -264,7 +264,7 @@ const ReadArticle = () => {
         {/* Thumbnail Section */}
         {article.thumbnail && (
           <div className="relative">
-            <img src={`${GatewayUrl}api/${article.thumbnail}`} alt="Article Thumbnail" className="w-full h-28 sm:h-40 md:h-56 object-cover" />
+            <img src={article.thumbnail} alt="Article Thumbnail" className="w-full h-28 sm:h-40 md:h-56 object-cover" />
           </div>
         )}
   
