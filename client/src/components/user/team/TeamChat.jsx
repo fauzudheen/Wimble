@@ -169,7 +169,7 @@ const TeamChat = () => {
     }, []);
 
     const MessageBubble = memo(({ msg, isSent }) => {
-        const formatFileUrl = (url) => url.replace('host.docker.internal', 'localhost');
+        const formatFileUrl = (url) => url;
     
         return (
             <div className={`flex ${isSent ? 'justify-end' : 'justify-start'} mb-1`}>

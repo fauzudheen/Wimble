@@ -45,7 +45,7 @@ const UserProfileDropdown = () => {
           {isAuthenticated && userProfile && (
             <img 
               className="w-full h-full object-cover rounded-full" 
-              src={`${GatewayUrl}api/user_service/media/${userProfile.split('/media/')[1]}`}
+              src={userProfile}
               alt="User profile"
             />
           )}

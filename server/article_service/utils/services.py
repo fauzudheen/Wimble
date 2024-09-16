@@ -1,1 +1,3 @@
-USER_SERVICE_URL = "http://host.docker.internal:8001"
+import os
+
+USER_SERVICE_URL = os.getenv('USER_SERVICE_URL')

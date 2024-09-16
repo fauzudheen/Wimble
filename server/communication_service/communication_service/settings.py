@@ -161,7 +161,7 @@ CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
 CORS_ALLOW_CREDENTIALS = True
 
 
-CELERY_BROKER_URL = 'kafka://host.docker.internal:9092'
+CELERY_BROKER_URL = 'kafka://kafka:9092'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 

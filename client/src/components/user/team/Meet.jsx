@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import axios from 'axios';
 import { GatewayUrl } from '../../const/urls';
+import { zegoAppId, zegoServerSecret } from '../../const/config';
 
 function randomID(len) {
   let result = '';
@@ -67,8 +68,8 @@ const Meet = () => {
         return;
       }
 
-      const appID = 562399490;
-      const serverSecret = '2caf8ad6b5f704d93d8b6dcbf93cf2e4';
+      const appID = zegoAppId;
+      const serverSecret = zegoServerSecret;
       const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, randomID(5), `${user.first_name} ${user.last_name}`);
 
       const zp = ZegoUIKitPrebuilt.create(kitToken);
