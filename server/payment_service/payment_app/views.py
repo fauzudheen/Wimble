@@ -10,9 +10,10 @@ from rest_framework.permissions import IsAuthenticated
 import uuid
 from .models import PaymentStatus
 from .serializers import PaymentStatusSerializer
+import os
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-USER_SERVICE_URL = "http://host.docker.internal:8001"
+USER_SERVICE_URL = os.getenv('USER_SERVICE_URL')
 
 class CreateCheckoutSessionView(APIView):
     permission_classes = [IsAuthenticated]
