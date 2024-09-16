@@ -102,7 +102,7 @@ const CommunityPage = () => {
           <div className="relative w-full h-[20vh] sm:h-[30vh] md:h-[40vh]">
             {community.cover_image ? (
               <img
-                src={`${GatewayUrl}api/${community.cover_image}`}
+                src={community.cover_image}
                 alt={`${community.name} cover`}
                 className="w-full h-full object-cover"
               />
