@@ -1,7 +1,9 @@
+version: '3.8'
+
 services:
   api_gateway:
     container_name: api_gateway
-    build: ./server/api_gateway
+    build: ./api_gateway
     ports:
       - "8000:8000"
     depends_on:
@@ -11,12 +13,11 @@ services:
       - team_service
       - communication_service
     volumes:
-      - ./server/api_gateway:/app
-
+      - ./api_gateway:/app
 
   user_service:
     container_name: user_service
-    build: ./server/user_service
+    build: ./user_service
     ports:
       - "8001:8001"
     depends_on:
@@ -24,44 +25,44 @@ services:
       - user_redis
       - kafka
     volumes:
-      - ./server/user_service:/app
+      - ./user_service:/app
 
   article_service:
     container_name: article_service
-    build: ./server/article_service
+    build: ./article_service
     ports:
       - "8002:8002"
     depends_on:
       - article_db
       - kafka
     volumes:
-      - ./server/article_service:/app
+      - ./article_service:/app
 
   community_service:
     container_name: community_service
-    build: ./server/community_service
+    build: ./community_service
     ports:
       - "8003:8003"
     depends_on:
       - community_db
       - kafka
     volumes:
-      - ./server/community_service:/app
+      - ./community_service:/app
 
   team_service:
     container_name: team_service
-    build: ./server/team_service
+    build: ./team_service
     ports:
       - "8004:8004"
     depends_on:
       - team_db
       - kafka
     volumes:
-      - ./server/team_service:/app
+      - ./team_service:/app
 
   communication_service:
     container_name: communication_service
-    build: ./server/communication_service
+    build: ./communication_service
     ports:
       - "8005:8005"
     depends_on:
@@ -69,18 +70,18 @@ services:
       - communication_redis
       - kafka
     volumes:
-      - ./server/communication_service:/app
+      - ./communication_service:/app
 
   payment_service:
     container_name: payment_service
-    build: ./server/payment_service
+    build: ./payment_service
     ports:
       - "8006:8006"
     depends_on:
       - payment_db
       - kafka
     volumes:
-      - ./server/payment_service:/app
+      - ./payment_service:/app
 
   user_db:
     container_name: user_db
@@ -88,12 +89,11 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: user_db
-      POSTGRES_USER: fauzu
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${USER_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - user_db_data:/var/lib/postgresql/data
-
 
   article_db:
     container_name: article_db
@@ -101,9 +101,9 @@ services:
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_DB: article_db
-      POSTGRES_USER: fauzu
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${ARTICLE_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - article_db_data:/var/lib/postgresql/data
 
@@ -113,9 +113,9 @@ services:
     ports:
       - "5434:5432"
     environment:
-      POSTGRES_DB: community_db
-      POSTGRES_USER: fauzu
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${COMMUNITY_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - community_db_data:/var/lib/postgresql/data
 
@@ -125,9 +125,9 @@ services:
     ports:
       - "5435:5432"
     environment:
-      POSTGRES_DB: team_db
-      POSTGRES_USER: fauzu
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${TEAM_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - team_db_data:/var/lib/postgresql/data
 
@@ -137,9 +137,9 @@ services:
     ports:
       - "5436:5432"
     environment:
-      POSTGRES_DB: communication_db
-      POSTGRES_USER: fauzu
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${COMMUNICATION_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - communication_db_data:/var/lib/postgresql/data
 
@@ -149,12 +149,12 @@ services:
     ports:
       - "5437:5432"
     environment:
-      POSTGRES_DB: payment_db
-      POSTGRES_USER: fauzu
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${PAYMENT_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - payment_db_data:/var/lib/postgresql/data
-  
+
   user_redis:
     container_name: user_redis
     image: "redis:alpine"
@@ -193,19 +193,19 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_LOG4J_OPTS=-Dlog4j.rootLogger=OFF
     depends_on:
-      - zookeeper 
+      - zookeeper
     restart: on-failure
 
   celery-worker:
     container_name: celery_worker
-    build: ./server/communication_service 
+    build: ./communication_service
     command: celery -A communication_service worker -l info
     depends_on:
       - communication_db
       - communication_redis
       - kafka
     volumes:
-      - ./server/communication_service:/app
+      - ./communication_service:/app
     environment:
       - CELERY_BROKER_URL=kafka://host.docker.internal:9092
       - CELERY_RESULT_BACKEND=django-db
@@ -221,7 +221,7 @@ services:
     entrypoint: /bin/sh
     command: -c "stripe listen --forward-to http://host.docker.internal:8000/api/payments/webhook/"
     volumes:
-      - ./server/payment_service:/app
+      - ./payment_service:/app
     tty: true  # Keep the terminal open
 
   prometheus:
@@ -242,7 +242,6 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
     restart: always
-
 
 volumes:
   user_db_data:

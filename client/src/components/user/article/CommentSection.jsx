@@ -203,7 +203,7 @@ const CommentSection = ({ articleId, token }) => {
     return (
       <div className={`bg-white dark:bg-gray-800 p-2 sm:p-3 rounded-lg shadow-md transition-all duration-200 ease-in-out hover:shadow-lg ${depth > 0 ? 'ml-2 sm:ml-4' : ''}`}>
         <div className="flex items-start space-x-1 sm:space-x-2">
-          <img src={comment.user_data.profile} alt={`${comment.user_data.first_name} ${comment.user_data.last_name}`} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full" />
+          <img src={comment.user_data.profile} alt={`${comment.user_data.first_name} ${comment.user_data.last_name}`} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover" />
           <div className="flex-1 min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <h4 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm truncate">{`${comment.user_data.first_name} ${comment.user_data.last_name}`}</h4>
