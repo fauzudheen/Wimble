@@ -64,22 +64,8 @@ const About = () => {
           </p>
         </div>
 
-        <div className="mt-10">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, index) => (
-              <Feature key={index} {...feature} />
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-20 text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            Join Our Growing Community
-          </h2>
-          <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500 dark:text-gray-400">
-            Connect with thousands of IT professionals, share your knowledge, and advance your career.
-          </p>
-          <div className="mt-8 flex justify-center">
+        <div className="mt-10 text-center">
+          <div className="mt-4 flex justify-center">
             <div className="inline-flex rounded-md shadow">
             <Link to="/home">
                 <div className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-teal-400 to-blue-500 hover:from-teal-500 hover:to-blue-600">
@@ -90,6 +76,15 @@ const About = () => {
             </div>
           </div>
         </div>
+        <div className="mt-10">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature, index) => (
+              <Feature key={index} {...feature} />
+            ))}
+          </div>
+        </div>
+
+        
       </div>
     </div>
   );
