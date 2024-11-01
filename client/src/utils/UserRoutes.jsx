@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import UserLogin from '../pages/user/Login';
 import UserSignup from '../pages/user/Signup';
-import UserHome from '../pages/user/';
+import UserHome from '../pages/user/Home';
 import UserPublicRoutes from './UserPublicRoutes';
 import UserProtectedRoutes from './UserProtectedRoutes';
 import ProfilePage from '../pages/user/profile/ProfilePage';

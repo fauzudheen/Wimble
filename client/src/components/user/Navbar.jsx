@@ -6,7 +6,7 @@ import DarkModeToggle from './DarkModeToggle';
 import logoImg from '../../assets/Logos/Square Logo.jpeg';
 import UserProfileDropdown from './UserProfileDropdown';
 import Colors from './misc/Colors';
-import HomeSidebar from './SidebarLeft';
+import HomeSidebar from './HomeSidebarLeft';
 import NotificationDropdown from './NotificationDropdown';
 import { GatewayUrl } from '../const/urls';
 import { DocumentTextIcon, HashtagIcon, UserGroupIcon, UserIcon, UsersIcon } from '@heroicons/react/24/outline';
