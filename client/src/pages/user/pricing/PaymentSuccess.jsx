@@ -18,7 +18,7 @@ const PaymentSuccess = () => {
         <div className="mt-8 space-y-6">
           <div className="rounded-md shadow">
             <Link
-              to="/home"
+              to="/"
               className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
             >
               Go to Home

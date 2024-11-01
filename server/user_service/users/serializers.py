@@ -3,6 +3,7 @@ from .models import User
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from . import models
+from datetime import date
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
@@ -14,7 +15,23 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 
                   'profile', 'date_joined', 'is_superuser', 'is_staff', 'is_active', 
                   'tagline', 'bio', 'followers_count', 'followings_count', 'account_tier',
-                  'skill_count', 'stripe_customer_id', 'stripe_subscription_id', 'subscription_expiry']    
+                  'skill_count', 'stripe_customer_id', 'stripe_subscription_id', 'subscription_expiry']   
+
+    def to_representation(self, instance):
+        self.check_subscription_status(instance)
+        return super().to_representation(instance)
+    
+    def check_subscription_status(self, user):
+        today = date.today()
+        
+        if (user.account_tier == 'premium' and 
+            user.subscription_expiry and 
+            user.subscription_expiry < today):
+            
+            user.account_tier = 'free'
+            user.stripe_subscription_id = None
+            user.subscription_expiry = None
+            user.save(update_fields=['account_tier', 'stripe_subscription_id', 'subscription_expiry']) 
      
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)

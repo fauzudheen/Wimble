@@ -24,7 +24,7 @@ const SelectInterests = ({ token }) => {
         console.log("response from select interests", response);
       dispatch(setUserLogin(response));
     } else {
-        navigate('/home');
+        navigate('/');
     }
   }, [response, dispatch]);
 
@@ -47,7 +47,7 @@ const SelectInterests = ({ token }) => {
         const response = await axios.get(`${GatewayUrl}api/users/${userId}/interests/`);
         console.log('User Interests:', response.data);
         if (response.data.length > 0) {
-            navigate('/home');
+            navigate('/');
         }
       } catch (error) {
         console.error('Error fetching user interests:', error);
@@ -73,7 +73,7 @@ const SelectInterests = ({ token }) => {
       axiosInstance.post(`${GatewayUrl}api/users/${userId}/interests-batch/`, {
         interests: selectedInterests,
       });
-      navigate('/home');
+      navigate('/');
     } catch (error) {
       console.error("Error saving interests:", error);
     }

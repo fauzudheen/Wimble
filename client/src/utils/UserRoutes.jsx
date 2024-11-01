@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import UserLogin from '../pages/user/Login';
 import UserSignup from '../pages/user/Signup';
-import UserHome from '../pages/user/Home';
+import UserHome from '../pages/user/';
 import UserPublicRoutes from './UserPublicRoutes';
 import UserProtectedRoutes from './UserProtectedRoutes';
 import ProfilePage from '../pages/user/profile/ProfilePage';
@@ -53,7 +53,7 @@ const UserRoutes = () => {
         
         <Route element={<NavbarLayout />}>
             <Route path="/select-interests" element={<SelectInterests />} />
-            <Route path="/home" element={<MainLayout><UserHome /></MainLayout>} />
+            <Route path="/" element={<MainLayout><UserHome /></MainLayout>} />
             <Route path="/tags" element={<MainLayout><Tags /></MainLayout>} />
             <Route path="/articles-by-tag/:interestId" element={<MainLayout><ArticlesByTag /></MainLayout>} />
             <Route path="/communities" element={<MainLayout><CommunitiesLayout /></MainLayout>} />

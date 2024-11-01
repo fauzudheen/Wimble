@@ -112,7 +112,7 @@ const CreateArticle = () => {
       if (communityId) {
         navigate(`/communities/${communityId}`);
       } else {
-        navigate('/home');
+        navigate('/');
       }
     } catch (error) {
       console.error('Error creating article or tags:', error.response?.data || error.message);
@@ -246,7 +246,7 @@ const CreateArticle = () => {
             <div className="flex items-center justify-end space-x-4">
               <button
                 type="button"
-                onClick={() => navigate('/home')}
+                onClick={() => navigate('/')}
                 className={Buttons.cancelButton}
               >
                 Cancel

@@ -171,7 +171,7 @@ const ReadArticle = () => {
       <NoContentPage 
         message="This article has been removed by the author."
         linkText="Browse other articles"
-        linkHref="/home"
+        linkHref="/"
       />
     );
   }

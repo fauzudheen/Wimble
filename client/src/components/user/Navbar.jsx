@@ -6,7 +6,7 @@ import DarkModeToggle from './DarkModeToggle';
 import logoImg from '../../assets/Logos/Square Logo.jpeg';
 import UserProfileDropdown from './UserProfileDropdown';
 import Colors from './misc/Colors';
-import HomeSidebar from './HomeSidebarLeft';
+import HomeSidebar from './SidebarLeft';
 import NotificationDropdown from './NotificationDropdown';
 import { GatewayUrl } from '../const/urls';
 import { DocumentTextIcon, HashtagIcon, UserGroupIcon, UserIcon, UsersIcon } from '@heroicons/react/24/outline';
@@ -75,7 +75,7 @@ const Navbar = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                        <Link to='/home' className="flex-shrink-0">
+                        <Link to='/' className="flex-shrink-0">
                             <img src={logoImg} alt="Wimble Logo" className="h-8 w-auto rounded-md hidden md:block" />
                         </Link>
                     </div>

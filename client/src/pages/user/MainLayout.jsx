@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import CommunityPromotion from '../../components/user/CommunityPromotion';
-import HomeSidebar from '../../components/user/HomeSidebarLeft';
+import HomeSidebar from '../../components/user/SidebarLeft';
 import PlusPromotion from '../../components/user/PlusPromotion';
 
 const MainLayout = ({children}) => {

@@ -9,7 +9,7 @@ const UserPublicRoutes = () => {
     useEffect(() => {
         console.log("useEffect works")
         if (isAuthenticated) {
-            navigate('/home')
+            navigate('/')
         }
     }, [isAuthenticated, navigate])
 

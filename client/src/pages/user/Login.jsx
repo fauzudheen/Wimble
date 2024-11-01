@@ -23,7 +23,7 @@ const Login = () => {
       console.log("Data from response", response.data);
       setServerErrors({})
       dispatch(setUserLogin(response.data))
-      navigate('/home')
+      navigate('/')
     } catch (error) {
       if (error.response && error.response.data) {
         setServerErrors(error.response.data)

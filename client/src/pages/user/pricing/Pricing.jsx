@@ -14,32 +14,6 @@ const Pricing = () => {
   const [user, setUser] = useState(null);
   const [tiers, setTiers] = useState([]);
 
-  // const tiers = [
-  //   {
-  //     name: 'Free',
-  //     price: '₹0',
-  //     frequency: '/month',
-  //     description: 'Great for individuals and small teams getting started.',
-  //     features: [
-  //       'User profile creation',
-  //       'Community participation',
-  //       'Basic team functionalities',
-  //     ],
-  //   },
-  //   {
-  //     name: 'Premium',
-  //     price: '₹500',
-  //     frequency: '/month',
-  //     description: 'Perfect for growing teams and advanced functionalities.',
-  //     features: [
-  //       'All Free Tier features',
-  //       'Advanced team functionalities',
-  //       'Meeting scheduling and management',
-  //     ],
-  //     cta: 'Upgrade Now',
-  //     priceId: 'price_1PqXI3H0epnuZaS4GwodNcFJ',
-  //   },
-  // ];
 
   useEffect(() => {
     const fetchTiers = async () => {
@@ -96,7 +70,7 @@ const Pricing = () => {
     if (!user) return null;
 
     const isPremium = user.account_tier === 'premium';
-    const daysRemaining = differenceInDays(new Date(user.subscription_expiry), new Date());
+    const daysRemaining = differenceInDays(new Date(user.subscription_expiry), new Date()) + 1;
 
     return (
       <div className="flex justify-center mt-6 sm:mt-8 lg:mt-10 w-full">

@@ -67,7 +67,7 @@ const About = () => {
         <div className="mt-10 text-center">
           <div className="mt-4 flex justify-center">
             <div className="inline-flex rounded-md shadow">
-            <Link to="/home">
+            <Link to="/">
                 <div className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-teal-400 to-blue-500 hover:from-teal-500 hover:to-blue-600">
                     <UserPlusIcon className="w-5 h-5 mr-2" />
                     Get Started
