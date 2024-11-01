@@ -9,7 +9,7 @@ import { setUserLogin } from '../../redux/authSlice';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm();
   const [serverErrors, setServerErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch()
@@ -35,6 +35,13 @@ const Login = () => {
     setIsLoading(false);
   }
 
+  const handleGuestLogin = () => {
+    setValue('username', 'guest');
+    setValue('password', 'guest123');
+    // Programmatically trigger form submission
+    handleSubmit(onSubmit)();
+  }
+
   return (
     <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 p-4">
        {/* Background with repeating logos */}
@@ -48,10 +55,18 @@ const Login = () => {
       </div>
 
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-md z-10 relative">
-        <div className="flex flex-col items-center mb-6">
+        <div className="flex flex-col items-center mb-6 space-y-2">
           <img className="h-20 rounded-md max-w-xs mb-2" src={logoImg} alt="Logo" />
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Wimble</h2>
           <p className="text-sm text-gray-600 dark:text-gray-400">Your Professional Tech Network</p>
+          <button
+            type="button"
+            onClick={handleGuestLogin}
+            className="text font-bold border border-green-500 rounded-md p-2 bg-green-50 hover:bg-green-100
+             text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300"
+          >
+            Sign in as Guest
+          </button>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
@@ -105,7 +120,8 @@ const Login = () => {
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        <div className="text-right mb-4">
+        <div className="text-right mb-4 flex justify-between items-center">
+          
           <button
             type="button"
             onClick={() => navigate('/forgot-password')}
