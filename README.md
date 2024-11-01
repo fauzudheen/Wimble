@@ -27,37 +27,24 @@
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-username/wimble.git
+   git clone https://github.com/fauzudheen/Wimble.git
    cd wimble
    ```
 
-2. **Backend Setup**
-   - Install Python packages:
-     ```bash
-     pip install -r backend/requirements.txt
-     ```
-   - Set up environment variables for Django and database configurations in a `.env` file in the backend folder.
+2. **Navigate to the backend Directory**
+   ```bash
+   cd server
+   ```
 
-3. **Frontend Setup**
-   - Navigate to the frontend directory:
-     ```bash
-     cd frontend
-     ```
-   - Install dependencies:
-     ```bash
-     npm install
-     ```
-   - Configure environment variables in `.env` for frontend settings (e.g., API URLs).
+3. **Run Docker Compose**
+   ```bash
+   docker-compose up --build
+   ```
 
-4. **Run Application Locally**
-   - Start the Django server:
-     ```bash
-     python manage.py runserver
-     ```
-   - Start the React frontend:
-     ```bash
-     npm start
-     ```
+   This command will build the images and start all services defined in your `docker-compose.yml` file.
+
+4. **Access the Application**
+   - Once the services are up, access the application at `http://localhost:<port>` (replace `<port>` with the port configured for your frontend service in `docker-compose.yml`).
 
 ## 🎯 Microservices Deployment (AWS)
 
